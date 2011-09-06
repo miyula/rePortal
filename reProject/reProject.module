@@ -1,0 +1,18 @@
+<?php
+
+/**
+ * @file
+ * Definde reseache project structure and model
+ */
+
+/**
+ * Implementation of hook_help().
+ */
+function reProject_help(){
+    switch ($path) {
+        case 'admin/settings/reProject':
+            return t('Definde reseache project structure and model');
+        case 'admin/help#reProject':
+            return t('Definde reseache project structure and model');
+}
+

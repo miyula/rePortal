@@ -1,0 +1,6 @@
+; $Id$
+name = "Research Project"
+description = "Handle Research Project Object"
+package = reProject
+core = 6.x
+php = 5.x
