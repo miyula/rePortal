@@ -14,5 +14,6 @@ function reProject_help(){
             return t('Definde reseache project structure and model');
         case 'admin/help#reProject':
             return t('Definde reseache project structure and model');
+    }
 }
 
