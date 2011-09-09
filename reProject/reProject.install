@@ -63,6 +63,11 @@ function research_projects_schema(){
                 'length' => 255,
                 'not null' => FALSE,
                 ),
+            'founder' => array(
+                'type' => 'varchar',
+                'length' => 255,
+                'not null' => TRUE,
+                ),
             'introduction' => array(
                 'type' => 'text',
                 'not null' => TRUE,
@@ -215,6 +220,13 @@ function research_projects_contents_schema(){
                 'type' => 'varchar',
                 'length' => 128,
                 'not null' => TRUE,
+                ),
+            'deletable' => array(
+                'description' => 'User can delete the content from project or not.',
+                'type' => 'int',
+                'size' => 'tiny',
+                'not null' => TRUE,
+                'default' => 1,
                 ),
             'created' => array(
                 'type' => 'datetime',

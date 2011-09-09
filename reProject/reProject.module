@@ -29,7 +29,15 @@ function reProject_menu(){
         'page callback'     => 'projects_new_callback',
         'access arguments'  => array('create research project'),
         'file'              => 'includes/project.pages.inc',
-        'type'              => MENU_NORMAL_ITEM,
+        'type'              => MENU_CALLBACK,
+    );
+    $menu['projects/new/editpages'] = array(
+        'title'             => t('Write home page and help page'),
+        'description'       => t('When new project, guide user to create first two page.'),
+        'page callback'     => 'projects_new_editpages_callback',
+        'access arguments'  => array('create research project'),
+        'file'              => 'includes/project.pages.inc',
+        'type'              => MENU_CALLBACK,
     );
     $menu['projects/list'] = array(
         'title'             => t('Projects'),
@@ -37,7 +45,18 @@ function reProject_menu(){
         'page callback'     => 'projects_list_callback',
         'access arguments'  => array('access content'),
         'file'              => 'includes/project.pages.inc',
-        'type'              => MENU_NORMAL_ITEM, 
+        'type'              => MENU_CALLBACK, 
+    );
+    
+    $menu['project/%'] = array(
+        'title arguments'   => array(1),
+	'title callback'    => 'project_title_callback',
+        'description'       => t('Display project home page'),
+        'page callback'     => 'project_display_callback',
+        'page arguments'    => array(1),
+        'access arguments'  => array('access content'),
+        'file'              => 'includes/project.pages.inc',
+        'type'  
     );
     return $menu;
 }
@@ -53,6 +72,13 @@ function reProject_perm(){
     );
 }
 
+/**
+ * Title callback for menu project/%
+ */
+function project_title_callback($path){
+    $project = load_project($path);
+    return $project->name;
+}
 /**
  * Load project object
  * @param
@@ -73,6 +99,14 @@ function load_project($index,$type='path'){
     }
 }
 
+/**
+ * Get project url by id
+ */
+function get_project_url($pid){
+    $sql = 'SELECT path from {research_projects} WHERE id=%d';
+    $path = db_result(db_query($sql, $pid));
+    return("project/$path");
+}
 
 /**
  * Log operation
@@ -91,31 +125,88 @@ function log_operation($project_id, $type, $content, $link, $module){
     global $user;
     $ip = $_SERVER["REMOTE_ADDR"];
     $sql = "INSERT INTO {research_projects_operation_logs} (project,operator,type,ip,content,link,module,time) VALUES(%d,%d,'%s','%s','%s','%s','%s',NOW())";
-    db_query($sql, $project_id, $user->id, $type, $ip, $content, $link, $module);
+    db_query($sql, $project_id, $user->uid, $type, $ip, $content, $link, $module);
 }
+
+/**
+ * Add content to project
+ * @param
+ *   $pid,  the id of project
+ * @param
+ *   $nid,  the id of node
+ * @param
+ *   $type, the type of content in project, can be 'homepage', 'helppage', 'news', 'default' &etc.
+ * @param
+ *   $deletable, boolean, 1 or 0
+ */
+function project_add_content($pid, $nid, $type='default', $deletable=1){
+    $sql = "INSERT INTO {research_projects_contents} (project, node, type, deletable, created, changed) VALUES(%d, %d, '%s', %d, NOW(), NOW())";
+    db_query($sql, $pid, $nid, $type, (int)$deletable);
+}
+
+/**
+ * Remove the content from project
+ * @param
+ *   $pid,  the id of project
+ * @param
+ *   $nid,  the id of node
+ */
+function project_remove_content($pid, $nid){
+    $sql = "DELETE {research_projects_contents} WHERE project=%d AND node=%d AND deletable=1";
+    db_query($sql, $pid, $nid);
+    //remove node from database
+    node_delete($nid);
+}
+
+/**
+ * Update project activity
+ * @param
+ *   $pid,  the id of project
+ * @param
+ *   $points,  integer
+ */
+function update_project_activity($pid, $points){
+    //get activity record
+    $sql = "SELECT project, activity FROM {research_projects_activity} WHERE project=%d";
+    $p_activity = db_fetch_object(db_query($sql,$pid));
+    if($p_activity){
+        //update
+        $activity = (int)$p_activity->activity + (int)$points;
+        $update = "UPDATE {research_projects_activity} SET activity=%d WHERE project=%d";
+        db_query($update, $activity, $pid);
+    }else{
+        //insert new
+        $insert = "INSERT INTO {research_projects_activity} VALUES(%d, %d)";
+        db_query($insert, $pid, (int)$points);
+    }
+}
+
 
 /**
  * Save project info to table {research_projects}
  * @param
  *   $project, object of research_projects
  */
-function _research_projects_save($project){
+function _research_projects_save(&$project){
     
     $name = (string)$project->name;
+    $founder = (string)$project->founder;
     $url = isset($project->url)?(string)$project->url:'';
     $path = (string)$project->path;
     $introduction = (string)$project->introduction;
     
     if(isset($project->id) && $project->id>0){
         //update record
-        $sql = "UPDATE {research_projects} SET name='%s', url='%s', path='%s', introduction='%s', changed=NOW() WHERE id=%d";
-        return db_query($sql, $name, $url, $path, $introduction, $project->id);
+        $sql = "UPDATE {research_projects} SET name='%s', founder='%s', url='%s', path='%s', introduction='%s', changed=NOW() WHERE id=%d";
+        return db_query($sql, $name, $founder, $url, $path, $introduction, $project->id);
         
     }else{
         $creator = (int)$project->creator;
         //insert new
-        $sql = "INSERT INTO {research_projects} (name, creator, url, path, introduction, created, changed) VALUES('%s','%d','%s','%s','%s',NOW(),NOW())";
-        return db_query($sql, $name, $creator, $url, $path, $introduction, $project->id);
+        $sql = "INSERT INTO {research_projects} (name, creator, founder, url, path, introduction, created, changed) VALUES('%s','%d', '%s', '%s','%s','%s',NOW(),NOW())";
+        $result = db_query($sql, $name, $creator, $founder, $url, $path, $introduction);
+        $project->id = mysql_insert_id();        
+        return $result;
     }
 }
 /**
@@ -125,4 +216,6 @@ function _research_projects_delete($id){
     $sql = 'DELECT FROM {research_projects} WHERE id=%d';
     return db_query($sql, $id);
 }
+
+
 
