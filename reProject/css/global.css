@@ -1,0 +1,24 @@
+a.add_link{
+    background: url('../images/add-link.png') no-repeat left top;
+    font-size: 14px;
+    padding-left: 20px;
+    cursor: pointer;
+}
+
+a.edit_link{
+    background: url('../images/edit-link.png') no-repeat left top;
+    font-size: 14px;
+    padding-left: 20px;
+    cursor: pointer;
+}
+a.outer_link{
+    background: url('../images/outer-link.png') no-repeat left top;
+    font-size: 14px;
+    padding-left: 20px;
+    cursor: pointer;
+}
+
+img.tool_logo_image{
+    width: 120px;
+    height: 120px;
+}

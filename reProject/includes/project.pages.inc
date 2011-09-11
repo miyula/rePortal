@@ -151,7 +151,7 @@ function create_new_project_form_submit($form, &$form_state){
 /**
  * Form for edit research  project
  */
-function edit_research_project_form(&$form, $project=null){
+function edit_research_project_form(&$form_state, $project=null){
     $form['id'] = array(
         '#type'             => 'hidden',
         '#value'            => isset($project->id)?$project->id:0,
@@ -219,7 +219,7 @@ function edit_research_project_form_submit($form, &$form_state){
 /**
  * Form for first edit project pages
  */
-function first_edit_project_pages_form(&$form, $pid){
+function first_edit_project_pages_form(&$form_state, $pid=0){
     
     $sql = 'SELECT node FROM {research_projects_contents} WHERE project=%d AND type="%s"';
     
@@ -237,7 +237,7 @@ function first_edit_project_pages_form(&$form, $pid){
     
     $form['project_id'] = array(
         '#type'         => 'hidden',
-        '#value'        =>  (int)$pid, 
+        '#value'        =>  ''.$pid, 
     );
     $form['homepage'] = array(
         '#type'         => 'textarea',
@@ -248,22 +248,22 @@ function first_edit_project_pages_form(&$form, $pid){
     );
     $form['homepage_nid'] = array(
         '#type'         => 'hidden',
-        '#value'        =>  $homepage_id, 
+        '#value'        =>  ''.$homepage_id, 
     );
     $form['helppage'] = array(
-        '#type'     => 'textarea',
-        '#title'    => t('Help page content'),
+        '#type'         => 'textarea',
+        '#title'        => t('Help page content'),
         '#description'  => t('This is a public page. Please not put any confidential informatoin here!'),
-        '#required' => TRUE,
+        '#required'     => TRUE,
         '#default_value'  => $helppage->body,
     );
     $form['helppage_nid'] = array(
         '#type'         => 'hidden',
-        '#value'        =>  $helppage_id, 
+        '#value'        =>  ''.$helppage_id, 
     );
     $form['submit'] = array(
-        '#type'     => 'submit',
-        '#value'    => t('Save'),
+        '#type'         => 'submit',
+        '#value'        => t('Save'),
     );
     
     return $form;
@@ -273,12 +273,14 @@ function first_edit_project_pages_form(&$form, $pid){
  * Handle submit for first edit project pages
  */
 function first_edit_project_pages_form_submit($form, &$form_state){
+    //die(print($form_state));
     
     $pid = $form_state['values']['project_id'];
     $homepage_body = $form_state['values']['homepage'];
     $homepage_nid = $form_state['values']['homepage_nid'];
     $helppage_body = $form_state['values']['helppage'];
     $helppage_nid = $form_state['values']['helppage_nid'];
+    
     
     //save homepage
     $homepage = node_load($homepage_nid);
@@ -292,7 +294,6 @@ function first_edit_project_pages_form_submit($form, &$form_state){
     
     //get project path
     drupal_goto(get_project_url($pid));
-    
 }
 
 /**

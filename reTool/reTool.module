@@ -1,0 +1,152 @@
+<?php
+
+/**
+ * @file
+ * Definde reseache tool structure and model
+ */
+
+/**
+ * Implementation of hook_help().
+ */
+function reTool_help(){
+    switch ($path) {
+        case 'admin/settings/reTool':
+            return t('Definde reseache tool structure and model');
+        case 'admin/help#reTool':
+            return t('Definde reseache tool structure and model');
+    }
+}
+
+/**
+ * Implementation of hook_menu().
+ */
+function reTool_menu(){
+    
+    /**  research tools **/
+    $menu['research/tools'] = array(
+        'title'             => t('Research tools'),
+        'description'       => t('The page to list all research tools'),
+        'page callback'     => 'research_tools_list_callback',
+        'access arguments'  => array('view research tools'),
+        'file'              => 'includes/research.tool.pages.inc',
+        'type'              => MENU_NORMAL_ITEM,
+    );
+    $menu['research/tools/add'] = array(
+        'title'             => t('Add new tool'),
+        'description'       => t('The page to add a new research tool'),
+        'page callback'     => 'research_tools_add_callback',
+        'access arguments'  => array('create research tool'),
+        'file'              => 'includes/research.tool.pages.inc',
+        'type'              => MENU_NORMAL_ITEM,
+    );
+    $menu['research/tools/list'] = array(
+        'title'             => t('Research tools'),
+        'description'       => t('The page to list all research tools'),
+        'page callback'     => 'research_tools_list_callback',
+        'access arguments'  => array('view research tools'),
+        'file'              => 'includes/research.tool.pages.inc',
+        'type'              => MENU_NORMAL_ITEM,
+    );
+    $menu['research/tools/view/%'] = array(
+        'title callback'    => 'research_tools_title_callback',
+        'title arguments'   => array(3),
+        'description'       => t('The page to view a research tool'),
+        'page callback'     => 'research_tools_view_callback',
+        'page arguments'    => array(3),
+        'access arguments'  => array('view research tools'),
+        'file'              => 'includes/research.tool.pages.inc',
+        'type'              => MENU_NORMAL_ITEM,
+    );
+    $menu['research/tools/view/%/edit'] = array(
+        'title'             => t('Edit research tool'),
+        'description'       => t('The page to edit a research tool'),
+        'page callback'     => 'research_tools_edit_callback',
+        'page arguments'    => array(3),
+        'access arguments'  => array('edit research tool'),
+        'file'              => 'includes/research.tool.pages.inc',
+        'type'              => MENU_CALLBACK,
+    );
+    $menu['research/tools/view/%/delete'] = array(
+        'title'             => t('Delete research tool'),
+        'description'       => t('The page to delete a research tool'),
+        'page callback'     => 'research_tools_delete_callback',
+        'page arguments'    => array(3),
+        'access arguments'  => array('delete research tool'),
+        'file'              => 'includes/research.tool.pages.inc',
+        'type'              => MENU_CALLBACK,
+    );
+    
+    /** reasearch tool links **/
+    $menu['research/tools/view/%/links/add'] = array(
+        'title'             => t('Add research tool link'),
+        'description'       => t('The page to add link for a research tool'),
+        'page callback'     => 'research_tools_links_add_callback',
+        'page arguments'    => array(3),
+        'access arguments'  => array('add research tool links'),
+        'file'              => 'includes/research.tool.links.pages.inc',
+        'type'              => MENU_CALLBACK,
+    );
+    $menu['research/tools/view/%/links/edit/%'] = array(
+        'title'             => t('Edit research tool link'),
+        'description'       => t('The page to edit link of a research tool'),
+        'page callback'     => 'research_tools_links_edit_callback',
+        'page arguments'    => array(3, 6),
+        'access arguments'  => array('add research tool links'),
+        'file'              => 'includes/research.tool.links.pages.inc',
+        'type'              => MENU_CALLBACK,
+    );
+    $menu['research/tools/view/%/links/delete/%'] = array(
+        'title'             => t('Delete research tool link'),
+        'description'       => t('The page to delete link from a research tool'),
+        'page callback'     => 'research_tools_links_delete_callback',
+        'page arguments'    => array(3, 6),
+        'access arguments'  => array('add research tool links'),
+        'file'              => 'includes/research.tool.links.pages.inc',
+        'type'              => MENU_CALLBACK,
+    );
+    
+    return $menu;
+}
+
+/**
+ * Implementation of hook_perm().
+ */
+function reTool_perm(){
+    return array(
+        'create research tool',
+        'view research tools',
+        'edit research tool',
+        'delete research tool',
+        'add research tool links',
+        'edit research tool links',
+        'delete research tool links',
+    );
+}
+
+/**
+ * Implements hook_theme().
+ */
+function reTool_theme(){
+    return array(
+	'research_tool_view_page' => array(
+	    'template' => 'tool.view.page',
+	    'arguments' => array(
+		'tool' => NULL,
+	    ),
+	),
+    );
+}
+
+/**
+ * Title callback for research/tools/view/%
+ */
+function research_tools_title_callback($tool_id){
+    //get name
+    $sql = "SELECT name FROM {research_tools} WHERE id=%d";
+    $title = db_result(db_query($sql, $tool_id));
+    if($title){
+        return $title;
+    }else{
+        drupal_not_found();
+    }
+}
