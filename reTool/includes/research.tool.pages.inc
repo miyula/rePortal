@@ -11,7 +11,7 @@ function research_tools_list_callback(){
         array('data'=>'Project tool'),
         array('data'=>'Name'),
         array('data'=>'Abstract'),
-        array('data'=>'Ranks'),
+        array('data'=>'Ratings'),
     );
     
     //get tool list

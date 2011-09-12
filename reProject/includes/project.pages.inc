@@ -318,7 +318,7 @@ function create_new_project($project){
         $node->title = "Home page";
         $node->body = "Please input home page information here for your project. The home page is a public page that everyone can see. Please don't put any confidential informatoin here!";
         $node->uid = $user->uid;
-        $node->type = 'page';
+        $node->type = 'projectcontent';
         node_save($node);
         project_add_content($project->id, $node->nid, 'homepage', FALSE);
         
@@ -327,7 +327,7 @@ function create_new_project($project){
         $node->title = "Help page";
         $node->body = "Please input help infor here. The help page is to guide people who are interested in how to participate or contact project. The help page is a public page that everyone can see. Please don't put any confidential informatoin here!";
         $node->uid = $user->uid;
-        $node->type = 'page';
+        $node->type = 'projectcontent';
         node_save($node);
         project_add_content($project->id, $node->nid, 'helppage', FALSE);
         

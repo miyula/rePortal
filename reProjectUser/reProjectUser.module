@@ -12,12 +12,13 @@ define('PROJECT_RESEARCHER', 'researcher');
  */
 function reProjectUser_menu(){
 
-    $menu['project/%/termofuse/%'] = array(
+    $menu['project/%/termofuse'] = array(
         'title'             => t('Term of use'),
         'description'       => t('Display the term of use page for project'),
         'page callback'     => 'project_termofuse_callback',
         'page arguments'    => array(1, 3),
-        'file'              => 'incluses/join.guide.page.inc',
+        'access arguments'  => array('access content'),
+        'file'              => 'includes/join.guide.pages.inc',
         'type'              => MENU_CALLBACK,
     );
     
@@ -25,11 +26,26 @@ function reProjectUser_menu(){
         'title'             => t('Edit term of use'),
         'page callback'     => 'project_manage_content_termofuse_callback',
         'page arguments'    => array(1),
+        'access arguments'  => array('access content'),
         'file'              => 'includes/manage.contents.pages.inc',
         'type'              => MENU_CALLBACK,
     );
     
     return $menu;
+}
+
+/**
+ * Implements hook_theme().
+ */
+function reProjectUser_theme(){
+    return array(
+	'project_termofuse_page' => array(
+	    'template' => 'templates/termofuse.page',
+	    'arguments' => array(
+		'project' => NULL,
+	    ),
+	),
+    );
 }
 
 /**
@@ -44,4 +60,25 @@ function add_user_to_project($pid, $uid, $role=PROJECT_NORMAL_USER){
         return db_query($insert, $pid, $uid, $role);
     }
     return FALSE;
+}
+
+/**
+ * load term of use node
+ */
+function load_term_of_use_node($project){
+    //get term of use node
+    $sql = 'SELECT node FROM {research_projects_contents} WHERE project=%d AND type="termofuse" ORDER BY created DESC LIMIT 1 ';
+    $nid = db_result(db_query($sql, $project->id));
+    if($nid>0){
+        return node_load($nid);
+    }else{
+        //create new term of use page
+        $node = new stdClass;
+        $node->title = 'Term of use';
+        $node->body = '<a href="'.url('project/'.$project->path.'/manage/contents/termofuse').'" class="edit-link">Click here for first edit.</a>';
+        $node->type = 'projectcontent';
+        node_save($node);
+        project_add_content($pid, $node->nid, 'termofuse', FALSE);
+        return $node;
+    }
 }
