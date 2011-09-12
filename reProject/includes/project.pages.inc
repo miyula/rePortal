@@ -77,6 +77,24 @@ function project_display_callback($path){
     drupal_not_found();
 }
 
+/**
+ * Menu callback for project/%/help
+ */
+function project_help_callback($path){
+    $project = load_project($path);
+    if($project){
+        $sql = 'SELECT node FROM {research_projects_contents} WHERE project=%d AND type="%s"';
+    
+        //get helppage
+        $helppage_id = db_result(db_query($sql, $project->id, 'helppage'));
+        if($helppage_id){
+            $helppage = node_load($helppage_id);
+            return $helppage->body;
+        }
+    }
+    drupal_not_found();
+}
+
 /***************** Create new project form********************/
 
 /**

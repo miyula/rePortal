@@ -66,6 +66,16 @@ function reProject_menu(){
         'file'              => 'includes/project.pages.inc',  
     );
     
+    $menu['project/%/help'] = array(
+        'title arguments'   => array(1),
+	'title callback'    => 'project_title_callback',
+        'description'       => t('Display project help page'),
+        'page callback'     => 'project_help_callback',
+        'page arguments'    => array(1),
+        'access arguments'  => array('access content'),
+        'file'              => 'includes/project.pages.inc',  
+    );
+    
     $menu['project/%/manage'] = array(
 	'title arguments'   => array(1),
 	'title callback'    => 'project_title_callback',
