@@ -13,7 +13,7 @@
         <li><a href="<?=url('project/'.$project->path)?>">Home page</a></li>
         <li><a href="<?=url('project/'.$project->path.'/manage/tools')?>">Manage tools</a></li>
         <li><a href="<?=url('project/'.$project->path.'/manage/contents')?>">Manage content</a></li>
-        <li>Manage persons</li>
+        <li><a href="<?=url('project/'.$project->path.'/manage/persons')?>">Manage persons</a></li>
         <li>Send message</li>
         <li>Settings</li>
     </ul>

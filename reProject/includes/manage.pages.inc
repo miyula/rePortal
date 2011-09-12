@@ -170,20 +170,83 @@ function project_manage_persons_list_callback($path){
             array('data'=>'Email'),
         );
         
-        $sql = "SELECT t.id id, t.name, t.logo FROM {research_projects_persons_list} AS p, {USER} AS u ORDER BY t.changed DESC";
-        $res = db_query($sql);
+        $sql = "SELECT name, mail FROM {research_projects_persons_list} AS p, {users} AS u WHERE p.project=%d AND p.user=u.uid AND p.role='researcher'";
+        $res = db_query($sql, $project->id);
         while($row=db_fetch_object($res)){
             $rows[] = array(
-                //"<image src='{$row->logo}' width='100px' />",
-                "<a href='".url('research/tools/view/'.$row->id)."' target='_blank'>{$row->name}</a>",
-                "<a href='".url("project/$path/manage/tools/selete/{$row->id}")."' class='add_link'>Add to project</a>",
+                $row->name,
+                $row->mail,
             );
         }
         $content.= theme_table($header, $rows);
+        
+        //get normal user
+        $content.= '<h2>Participants list</h2>';
+        $content.= '<p><a href="'.url('project/'.$path.'/manage/persons/normal/add').'" class="add_link">Invite new</a></p>';
+        $rows = array();
+        $header = array(
+            //array('data'=>'Photo'),
+            array('data'=>'Name'),
+            array('data'=>'Email'),
+        );
+        
+        $sql = "SELECT name, mail FROM {research_projects_persons_list} AS p, {users} AS u WHERE p.project=%d AND p.user=u.uid AND p.role='normal'";
+        $res = pager_query($sql, 30, $project->id);
+        while($row=db_fetch_object($res)){
+            $rows[] = array(
+                $row->name,
+                $row->mail,
+            );
+        }
+        
+        $content.= theme_table($header, $rows);
         $content.= theme('pager');
-        $project->subtitle = 'Tools management';
         $project->right_part = $content;    
         return theme('project_manage_page',$project);
     }
     drupal_not_found();
+}
+
+/**
+ * Menu callback for project/%/manage/persons/researcher/add
+ */
+function project_manage_persons_researcher_add_callback($path){
+    $project = load_project($path);
+    if($project){
+        return drupal_get_form('project_invite_research_form', $project->id);
+    }
+    drupal_not_found();
+}
+
+/** Invite researcher form **/
+function project_invite_research_form(&$form_state, $pid){
+    $form['pid'] = array(
+        '#type' => 'hidden',
+        '#value' => $pid,
+    );
+    $form['email'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Email address'),
+        '#description' => t('The email account of the researcher'),
+        '#required' => TRUE,
+    );
+    $form['submit'] = array(
+        '#type' => 'submit',
+        '#value' => t('Add'),
+    );
+    
+    return $form;
+}
+function project_invite_research_form_submit($form, &$form_state){
+    $pid = $form_state['values']['pid'];
+    $email = $form_state['values']['email'];
+    
+    //find user
+    $find = "SELECT uid FROM {users} WHERE mail='%s'";
+    $uid = db_result(db_query($find, $email));
+    
+    if($uid){
+        add_user_to_project($pid, $uid, PROJECT_RESEARCHER);
+    }
+    drupal_goto(get_project_url($pid).'/manage/persons');
 }

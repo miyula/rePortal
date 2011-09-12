@@ -54,7 +54,7 @@ function reProjectUser_theme(){
 function add_user_to_project($pid, $uid, $role=PROJECT_NORMAL_USER){
     //check if user already in project
     $check = 'SELECT COUNT(*) FROM {research_projects_persons_list} WHERE project=%d AND user=%d AND role="%s"';
-    if(db_result(db_query($check, $pid, $uid, $role))>0){
+    if(!db_result(db_query($check, $pid, $uid, $role))){
         //insert new
         $insert = 'INSERT INTO {research_projects_persons_list}(project, user, role, created, changed) VALUES(%d, %d, "%s", NOW(), NOW())';
         return db_query($insert, $pid, $uid, $role);

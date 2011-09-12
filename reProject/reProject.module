@@ -146,6 +146,16 @@ function reProject_menu(){
         'access arguments'  => array(1),
         'file'              => 'includes/manage.pages.inc',  
     );
+     $menu['project/%/manage/persons/researcher/add'] = array(
+	'title arguments'   => array(1),
+	'title callback'    => 'project_title_callback',
+        'description'       => t('Add new researcher'),
+        'page callback'     => 'project_manage_persons_researcher_add_callback',
+        'page arguments'    => array(1),
+	'access callback'   => 'manage_project_access',
+        'access arguments'  => array(1),
+        'file'              => 'includes/manage.pages.inc',  
+    );
     
     return $menu;
 }
