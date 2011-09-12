@@ -52,6 +52,28 @@ function projects_list_callback(){
     
 }
 
+/**
+ * Menu callback for project/%
+ */
+function project_display_callback($path){
+    $project = load_project($path);
+    if($project){
+        $homepage = load_homepage_node($project);
+        $project->homepage = $homepage;
+        
+        //load tools list
+        $sql = 'SELECT t.id id, name, logo, introduction FROM {research_project_tools_list} AS p, {research_tools} AS t '
+              .'WHERE p.project=%d AND p.tool=t.id';
+        $tools = array();
+        $res = db_query($sql, $project->id);
+        while($tool=db_fetch_object($res)){
+            $tools[] = $tool;
+        }
+        $project->tools_list = $tools;
+        return theme('project_home_page', $project);
+    }
+    drupal_not_found();
+}
 
 /***************** Create new project form********************/
 

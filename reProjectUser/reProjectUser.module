@@ -75,7 +75,7 @@ function load_term_of_use_node($project){
         //create new term of use page
         $node = new stdClass;
         $node->title = 'Term of use';
-        $node->body = '<a href="'.url('project/'.$project->path.'/manage/contents/termofuse').'" class="edit-link">Click here for first edit.</a>';
+        $node->body = '<a href="'.url('project/'.$project->path.'/manage/contents/termofuse').'" class="edit-link">Click here to first edit.</a>';
         $node->type = 'projectcontent';
         node_save($node);
         project_add_content($pid, $node->nid, 'termofuse', FALSE);

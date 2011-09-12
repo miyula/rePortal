@@ -1,0 +1,35 @@
+div.project-manage-div{
+    
+}
+
+div.left-navigation-div{
+    float:left;
+    overflow: hidden;
+    display: inline;
+    margin-top:10px;
+    padding: 5px 20px 10px 0px;
+    border: 1px solid #777;
+    -moz-border-radius: 5px;
+    -khtml-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+}
+div.left-navigation-div ul li{
+    font-size: 16px;
+    background-image: url('../images/setting.png');
+}
+
+div.right-content-div{
+    float:left;
+    overflow: hidden;
+    display: inline;
+    border-left: 1px solid #777;
+    margin-top: 10px;
+    margin-left: 10px;
+    min-height: 500px;
+    padding-left: 10px;
+    width: 600px;
+}
+div.right-content-div table{
+    width: 100%;
+}

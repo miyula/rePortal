@@ -63,9 +63,40 @@ function reProject_menu(){
         'page callback'     => 'project_display_callback',
         'page arguments'    => array(1),
         'access arguments'  => array('access content'),
-        'file'              => 'includes/project.pages.inc',
-        'type'  
+        'file'              => 'includes/project.pages.inc',  
     );
+    
+    $menu['project/%/manage'] = array(
+	'title arguments'   => array(1),
+	'title callback'    => 'project_title_callback',
+        'description'       => t('Display project home page'),
+        'page callback'     => 'project_manage_callback',
+        'page arguments'    => array(1),
+	'access callback'   => 'manage_project_access',
+        'access arguments'  => array(1),
+        'file'              => 'includes/manage.pages.inc',  
+    );
+    $menu['project/%/manage/contents'] = array(
+	'title arguments'   => array(1),
+	'title callback'    => 'project_title_callback',
+        'description'       => t('Display contents list in the project'),
+        'page callback'     => 'project_manage_contents_list_callback',
+        'page arguments'    => array(1),
+	'access callback'   => 'manage_project_access',
+        'access arguments'  => array(1),
+        'file'              => 'includes/manage.pages.inc',  
+    );
+    $menu['project/%/manage/content/%'] = array(
+	'title arguments'   => array(1),
+	'title callback'    => 'project_title_callback',
+        'description'       => t('Display contents list in the project'),
+        'page callback'     => 'project_manage_content_edit_callback',
+        'page arguments'    => array(1, 4),
+	'access callback'   => 'manage_project_access',
+        'access arguments'  => array(1),
+        'file'              => 'includes/manage.pages.inc',  
+    );
+    
     return $menu;
 }
 
@@ -81,12 +112,58 @@ function reProject_perm(){
 }
 
 /**
+ * Implementation of hook_theme().
+ */
+function reProject_theme(){
+    return array(
+	'project_home_page' => array(
+	    'template' => 'templates/home.page',
+	    'arguments' => array(
+		'project' => NULL,
+	    ),
+	),
+	'project_manage_page' => array(
+	    'template' => 'templates/manage.page',
+	    'arguments' => array(
+		'project' => NULL,
+	    ),
+	),
+    );
+}
+
+/**
  * Title callback for menu project/%
  */
 function project_title_callback($path){
     $project = load_project($path);
     return $project->name;
 }
+
+/**
+ * Access callback for menu project/%/manage
+ *
+ * access condition:
+ *   -creator of the project
+ *   -researcher in project person list
+ */
+function manage_project_access($path){
+    //get current user
+    global $user;
+    if((bool)$user->uid&&$user->status==1){
+	$project = load_project($path);
+	if($project->creator==$user->uid){
+	    return TRUE;
+	}
+	//find user in person list
+	$sql = "SELECT COUNT(*) FROM {research_projects_persons_list} WHERE project=%d AND user=%d AND role='researcher'";
+	if(db_result(db_query($sql, $project->id, $user->uid))>0){
+	    return TRUE;
+	}
+    }
+	
+    return FALSE;    
+}
+
 /**
  * Load project object
  * @param
@@ -189,6 +266,27 @@ function update_project_activity($pid, $points){
     }
 }
 
+/**
+ * load homepage node
+ */
+function load_homepage_node($project){
+    //get term of use node
+    $sql = 'SELECT node FROM {research_projects_contents} WHERE project=%d AND type="homepage" ORDER BY created DESC LIMIT 1 ';
+    $nid = db_result(db_query($sql, $project->id));
+    if($nid>0){
+        return node_load($nid);
+    }else{
+        //create new term of use page
+        $node = new stdClass;
+        $node->title = 'Home page';
+        $node->body = '<a href="'.url('project/'.$project->path.'/manage/contents/homepage').'" class="edit-link">Click here to first edit.</a>';
+        $node->type = 'homepage';
+        node_save($node);
+        project_add_content($pid, $node->nid, 'homepage', FALSE);
+        return $node;
+    }
+}
+
 
 /**
  * Save project info to table {research_projects}
@@ -223,6 +321,52 @@ function _research_projects_save(&$project){
 function _research_projects_delete($id){
     $sql = 'DELECT FROM {research_projects} WHERE id=%d';
     return db_query($sql, $id);
+}
+
+/** Content edit form **/
+function project_content_edit_form(&$form_state, $content){
+    //print_r($content);
+    $form['nid'] = array(
+        '#type'             => 'hidden',
+        '#value'            => $content->nid,
+    );
+    $form['project'] = array(
+        '#type'             => 'hidden',
+        '#value'            => $content->project,  
+    );
+    $form['title'] = array(
+        '#type'             => 'textfield',
+        '#title'            => t('Title'),
+        '#required'         => TRUE,
+        '#default_value'    => isset($content->title)?$content->title:'',
+    );
+    $form['body'] = array(
+        '#type'             => 'textarea',
+        '#title'            => t('Content'),
+        '#default_value'    => isset($content->body)?$content->body:'',
+        '#required'         => TRUE,
+    );
+    $form['submit'] = array(
+        '#type'             => 'submit',
+        '#value'            => t('Save'),
+    );
+    return $form;
+}
+function project_content_edit_form_submit($form, &$form_state){
+    $nid = $form_state['values']['nid'];
+    $project_id = $form_state['values']['project'];
+    $title = $form_state['values']['title'];
+    $body = $form_state['values']['body'];
+    
+    //load $node
+    print($nid);
+    $node = node_load($nid);
+    $node->title = $title;
+    $node->body = $body;
+    node_save($node);
+
+    drupal_goto(get_project_url($project_id).'/manage/contents');
+
 }
 
 
