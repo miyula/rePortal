@@ -1,0 +1,61 @@
+<?php
+
+/**
+ * Implementation of hook_install().
+ */
+function reProjectUser_install(){
+    //Create tables
+    drupal_install_schema('research_projects_onetime_invite_code');
+}
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function reProjectUser_uninstall(){
+    //Drop tables
+    drupal_uninstall_schema('research_projects_onetime_invite_code');
+}
+
+/**
+ * Implementation of hook_schema().
+ */
+function research_projects_onetime_invite_code_schema(){
+    $schema['research_projects_onetime_invite_code'] = array(
+        'fields' => array(
+            'id' => array(
+                'type'      => 'serial',
+                'unsigned'  => TRUE,
+                'not null'  => TRUE,
+                ),
+            'project' => array(
+                'type'      => 'int',
+                'unsigned'  => TRUE,
+                'not null'  => TRUE,
+                ),
+            'code' => array(
+                'type'      => 'varchar',
+                'length'    => 20,
+                'not null'  => TRUE,
+                ),
+            'used' => array(
+                'type'      => 'int',
+                'size'      => 'tiny',
+                'not null'  => TRUE,
+                'default'   => 0,  
+            ),
+            'created' => array(
+                'type'      => 'datetime',
+                'not null'  => TRUE,
+            ),
+        ),
+        'indexes' => array(
+            'invite_code' => array('code'),
+        ),
+        'unique keys' => array(
+            'code' => array('code'),
+        ),
+        'primary key' => array('id'),
+            
+    );
+    return $schema;
+}

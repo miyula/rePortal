@@ -4,18 +4,44 @@
  * @file
  * Provide functions for manage project user
  */
+define('PROJECT_NORMAL_USER', 'normal');
+define('PROJECT_RESEARCHER', 'researcher');
 
 /**
  * Implementation of hook_menu().
  */
 function reProjectUser_menu(){
+
     $menu['project/%/termofuse/%'] = array(
-        'title'             => t('DELETE message template'),
-        'description'       => t('DELETE the message template'),
-        'page callback'     => 'project_manage_message_templates_delete_callback',
-        'page arguments'    => array(1, 6),
-        'access arguments'  => array('create research project'),
+        'title'             => t('Term of use'),
+        'description'       => t('Display the term of use page for project'),
+        'page callback'     => 'project_termofuse_callback',
+        'page arguments'    => array(1, 3),
+        'file'              => 'incluses/join.guide.page.inc',
         'type'              => MENU_CALLBACK,
     );
+    
+    $menu['project/%/manage/contents/termofuse'] = array(
+        'title'             => t('Edit term of use'),
+        'page callback'     => 'project_manage_content_termofuse_callback',
+        'page arguments'    => array(1),
+        'file'              => 'includes/manage.contents.pages.inc',
+        'type'              => MENU_CALLBACK,
+    );
+    
     return $menu;
+}
+
+/**
+ * add user to the project
+ */
+function add_user_to_project($pid, $uid, $role=PROJECT_NORMAL_USER){
+    //check if user already in project
+    $check = 'SELECT COUNT(*) FROM {research_projects_persons_list} WHERE project=%d AND user=%d AND role="%s"';
+    if(db_result(db_query($check, $pid, $uid, $role))>0){
+        //insert new
+        $insert = 'INSERT INTO {research_projects_persons_list}(project, user, role, created, changed) VALUES(%d, %d, "%s", NOW(), NOW())';
+        return db_query($insert, $pid, $uid, $role);
+    }
+    return FALSE;
 }
