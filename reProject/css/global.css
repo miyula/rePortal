@@ -17,8 +17,18 @@ a.outer_link{
     padding-left: 20px;
     cursor: pointer;
 }
+a.delete_link{
+    background: url('../images/delete-link.png') no-repeat left top;
+    font-size: 14px;
+    padding-left: 20px;
+    cursor: pointer;
+}
 
 img.tool_logo_image{
     width: 120px;
     height: 120px;
+}
+
+div.project-introduction-div{
+    padding: 20px;
 }

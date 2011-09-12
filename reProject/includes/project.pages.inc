@@ -58,6 +58,8 @@ function projects_list_callback(){
 function project_display_callback($path){
     $project = load_project($path);
     if($project){
+        drupal_add_css(drupal_get_path('module','reProject').'/css/retools.css');
+        
         $homepage = load_homepage_node($project);
         $project->homepage = $homepage;
         
@@ -353,6 +355,8 @@ function create_new_project($project){
         node_save($node);
         project_add_content($project->id, $node->nid, 'helppage', FALSE);
         
+        //create term of use page
+        load_term_of_use_node($project);
         
         return TRUE;
         

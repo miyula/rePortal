@@ -150,3 +150,16 @@ function research_tools_title_callback($tool_id){
         drupal_not_found();
     }
 }
+
+/**
+ * Bind tool with project
+ */
+function project_bind_tool($project, $tid){
+    //check if binded already
+    $check = 'SELECT COUNT(*) FROM {research_project_tools_list} WHERE project=%d AND tool=%d';
+    
+    if(!(db_result(db_query($check, $project->id, $tid)))){
+        $sql = "INSERT INTO {research_project_tools_list} (project, tool, created) VALUES(%d, %d, NOW())";
+        db_query($sql,$project->id, $tid);
+    }
+}
