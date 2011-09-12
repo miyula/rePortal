@@ -56,14 +56,54 @@ function ProjectMessageTemplate_menu(){
  * Menu callback for project/%/manage/message/templates
  */
 function project_manage_message_templates_callback($path){
+    //get project id
+    $project = load_project($path);
+    if($project){
+        
+        $content = '';
+        $rows = array();
+        $header = array(
+            array('data'=>'Title'),
+            array('data'=>'Type'),
+            array('data'=>'Abstract'),
+        );
+        
+        //get templates
+        $sql = "SELECT id,  project, type, title, content FROM  {project_message_templates} WHERE project=%d ORDER BY created DESC";
+        $res = pager_query($sql, 30, 0, $project->id);
+        
+        while($row = db_fetch_object($res)){
+            $rows[] = array(
+                l($row->title, 'project/'.$path.'/manage/message/templates/edit/'.$row->id),
+                $row->type,
+                l(node_teaser($row->content, null, 600), 'project/'.$path.'/manage/message/templates/edit/'.$row->id),
+            );
+        }
     
+        $content.= theme_table($header, $rows);
+        $content.= theme('pager');
+    
+        return $content;
+        
+    }else{
+        drupal_not_found();
+    }
 }
 
 /**
  * Menu callback for project/%/manage/message/templates/add
  */
 function project_manage_message_templates_add_callback($path){
-    return drupal_get_form('project_message_template_form');
+    //get project id
+    $project = load_project($path);
+    if($project){
+        $template = new stdClass;
+        $template->project = $project->id;
+        return drupal_get_form('project_message_template_form', $template);
+    }else{
+        drupal_not_found();
+    }
+    
 }
 
 /**

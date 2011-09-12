@@ -1,0 +1,21 @@
+<?php
+
+/**
+ * @file
+ * Provide functions for manage project user
+ */
+
+/**
+ * Implementation of hook_menu().
+ */
+function reProjectUser_menu(){
+    $menu['project/%/termofuse/%'] = array(
+        'title'             => t('DELETE message template'),
+        'description'       => t('DELETE the message template'),
+        'page callback'     => 'project_manage_message_templates_delete_callback',
+        'page arguments'    => array(1, 6),
+        'access arguments'  => array('create research project'),
+        'type'              => MENU_CALLBACK,
+    );
+    return $menu;
+}

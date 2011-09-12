@@ -2,6 +2,6 @@
 name            = "Massage Send"
 description     = "Provide functions for email sending and SMS"
 package         = reProject
-dependencies[]  = reProject
+dependencies[]  = phpmailer
 core            = 6.x
 php             = 5.x
