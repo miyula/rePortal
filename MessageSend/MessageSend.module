@@ -1,0 +1,13 @@
+<?php
+
+/**
+ * @file
+ * Provide functions for email sending and SMS
+ */
+
+/**
+ * Implementation of hook_menu().
+ */
+function MessageSend_menu(){
+    
+}
