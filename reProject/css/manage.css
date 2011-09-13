@@ -16,7 +16,7 @@ div.left-navigation-div{
 }
 div.left-navigation-div ul li{
     font-size: 16px;
-    background-image: url('../images/setting.png');
+    list-style-image: url('../images/setting.png');
 }
 
 div.right-content-div{
