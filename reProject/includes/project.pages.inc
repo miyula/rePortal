@@ -123,7 +123,7 @@ function create_new_project_form(){
         '#required'         => TRUE,
         '#default_value'    => isset($project->path)?$project->path:'',
     );
-    $form['Introduction'] = array(
+    $form['introduction'] = array(
         '#type'             => 'textarea',
         '#title'            => t('Write a short introduction for your project'),
         '#description'      => t('A short description of the project'),
@@ -375,7 +375,7 @@ function create_new_project($project){
         
         //create term of use page
         load_term_of_use_node($project);
-        
+        load_first_guide_node($project);
         return TRUE;
         
         
@@ -384,4 +384,17 @@ function create_new_project($project){
         return FALSE;
     }
     
+}
+
+/**
+ * Menu callback for project/%/firstguide
+ */
+function project_firstguide_callback($path){
+    $project = load_project($path);
+    if($project){
+        $firstguide = load_first_guide_node($project);
+        
+        return $firstguide->body;
+    }
+    drupal_not_found();
 }

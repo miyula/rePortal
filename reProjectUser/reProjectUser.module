@@ -78,7 +78,25 @@ function load_term_of_use_node($project){
         $node->body = '<a href="'.url('project/'.$project->path.'/manage/contents/termofuse').'" class="edit-link">Click here to first edit.</a>';
         $node->type = 'projectcontent';
         node_save($node);
-        project_add_content($pid, $node->nid, 'termofuse', FALSE);
+        project_add_content($project->id, $node->nid, 'termofuse', FALSE);
+        return $node;
+    }
+}
+
+function load_first_guide_node($project){
+    //get term of use node
+    $sql = 'SELECT node FROM {research_projects_contents} WHERE project=%d AND type="firstguide" ORDER BY created DESC LIMIT 1 ';
+    $nid = db_result(db_query($sql, $project->id));
+    if($nid>0){
+        return node_load($nid);
+    }else{
+        //create new term of use page
+        $node = new stdClass;
+        $node->title = 'First Guide';
+        $node->body = '<a href="'.url('project/'.$project->path.'/manage/contents').'" class="edit-link">Click here to first edit.</a>';
+        $node->type = 'projectcontent';
+        node_save($node);
+        project_add_content($project->id, $node->nid, 'firstguide', FALSE);
         return $node;
     }
 }

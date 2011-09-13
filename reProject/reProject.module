@@ -75,6 +75,16 @@ function reProject_menu(){
         'access arguments'  => array('access content'),
         'file'              => 'includes/project.pages.inc',  
     );
+    $menu['project/%/firstguide'] = array(
+        'title arguments'   => array(1),
+	'title callback'    => 'project_title_callback',
+        'description'       => t('Display project help page'),
+        'page callback'     => 'project_firstguide_callback',
+        'page arguments'    => array(1),
+        'access arguments'  => array('access content'),
+        'file'              => 'includes/project.pages.inc',  
+    );
+    
     
     $menu['project/%/manage'] = array(
 	'title arguments'   => array(1),
@@ -370,6 +380,8 @@ function _research_projects_save(&$project){
     $url = isset($project->url)?(string)$project->url:'';
     $path = (string)$project->path;
     $introduction = (string)$project->introduction;
+    
+    //die(print_r($project));
     
     if(isset($project->id) && $project->id>0){
         //update record

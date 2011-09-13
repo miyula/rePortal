@@ -136,11 +136,11 @@ function message_send_http_mail($to_mail,$subject,$body,$isArray=False){
 	$mail->Send();
 	$result->status = TRUE;
 	$result->message = "Successed to send mail";
-	//drupal_set_message("Successed to send mail to $to_mail","status");
+	drupal_set_message("Successed to send mail to $to_mail","status");
     } catch (Exception $e) {
 	$result->status = FALSE;
 	$result->message = "Failed to send mail to $to_mail. ".$e->errorMessage();
-	//drupal_set_message("Failed to send mail to $to_mail. ".$e->errorMessage(),"error");
+	drupal_set_message("Failed to send mail to $to_mail. ".$e->errorMessage(),"error");
     }
     return $result;
 }
