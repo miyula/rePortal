@@ -8,6 +8,6 @@
  */
 ?>
 <div class='node-content-div'><?=$project->termofuse->body;?></div>
-<div class='join-button-div'>
-    <form><input type='hidden' value=''/><input type='image' src=''/></form>
+<div class='join-button-div' style="margin-top: 20px;">
+    <p><a href="" style="font-size:20px; font-weight:bold; padding: 10px 20px; border: 1px solid #777; -moz-border-radius: 5px;-webkit-border-radius: 5px;border-radius: 5px;-khtml-border-radius: 5px;">I want join</a></p>
 </div>

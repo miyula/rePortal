@@ -250,3 +250,63 @@ function project_invite_research_form_submit($form, &$form_state){
     }
     drupal_goto(get_project_url($pid).'/manage/persons');
 }
+
+/**
+ * Menu callback for project/%/manage/persons/normal/add
+ */
+function project_manage_persons_normal_add_callback($path){
+    $project = load_project($path);
+    if($project){
+        drupal_add_css(drupal_get_path('module','reProject').'/css/manage.css');
+        $project->right_part = drupal_get_form('project_invite_participants_form',$project);    
+        return theme('project_manage_page',$project);
+    }
+    drupal_not_found();
+}
+
+/** Invite new participants form **/
+function project_invite_participants_form(&$form_state, $project){
+    $form['pid'] = array(
+        '#type' => 'hidden',
+        '#value' => $project->id,
+    );
+    $form['invitation-list'] = array(
+        '#type' => 'textarea',
+        '#title' => t('Invitation List'),
+        '#description' => t('Please split each item by ",". e.g. 123@gmail.com, avc@tkk.fi'),
+        '#required' => TRUE,
+    );
+    $form['subjet-title'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Mail subject'),
+        '#default_value' => 'Invitation from '.$project->name, 
+    );
+    $invite_body = "<p>{$project->name} invites you to join their project.  Click the link to accept the term of use:</p>"
+                  ."<p>http://".$_SERVER['HTTP_HOST'].url("project/{$project->path}/termofuse")."</p>"
+                  ."<p>If clicking the link doesn't work, please copy and paste it into your browser.</p>"
+                  ."<p>Please don't reply this mail.</p>"
+                  ."<p>Best Regards,</p>"
+                  ."<p>Yours,</p>"
+                  ."<p>{$project->name} Team</P>";
+
+    $form['message'] = array(
+        '#type' => 'textarea',
+        '#title' => t('Message body'),
+        '#description' => t('This message will be sent to all persons on above invitation list'),
+        '#required' => TRUE,
+        '#default_value' => $invite_body,
+    );
+    
+    $form['submit'] = array(
+        '#type' => 'submit',
+        '#value' => t('Invite'),
+    );
+    return $form;
+}
+function project_invite_participants_form_submit($form, &$form_state){
+    $mail_list = $form_state['values']['invitation-list'];
+    $title = $form_state['values']['subjet-title'];
+    $body = $form_state['values']['message'];
+    
+    message_send_http_mail($mail_list,$title,$body);
+}
