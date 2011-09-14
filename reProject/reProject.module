@@ -96,56 +96,7 @@ function reProject_menu(){
         'access arguments'  => array(1),
         'file'              => 'includes/manage.pages.inc',  
     );
-    $menu['project/%/manage/contents'] = array(
-	'title arguments'   => array(1),
-	'title callback'    => 'project_title_callback',
-        'description'       => t('Display contents list in the project'),
-        'page callback'     => 'project_manage_contents_list_callback',
-        'page arguments'    => array(1),
-	'access callback'   => 'manage_project_access',
-        'access arguments'  => array(1),
-        'file'              => 'includes/manage.pages.inc',  
-    );
-    $menu['project/%/manage/content/%'] = array(
-	'title arguments'   => array(1),
-	'title callback'    => 'project_title_callback',
-        'description'       => t('Display contents list in the project'),
-        'page callback'     => 'project_manage_content_edit_callback',
-        'page arguments'    => array(1, 4),
-	'access callback'   => 'manage_project_access',
-        'access arguments'  => array(1),
-        'file'              => 'includes/manage.pages.inc',  
-    );
-    $menu['project/%/manage/tools'] = array(
-	'title arguments'   => array(1),
-	'title callback'    => 'project_title_callback',
-        'description'       => t('Display tools list in the project'),
-        'page callback'     => 'project_manage_tools_list_callback',
-        'page arguments'    => array(1),
-	'access callback'   => 'manage_project_access',
-        'access arguments'  => array(1),
-        'file'              => 'includes/manage.pages.inc',  
-    );
-    $menu['project/%/manage/tools/selete'] = array(
-	'title arguments'   => array(1),
-	'title callback'    => 'project_title_callback',
-        'description'       => t('Display seletable tools for the project'),
-        'page callback'     => 'project_manage_tools_selete_list_callback',
-        'page arguments'    => array(1),
-	'access callback'   => 'manage_project_access',
-        'access arguments'  => array(1),
-        'file'              => 'includes/manage.pages.inc',  
-    );
-    $menu['project/%/manage/tools/selete/%'] = array(
-	'title arguments'   => array(1),
-	'title callback'    => 'project_title_callback',
-        'description'       => t('Display seletable tools for the project'),
-        'page callback'     => 'project_manage_tools_selete_new_callback',
-        'page arguments'    => array(1, 5),
-	'access callback'   => 'manage_project_access',
-        'access arguments'  => array(1),
-        'file'              => 'includes/manage.pages.inc',  
-    );
+    
     $menu['project/%/manage/persons'] = array(
 	'title arguments'   => array(1),
 	'title callback'    => 'project_title_callback',
@@ -274,6 +225,24 @@ function get_project_url($pid){
 }
 
 /**
+ * prepare project manage page
+ * @param
+ *   $path, the unique path for the project
+ */
+function prepare_project_manage_page($path){
+    $project = load_project($path);
+    if($project){
+        drupal_add_css(drupal_get_path('module','reProject').'/css/manage.css');
+        //get navigation list
+        $navigation = module_invoke_all('project_manage_navigation', $project);
+        $project->navigation = $navigation;
+        return $project;
+    }
+    drupal_not_found();
+    exit;
+}
+
+/**
  * Log operation
  * @param
  *   $project_id, the id of project
@@ -293,21 +262,7 @@ function log_operation($project_id, $type, $content, $link, $module){
     db_query($sql, $project_id, $user->uid, $type, $ip, $content, $link, $module);
 }
 
-/**
- * Add content to project
- * @param
- *   $pid,  the id of project
- * @param
- *   $nid,  the id of node
- * @param
- *   $type, the type of content in project, can be 'homepage', 'helppage', 'news', 'default' &etc.
- * @param
- *   $deletable, boolean, 1 or 0
- */
-function project_add_content($pid, $nid, $type='default', $deletable=1){
-    $sql = "INSERT INTO {research_projects_contents} (project, node, type, deletable, created, changed) VALUES(%d, %d, '%s', %d, NOW(), NOW())";
-    db_query($sql, $pid, $nid, $type, (int)$deletable);
-}
+
 
 /**
  * Remove the content from project
@@ -403,52 +358,6 @@ function _research_projects_save(&$project){
 function _research_projects_delete($id){
     $sql = 'DELECT FROM {research_projects} WHERE id=%d';
     return db_query($sql, $id);
-}
-
-/** Content edit form **/
-function project_content_edit_form(&$form_state, $content){
-    //print_r($content);
-    $form['nid'] = array(
-        '#type'             => 'hidden',
-        '#value'            => $content->nid,
-    );
-    $form['project'] = array(
-        '#type'             => 'hidden',
-        '#value'            => $content->project,  
-    );
-    $form['title'] = array(
-        '#type'             => 'textfield',
-        '#title'            => t('Title'),
-        '#required'         => TRUE,
-        '#default_value'    => isset($content->title)?$content->title:'',
-    );
-    $form['body'] = array(
-        '#type'             => 'textarea',
-        '#title'            => t('Content'),
-        '#default_value'    => isset($content->body)?$content->body:'',
-        '#required'         => TRUE,
-    );
-    $form['submit'] = array(
-        '#type'             => 'submit',
-        '#value'            => t('Save'),
-    );
-    return $form;
-}
-function project_content_edit_form_submit($form, &$form_state){
-    $nid = $form_state['values']['nid'];
-    $project_id = $form_state['values']['project'];
-    $title = $form_state['values']['title'];
-    $body = $form_state['values']['body'];
-    
-    //load $node
-    print($nid);
-    $node = node_load($nid);
-    $node->title = $title;
-    $node->body = $body;
-    node_save($node);
-
-    drupal_goto(get_project_url($project_id).'/manage/contents');
-
 }
 
 

@@ -57,6 +57,7 @@ function projects_list_callback(){
  */
 function project_display_callback($path){
     $project = load_project($path);
+    
     if($project){
         drupal_add_css(drupal_get_path('module','reProject').'/css/retools.css');
         

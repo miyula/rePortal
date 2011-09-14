@@ -105,6 +105,38 @@ function reTool_menu(){
         'type'              => MENU_CALLBACK,
     );
     
+    /** project manage part **/
+    $menu['project/%/manage/tools'] = array(
+	'title arguments'   => array(1),
+	'title callback'    => 'project_title_callback',
+        'description'       => t('Display tools list in the project'),
+        'page callback'     => 'project_manage_tools_list_callback',
+        'page arguments'    => array(1),
+	'access callback'   => 'manage_project_access',
+        'access arguments'  => array(1),
+        'file'              => 'includes/manage.pages.inc',  
+    );
+    $menu['project/%/manage/tools/selete'] = array(
+	'title arguments'   => array(1),
+	'title callback'    => 'project_title_callback',
+        'description'       => t('Display seletable tools for the project'),
+        'page callback'     => 'project_manage_tools_selete_list_callback',
+        'page arguments'    => array(1),
+	'access callback'   => 'manage_project_access',
+        'access arguments'  => array(1),
+        'file'              => 'includes/manage.pages.inc',  
+    );
+    $menu['project/%/manage/tools/selete/%'] = array(
+	'title arguments'   => array(1),
+	'title callback'    => 'project_title_callback',
+        'description'       => t('Display seletable tools for the project'),
+        'page callback'     => 'project_manage_tools_selete_new_callback',
+        'page arguments'    => array(1, 5),
+	'access callback'   => 'manage_project_access',
+        'access arguments'  => array(1),
+        'file'              => 'includes/manage.pages.inc',  
+    );
+    
     return $menu;
 }
 
@@ -135,6 +167,18 @@ function reTool_theme(){
 	    ),
 	),
     );
+}
+
+/**
+ * Implements hook_project_manage_navigation().
+ */
+function reTool_project_manage_navigation($project){
+    //return manage navigation menus
+    $navigation[] = array(
+        'title' => 'Tools manage',
+        'url'   => 'project/'.$project->path.'/manage/tools',
+    );
+    return $navigation;
 }
 
 /**

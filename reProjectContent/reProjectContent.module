@@ -1,0 +1,171 @@
+<?php
+
+/**
+ * @file
+ * Generate node type project content
+ */
+
+/**
+ * Implements hook_menu().
+ */
+function reProjectContent_menu(){
+    $menu['project/%/manage/contents'] = array(
+	'title arguments'   => array(1),
+	'title callback'    => 'project_title_callback',
+        'description'       => t('Display contents list in the project'),
+        'page callback'     => 'project_manage_contents_list_callback',
+        'page arguments'    => array(1),
+	'access callback'   => 'manage_project_access',
+        'access arguments'  => array(1),
+        'file'              => 'manage.pages.inc',  
+    );
+    $menu['project/%/manage/contents/%'] = array(
+	'title arguments'   => array(1),
+	'title callback'    => 'project_title_callback',
+        'description'       => t('Display contents list in the project'),
+        'page callback'     => 'project_manage_content_edit_callback',
+        'page arguments'    => array(1, 4),
+	'access callback'   => 'manage_project_access',
+        'access arguments'  => array(1),
+        'file'              => 'manage.pages.inc',  
+    );
+    return $menu;
+}
+
+/**
+ * Implements hook_node_info().
+ */
+function reProjectContent_node_info(){
+    return array(
+        'projectcontent' => array(
+            'name'          => t('Project content'),
+            'module'        => 'reProjectContent',
+            'description'  => t('A content in project.'),
+            'has_title'     => TRUE,
+            'title_label'   => t('Title'),
+            'has_body'      => TRUE,
+            'body_label'    => t('Content'),
+        )
+    );
+}
+
+/**
+ * Implements hook_form().
+ */
+function reProjectContent_form(&$node){
+    $type = node_get_types('type', $node);
+    if ($type->has_title) {
+	$form['title'] = array(
+	    '#type'         => 'textfield',
+	    '#title'        => $type->title_label,
+	    '#required'     => TRUE,
+	    '#default_value' => $node->title,
+	    '#weight'       => -20,
+	);
+    }
+    
+    if($type->has_body){
+        $form['body'] = array(
+	    '#type'         => 'textarea',
+	    '#title'        => $type->body_label,
+	    '#required'     => TRUE,
+	    '#default_value' => $node->body,
+	    '#cols'         => 30,
+	    '#rows'         => 12,
+	    '#weight'       => 0,
+	);
+    }
+    return $form;
+}
+
+/**
+ * Implements hook_create_project().
+ */
+function reProjectContent_create_project($project){
+    //first create homepage
+    load_project_content($project->id, 'homepage');
+    //first create helppage
+    load_project_content($project->id, 'helppage');
+    //first create termofuse
+    load_project_content($project->id, 'termofuse');
+    //first create firstguide
+    load_project_content($project->id, 'firstguide');
+}
+
+/**
+ * Implements hook_project_manage_navigation().
+ */
+function reProjectContent_project_manage_navigation($project){
+    //return manage navigation menus
+    $navigation[] = array(
+        'title' => 'Content manage',
+        'url'   => 'project/'.$project->path.'/manage/contents',
+    );
+    return $navigation;
+}
+
+/**
+ * Return default content
+ * @param
+ *   $pid, id of the project
+ * @param
+ *   $type, the type of the content, 'homepage', 'helppage', 'default', 'termofuse', 'firstguid'
+ * @return
+ *   node|FALSE
+ */
+function load_project_content($pid, $type='default'){
+    //get project node id
+    $get = 'SELECT node FROM {research_project_contents} WHERE project=%d AND type="%s" ORDER by created DESC LIMIT 1';
+    $nid = db_result(db_query($get, $pid, $type));
+    if($nid && $nid>0){
+        return node_load($nid);
+    }
+    
+    $node = new stdClass;
+    $node->type = 'projectcontent';
+    //generate new
+    switch($type){
+        case 'homepage':
+            $node->title = 'Home page';
+            $node->body  = '';
+            node_save($node);
+            project_add_content($pid, $node->nid, $type, 0);
+            return $node;
+        case 'helppage':
+            $node->title = 'Help page';
+            $node->body  = '';
+            node_save($node);
+            project_add_content($pid, $node->nid, $type, 0);
+            return $node;
+        case 'termofuse':
+            $node->title = 'Term of Use';
+            $node->body  = '';
+            node_save($node);
+            project_add_content($pid, $node->nid, $type, 0);
+            return $node;
+        case 'firstguide':
+            $node->title = 'First Guide';
+            $node->body  = '';
+            node_save($node);
+            project_add_content($pid, $node->nid, $type, 0);
+            return $node;
+        default:
+            return FALSE;
+    }
+}
+
+/**
+ * Add content to project
+ * @param
+ *   $pid,  the id of project
+ * @param
+ *   $nid,  the id of node
+ * @param
+ *   $type, the type of content in project, can be 'homepage', 'helppage', 'news', 'default' &etc.
+ * @param
+ *   $deletable, boolean, 1 or 0
+ */
+function project_add_content($pid, $nid, $type='default', $deletable=1){
+    $sql = "INSERT INTO {research_projects_contents} (project, node, type, deletable, created, changed) VALUES(%d, %d, '%s', %d, NOW(), NOW())";
+    db_query($sql, $pid, $nid, $type, (int)$deletable);
+}
