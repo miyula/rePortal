@@ -109,48 +109,58 @@ function reProjectContent_project_manage_navigation($project){
  * @param
  *   $pid, id of the project
  * @param
+ *   $nid, id of the node
+ * @param
  *   $type, the type of the content, 'homepage', 'helppage', 'default', 'termofuse', 'firstguid'
  * @return
  *   node|FALSE
  */
-function load_project_content($pid, $type='default'){
-    //get project node id
-    $get = 'SELECT node FROM {research_project_contents} WHERE project=%d AND type="%s" ORDER by created DESC LIMIT 1';
-    $nid = db_result(db_query($get, $pid, $type));
-    if($nid && $nid>0){
-        return node_load($nid);
-    }
-    
-    $node = new stdClass;
-    $node->type = 'projectcontent';
-    //generate new
-    switch($type){
-        case 'homepage':
-            $node->title = 'Home page';
-            $node->body  = '';
-            node_save($node);
-            project_add_content($pid, $node->nid, $type, 0);
-            return $node;
-        case 'helppage':
-            $node->title = 'Help page';
-            $node->body  = '';
-            node_save($node);
-            project_add_content($pid, $node->nid, $type, 0);
-            return $node;
-        case 'termofuse':
-            $node->title = 'Term of Use';
-            $node->body  = '';
-            node_save($node);
-            project_add_content($pid, $node->nid, $type, 0);
-            return $node;
-        case 'firstguide':
-            $node->title = 'First Guide';
-            $node->body  = '';
-            node_save($node);
-            project_add_content($pid, $node->nid, $type, 0);
-            return $node;
-        default:
-            return FALSE;
+function load_project_content($pid, $type='default', $id=NULL){
+    //if($id==NULL){
+        //get project node id
+        $get = 'SELECT node FROM {research_project_contents} WHERE project=%d AND type="%s" ORDER by created DESC LIMIT 1';
+        $nid = db_result(db_query($get, $pid, $type));
+        if($nid && $nid>0){
+            return node_load($nid);
+        }
+        $node = new stdClass;
+        $node->type = 'projectcontent';
+        //generate new
+        switch($type){
+            case 'homepage':
+                $node->title = 'Home page';
+                $node->body  = '';
+                node_save($node);
+                project_add_content($pid, $node->nid, $type, 0);
+                return $node;
+            case 'helppage':
+                $node->title = 'Help page';
+                $node->body  = '';
+                node_save($node);
+                project_add_content($pid, $node->nid, $type, 0);
+                return $node;
+            case 'termofuse':
+                $node->title = 'Term of Use';
+                $node->body  = '';
+                node_save($node);
+                project_add_content($pid, $node->nid, $type, 0);
+                return $node;
+            case 'firstguide':
+                $node->title = 'First Guide';
+                $node->body  = '';
+                node_save($node);
+                project_add_content($pid, $node->nid, $type, 0);
+                return $node;
+            default:
+                return FALSE;
+        }
+    }else{
+        //check nid with project
+        $check = "SELECT COUNT(*) FROM {research_project_contents} WHERE node=%d AND project=%d AND type='%s'";
+        if(db_result(db_query($check, $nid, $pid, $type))>0){
+            return node_load($nid);
+        }
+        return FALSE;
     }
 }
 

@@ -39,7 +39,7 @@ function project_manage_contents_list_callback($path){
  */
 function project_manage_content_edit_callback($path, $id){
     $project = prepare_project_manage_page($path);
-        /get content node
+        //get content node
         $sql = 'SELECT id, node, type, project FROM {research_projects_contents} WHERE id=%d AND project=%d LIMIT 1';
         $content = db_fetch_object(db_query($sql, $id, $project->id));
         if($content && $content->node>0){
