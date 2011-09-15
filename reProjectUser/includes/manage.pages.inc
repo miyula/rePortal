@@ -7,7 +7,6 @@ function project_manage_persons_list_callback($path){
     $project = prepare_project_manage_page($path);
     
     if ($_POST) {
-        print_r($_POST);
         $name = $_POST['name'];
         $email = $_POST['email'];
         $phone = $_POST['phone'];
@@ -52,9 +51,9 @@ function project_manage_persons_list_callback($path){
     );
     
     $rows[] = array(
-        '<input type="text" name="name"/>',
-        '<input type="text" name="email"/>',
-        '<input type="text" name="phone"/>',
+        '<input type="text" name="name" size=15/>',
+        '<input type="text" name="email" size=15/>',
+        '<input type="text" name="phone" size=15/>',
         '<textarea name="notes" rows="4" cols="30"></textarea>',
         '<input type="submit" value="Add" />',
     );
@@ -64,9 +63,12 @@ function project_manage_persons_list_callback($path){
     while($row=db_fetch_object($res)){
         $rows[] = array(
             '<div class="participant-card-name-div">'.$row->name.'</div>',
-            '<div class="participant-card-email-div">'.$row->email.'</div>',
-            '<div class="participant-card-phone-div">'.$row->phone.'</div>',
-            '<div class="participant-card-notes-div">'.$row->notes.'</div>',
+            array(
+                'data'  =>'<div class="participant-card-email-div">Email: '.$row->email.'</div>'
+                         .'<div class="participant-card-phone-div">Phone: '.$row->phone.'</div>'
+                         .'<div class="participant-card-notes-div">Notes: '.$row->notes.'</div>',
+                'colspan' => 3,
+            ),
             '<a class="delete_link" href="'.url("project/$path/manage/persons/participant/remove/{$row->id}").'">Remove</a>',
         );
     }

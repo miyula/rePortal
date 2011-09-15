@@ -6,7 +6,7 @@ div.left-navigation-div{
     float:left;
     overflow:hidden;
     display: inline;
-    width:180px;
+    width:150px;
     margin-top:10px;
     padding: 10px 20px 10px 10px;
     border: 1px solid #777;
@@ -28,23 +28,24 @@ div.right-content-div{
     margin-top: 10px;
     margin-left: 10px;
     min-height: 500px;
-    padding-left: 10px;
-    min-width: 780px;
+    padding: 10px;
+    width: 730px;
 }
 div.right-content-div table{
-    min-width:780px;
+    width:99%;
+    table-layout:fixed
 }
 
 /*** for personal page ***/
 div.participant-card-notes-div {
-    width: 200px;
+    width: 450px;
 }
 div.participant-card-email-div{
-
+    width: 450px;
 }
 div.participant-card-name-div{
     
 }
 div.participant-card-phone-div{
-    
+    width: 450px;
 }
