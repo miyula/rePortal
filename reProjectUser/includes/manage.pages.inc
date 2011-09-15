@@ -71,7 +71,7 @@ function project_manage_persons_list_callback($path){
         );
     }
         
-    $content.= '<form action="" method="POST">'.theme_table($header, $rows).'</form>';
+    $content.= '<form action="" method="POST"><div class="project-manage-page-table-div">'.theme_table($header, $rows).'</div></form>';
     $content.= theme('pager');
     $project->right_part = $content;    
     return theme('project_manage_page',$project);
