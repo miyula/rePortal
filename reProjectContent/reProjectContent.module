@@ -116,7 +116,7 @@ function reProjectContent_project_manage_navigation($project){
  *   node|FALSE
  */
 function load_project_content($pid, $type='default', $id=NULL){
-    //if($id==NULL){
+    if($id==NULL){
         //get project node id
         $get = 'SELECT node FROM {research_project_contents} WHERE project=%d AND type="%s" ORDER by created DESC LIMIT 1';
         $nid = db_result(db_query($get, $pid, $type));

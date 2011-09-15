@@ -49,7 +49,6 @@ function project_manage_content_edit_callback($path, $id){
             $project->right_part = drupal_get_form('project_content_edit_form', $content);
             return theme('project_manage_page',$project);
         }
-    }
     
 }
 

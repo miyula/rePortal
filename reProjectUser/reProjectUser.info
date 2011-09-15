@@ -5,5 +5,6 @@ package         = reProject
 dependencies[]  = phpmailer
 dependencies[]  = reProject
 dependencies[]  = MessageSend
+dependencies[]  = reProjectContent
 core            = 6.x
 php             = 5.x

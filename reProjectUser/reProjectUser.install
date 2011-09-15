@@ -6,6 +6,7 @@
 function reProjectUser_install(){
     //Create tables
     drupal_install_schema('research_projects_onetime_invite_code');
+    drupal_install_schema('research_projects_participants_cards');
 }
 
 /**
@@ -14,6 +15,7 @@ function reProjectUser_install(){
 function reProjectUser_uninstall(){
     //Drop tables
     drupal_uninstall_schema('research_projects_onetime_invite_code');
+    drupal_uninstall_schema('research_projects_participants_cards');
 }
 
 /**
@@ -53,6 +55,66 @@ function research_projects_onetime_invite_code_schema(){
         ),
         'unique keys' => array(
             'code' => array('code'),
+        ),
+        'primary key' => array('id'),
+            
+    );
+    return $schema;
+}
+
+/**
+ * Implementation of hook_schema().
+ */
+function research_projects_participants_cards_schema(){
+    $schema['research_projects_participants_cards'] = array(
+        'fields' => array(
+            'id' => array(
+                'type'      => 'serial',
+                'unsigned'  => TRUE,
+                'not null'  => TRUE,
+                ),
+            'project' => array(
+                'type'      => 'int',
+                'unsigned'  => TRUE,
+                'not null'  => TRUE,
+                ),
+            'user' => array(
+                'type'      => 'int',
+                'unsigned'  => TRUE,
+                'not null'  => FALSE,
+                ),
+            'name' => array(
+                'type'      => 'varchar',
+                'length'    => 45,
+                'not null'  => TRUE,
+                ),
+            'email' => array(
+                'type'      => 'varchar',
+                'length'    => 255,
+                'not null'  => FALSE,
+                ),
+            'phone' => array(
+                'type'      => 'varchar',
+                'length'    => 20,
+                'not null'  => FALSE,
+                ),
+            'tags' => array(
+                'type'      => 'varchar',
+                'length'    => 255,
+                'not null'  => FALSE,
+                ), 
+            'notes' => array(
+                'type'      => 'text',
+                'not null'  => FALSE,
+                ),
+            'created' => array(
+                'type'      => 'datetime',
+                'not null'  => TRUE,
+            ),
+            'changed' => array(
+                'type'      => 'datetime',
+                'not null'  => TRUE,
+            ),
         ),
         'primary key' => array('id'),
             
