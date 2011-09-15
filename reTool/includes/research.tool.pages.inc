@@ -4,8 +4,10 @@
  * Menu callback for research/tools and research/tools/list
  */
 function research_tools_list_callback(){
+    if(user_access('create research tool')){
+        $content = '<p style="text-align:right;"><a href="'.url('research/tools/add').'" class="add_link">Add new tool</a></p>';
+    }
     
-    $content = '';
     $rows = array();
     $header = array(
         array('data'=>'Project tool'),

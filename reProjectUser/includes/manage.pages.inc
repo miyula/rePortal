@@ -52,9 +52,9 @@ function project_manage_persons_list_callback($path){
     );
     
     $rows[] = array(
-        '<input type="text" name="name" size=15/>',
-        '<input type="text" name="email" size=15/>',
-        '<input type="text" name="phone" size=15/>',
+        '<input type="text" name="name"/>',
+        '<input type="text" name="email"/>',
+        '<input type="text" name="phone"/>',
         '<textarea name="notes" rows="4" cols="30"></textarea>',
         '<input type="submit" value="Add" />',
     );
@@ -63,10 +63,10 @@ function project_manage_persons_list_callback($path){
     $res = pager_query($sql2, 30);
     while($row=db_fetch_object($res)){
         $rows[] = array(
-            $row->name,
-            $row->email,
-            $row->phone,
-            $row->notes,
+            '<div class="participant-card-name-div">'.$row->name.'</div>',
+            '<div class="participant-card-email-div">'.$row->email.'</div>',
+            '<div class="participant-card-phone-div">'.$row->phone.'</div>',
+            '<div class="participant-card-notes-div">'.$row->notes.'</div>',
             '<a class="delete_link" href="'.url("project/$path/manage/persons/participant/remove/{$row->id}").'">Remove</a>',
         );
     }
