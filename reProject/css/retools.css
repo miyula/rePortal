@@ -48,6 +48,8 @@ div.research-tool-block ul li{
     float: left;
     display: inline;
     overflow: hidden;
+    margin-left: 10px;
+    margin-right:10px;
 }
 
 /** end of research tool part **/
