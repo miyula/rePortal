@@ -89,8 +89,19 @@ function reProject_menu(){
     $menu['project/%/manage'] = array(
 	'title arguments'   => array(1),
 	'title callback'    => 'project_title_callback',
-        'description'       => t('Display project home page'),
+        'description'       => t('Project management page'),
         'page callback'     => 'project_manage_callback',
+        'page arguments'    => array(1),
+	'access callback'   => 'manage_project_access',
+        'access arguments'  => array(1),
+        'file'              => 'includes/manage.pages.inc',  
+    );
+    
+    $menu['project/%/manage/settings'] = array(
+	'title arguments'   => array(1),
+	'title callback'    => 'project_title_callback',
+        'description'       => t('Project management page for setting project info.'),
+        'page callback'     => 'project_manage_settings_callback',
         'page arguments'    => array(1),
 	'access callback'   => 'manage_project_access',
         'access arguments'  => array(1),
@@ -132,6 +143,24 @@ function reProject_theme(){
 }
 
 /**
+ * Implementation of hook_project_manage_navigation().
+ */
+function reProject_project_manage_navigation($project){
+    return array(
+        array(
+            'title' => 'Home page',
+            'url'   => 'project/'.$project->path,
+            'weight'=> -20,
+        ),
+        array(
+            'title' => 'Settings',
+            'url'   => 'project/'.$project->path.'/manage/settings',
+            'weight'=> 20,
+        ),
+    );
+}
+
+/**
  * Title callback for menu project/%
  */
 function project_title_callback($path){
@@ -147,21 +176,24 @@ function project_title_callback($path){
  *   -researcher in project person list
  */
 function manage_project_access($path){
-    //get current user
-    global $user;
-    if((bool)$user->uid&&$user->status==1){
-	$project = load_project($path);
-	if($project->creator==$user->uid){
-	    return TRUE;
+    $project = load_project($path);
+    if($project){
+        //get current user
+        global $user;
+        if((bool)$user->uid && $user->status==1){
+            if($project->creator==$user->uid){
+                return TRUE;
+            }
+            //find user in person list
+            $sql = "SELECT COUNT(*) FROM {research_projects_persons_list} WHERE project=%d AND user=%d AND role='researcher'";
+            if(db_result(db_query($sql, $project->id, $user->uid))>0){
+                return TRUE;
+            }
 	}
-	//find user in person list
-	$sql = "SELECT COUNT(*) FROM {research_projects_persons_list} WHERE project=%d AND user=%d AND role='researcher'";
-	if(db_result(db_query($sql, $project->id, $user->uid))>0){
-	    return TRUE;
-	}
+	return FALSE;
     }
-	
-    return FALSE;    
+
+    return FALSE;
 }
 
 /**
@@ -174,10 +206,10 @@ function manage_project_access($path){
 function load_project($index,$type='path'){
     switch($type){
         case 'id':
-            $sql = 'SELECT id, creator, name, url, path, introduction, created, changed FROM {research_projects} WHERE id=%d';
+            $sql = 'SELECT id, creator, name, founder, url, path, introduction, created, changed FROM {research_projects} WHERE id=%d';
             return db_fetch_object(db_query($sql, $index));
         case 'path':
-            $sql = "SELECT id, creator, name, url, path, introduction, created, changed FROM {research_projects} WHERE path='%s'";
+            $sql = "SELECT id, creator, name, founder, url, path, introduction, created, changed FROM {research_projects} WHERE path='%s'";
             return db_fetch_object(db_query($sql, $index));
         default:
             return FALSE;
@@ -204,6 +236,7 @@ function prepare_project_manage_page($path){
         drupal_add_css(drupal_get_path('module','reProject').'/css/manage.css');
         //get navigation list
         $navigation = module_invoke_all('project_manage_navigation', $project);
+        usort($navigation, "weight_sort");
         $project->navigation = $navigation;
         return $project;
     }
@@ -329,5 +362,12 @@ function _research_projects_delete($id){
     return db_query($sql, $id);
 }
 
+/**
+ * sort callback function
+ */
+function weight_sort($a, $b){
+  if ($a['weight'] == $b['weight']) return 0;
+  return ($a['weight'] > $b['weight']) ? 1 : -1;
+}
 
 

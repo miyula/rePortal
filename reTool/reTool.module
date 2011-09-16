@@ -136,6 +136,16 @@ function reTool_menu(){
         'access arguments'  => array(1),
         'file'              => 'includes/manage.pages.inc',  
     );
+    $menu['project/%/manage/tools/remove/%'] = array(
+	'title arguments'   => array(1),
+	'title callback'    => 'project_title_callback',
+        'description'       => t('Remove the tool'),
+        'page callback'     => 'project_manage_tools_remove_callback',
+        'page arguments'    => array(1, 5),
+	'access callback'   => 'manage_project_access',
+        'access arguments'  => array(1),
+        'file'              => 'includes/manage.pages.inc',  
+    );
     
     return $menu;
 }
@@ -177,6 +187,7 @@ function reTool_project_manage_navigation($project){
     $navigation[] = array(
         'title' => 'Tools manage',
         'url'   => 'project/'.$project->path.'/manage/tools',
+        'weight'=> 0,
     );
     return $navigation;
 }
@@ -205,5 +216,25 @@ function project_bind_tool($project, $tid){
     if(!(db_result(db_query($check, $project->id, $tid)))){
         $sql = "INSERT INTO {research_project_tools_list} (project, tool, created) VALUES(%d, %d, NOW())";
         db_query($sql,$project->id, $tid);
+    }
+}
+
+/**
+ * Remove tool from project
+ */
+function project_remove_tool($project, $tid){
+    $delete = 'DELETE FROM {research_project_tools_list} WHERE project=%d AND tool=%d';
+    return db_query($delete, $project->id, $tid);
+}
+
+/**
+ * Check if the project is using this tool or not
+ */
+function check_project_using_tool($project, $tid){
+    $check = 'SELECT COUNT(*) FROM {research_project_tools_list} WHERE project=%d AND tool=%d';
+    if(db_result(db_query($check, $project->id, $tid))>0){
+        return TRUE;
+    }else{
+        return FALSE;
     }
 }

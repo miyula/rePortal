@@ -79,63 +79,13 @@ function project_manage_persons_list_callback($path){
     return theme('project_manage_page',$project);
 }
 
-/**
- * Menu callback for project/%/manage/persons/researcher/add
- */
-function project_manage_persons_researcher_add_callback($path){
-    $project = load_project($path);
-    if($project){
-        return drupal_get_form('project_invite_research_form', $project->id);
-    }
-    drupal_not_found();
-}
-
-/**
- * Menu callback for project/%/manage/persons/participant/remove/%
- */
-function project_manage_persons_participant_remove_callback($path, $id){
-    $project = prepare_project_manage_page($path);
-    $remove = "DELETE FROM {research_projects_participants_cards} WHERE id=%d AND project=%d";
-    db_query($remove, $id, $project->id);
-    drupal_goto("project/$path/manage/persons");
-    
-}
 
 
 
-/** Invite researcher form **/
-function project_invite_research_form(&$form_state, $pid){
-    $form['pid'] = array(
-        '#type' => 'hidden',
-        '#value' => $pid,
-    );
-    $form['email'] = array(
-        '#type' => 'textfield',
-        '#title' => t('Email address'),
-        '#description' => t('The email account of the researcher'),
-        '#required' => TRUE,
-    );
-    $form['submit'] = array(
-        '#type' => 'submit',
-        '#value' => t('Add'),
-    );
-    
-    return $form;
-}
-function project_invite_research_form_submit($form, &$form_state){
-    $pid = $form_state['values']['pid'];
-    $email = $form_state['values']['email'];
-    
-    //find user
-    $find = "SELECT uid FROM {users} WHERE mail='%s'";
-    $uid = db_result(db_query($find, $email));
-    
-    if($uid){
-        add_user_to_project($pid, $uid, PROJECT_RESEARCHER);
-    }
-    drupal_goto(get_project_url($pid).'/manage/persons');
-}
 
+
+
+////////////////// NOT USED OLD CODE //////////////////////
 /**
  * Menu callback for project/%/manage/persons/normal/add
  */

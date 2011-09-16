@@ -23,6 +23,12 @@ a.delete_link{
     padding-left: 20px;
     cursor: pointer;
 }
+a.back_link{
+    background: url('../images/back-link.png') no-repeat left top;
+    font-size: 14px;
+    padding-left: 20px;
+    cursor: pointer;
+}
 
 img.tool_logo_image{
     width: 120px;

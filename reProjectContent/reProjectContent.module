@@ -100,6 +100,7 @@ function reProjectContent_project_manage_navigation($project){
     $navigation[] = array(
         'title' => 'Content manage',
         'url'   => 'project/'.$project->path.'/manage/contents',
+        'weight'=> 0,
     );
     return $navigation;
 }
