@@ -84,6 +84,24 @@ function sms_settings_info_form_submit($form, &$form_state){
 }
 
 /**
+ * Validate phone number
+ * @param
+ *   $phone
+ *      string
+ * @return
+ *   boolean
+ */
+function valid_phone_number($phone){
+    
+    if (preg_match('/^[+][0-9]*$/', $phone)) {
+	return TRUE;
+    }else{
+	drupal_set_message("Invalid phone number $phone. Phone number should starts with e.g. '+358'",'error');
+	return FALSE;
+    }
+}
+
+/**
  * Send HTTP mail to person
  * @param
  *   $to_mail, email address

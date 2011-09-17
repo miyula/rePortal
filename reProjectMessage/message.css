@@ -1,0 +1,16 @@
+div.project-person-list-div{
+    border: 1px solid #777;
+    overflow: auto;
+    width: 700px;
+    height:200px;
+}
+
+td.project-person-td{
+    border: 5px solid #FFF;
+    padding: 2px;
+    background-color: #FFF;
+}
+
+td.project-person-td label{
+    cursor: pointer;
+}
