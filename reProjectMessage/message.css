@@ -9,6 +9,7 @@ td.project-person-td{
     border: 5px solid #FFF;
     padding: 2px;
     background-color: #FFF;
+    overflow:hidden;
 }
 
 td.project-person-td label{
