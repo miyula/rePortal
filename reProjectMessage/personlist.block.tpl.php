@@ -30,8 +30,15 @@
                         <div>(No email address.)</div>
                     <?php endif; ?>
                 <?php elseif($type=='sms'): ?>
-                    <input type="checkbox" name='person-<?=$p->id; ?>' value='<?$p->phone?>'> <?=$p->name; ?>
-                    <?=(empty($p->phone)?'<span>(No phone number.)</span>':'');?>
+                    <?php if(!empty($p->phone)): ?>
+                        <input class="person-input-checkbox" type="checkbox" name='person-<?=$p->id; ?>' value='<?=$p->phone?>' id="project-person-<?=$p->id; ?>"> <label for="project-person-<?=$p->id; ?>"><?=$p->name; ?></label>
+                        <div>(<?=$p->phone; ?>)</div>
+                    <?php else: ?>
+                        <div>
+                            <input disabled="disabled" type="checkbox" name='person-<?=$p->id; ?>' value='<?=$p->phone?>'> <?=$p->name; ?>
+                        </div>
+                        <div>(No phone number.)</div>
+                    <?php endif; ?>
                 <?php endif ?>
         </td>
         <?php

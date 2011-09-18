@@ -21,7 +21,8 @@ function project_manage_message_email_callback($path){
     $content.= theme('project_person_list_div', $list, 'mail');
     $content.= drupal_get_form('message_email_sending_form');
     
-    $project->subtitle = t('Send message');
+    $project->subtitle = t('Send email');
+    $project->title_tabs = '<a href="'.url("project/$path/manage/message/sms").'" class="sms-link">send sms</a>';
     $project->right_part = $content;
     return theme('project_manage_page',$project);
 }
@@ -29,7 +30,7 @@ function project_manage_message_email_callback($path){
 /** email sending form **/
 
 function message_email_sending_form(){
-    $form['mail-list'] = array(
+    $form['to-list'] = array(
         '#type'         => 'textarea',
         '#title'        => t('To'),
         '#description'  => t('The email addresses should be splited by ";"'),
@@ -61,7 +62,7 @@ function message_email_sending_form(){
     return $form;
 }
 function message_email_sending_form_validate($form, &$form_state){
-    $to = $form_state['values']['mail-list'];
+    $to = $form_state['values']['to-list'];
     //generate to_mail array
     $to_mail = array();
     $token = strtok($to,  ';');
@@ -77,7 +78,7 @@ function message_email_sending_form_validate($form, &$form_state){
     }
 }
 function message_email_sending_form_submit($form, &$form_state){
-    $to = $form_state['values']['mail-list'];
+    $to = $form_state['values']['to-list'];
     $subject = $form_state['values']['title'];
     $body = $form_state['values']['body'];
     $to_mail = $form_state['values']['to-mail']; 

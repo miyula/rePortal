@@ -21,7 +21,8 @@ function project_manage_message_sms_callback($path){
     $content.= theme('project_person_list_div', $list, 'sms');
     $content.= drupal_get_form('message_sms_sending_form');
     
-    $project->subtitle = t('Send message');
+    $project->subtitle = t('Send SMS');
+    $project->title_tabs = '<a href="'.url("project/$path/manage/message/email").'" class="mail-link">send email</a>';
     $project->right_part = $content;
     return theme('project_manage_page',$project);
 }
@@ -29,7 +30,7 @@ function project_manage_message_sms_callback($path){
 /** SMS sending form **/
 
 function message_sms_sending_form(){
-    $form['phone-list'] = array(
+    $form['to-list'] = array(
         '#type'         => 'textarea',
         '#title'        => t('To'),
         '#description'  => t('The phone number should be splited by ";"'),
@@ -55,7 +56,7 @@ function message_sms_sending_form(){
     return $form;
 }
 function message_sms_sending_form_validate($form, &$form_state){
-    $to = $form_state['values']['phone-list'];
+    $to = $form_state['values']['to-list'];
     //generate to_mail array
     $to_phone = array();
     $token = strtok($to,  ';');
@@ -69,9 +70,14 @@ function message_sms_sending_form_validate($form, &$form_state){
     }else{
         $form_state['values']['to-phone'] = $to_phone;
     }
+    
+    $body = $form_state['values']['body'];
+    if(strlen($body)>300){
+        form_set_error('body', 'Too long message!');
+    }
 }
 function message_sms_sending_form_submit($form, &$form_state){
-    $to = $form_state['values']['phone-list'];
+    $to = $form_state['values']['to-list'];
     $body = $form_state['values']['body'];
     $to_phone = $form_state['values']['to-phone']; 
     

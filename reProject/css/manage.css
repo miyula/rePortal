@@ -28,12 +28,20 @@ div.right-content-div{
     margin-top: 10px;
     margin-left: 10px;
     min-height: 500px;
-    padding: 10px;
+    padding: 5px 10px 10px 10px;
     width: 730px;
 }
 div.right-content-div table{
     width:99%;
     table-layout:fixed
+}
+
+div.right-content-div span.sub-title-span{
+    font-size: 24px;
+    font-weight: bold;
+}
+div.right-content-div div.sub-title-div{
+    margin-bottom: 10px;
 }
 
 /*** for personal page ***/

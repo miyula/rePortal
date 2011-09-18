@@ -16,7 +16,7 @@
     </ul>
 </div>
 <div class="right-content-div">
-    <h1><?=$project->subtitle; ?></h1>
+    <div class="sub-title-div"><span class="sub-title-span"><?=$project->subtitle; ?></span><?=$project->title_tabs; ?></div>
     <?=$project->right_part; ?>
 </div>
 <div style="clear:both"></div>

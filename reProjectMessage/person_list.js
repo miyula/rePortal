@@ -31,6 +31,6 @@ function renew_to_list(){
         if(this.checked){
             message_to_list+= this.value + ';';
         }
-        $('#edit-mail-list').val(message_to_list);
+        $('#edit-to-list').val(message_to_list);
     });
 }
