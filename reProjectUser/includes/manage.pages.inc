@@ -69,7 +69,9 @@ function project_manage_persons_list_callback($path){
                          .'<div class="participant-card-notes-div">Notes: '.$row->notes.'</div>',
                 'colspan' => 3,
             ),
-            '<a class="delete_link" href="'.url("project/$path/manage/persons/participant/remove/{$row->id}").'">Remove</a>',
+            '<p class="operation-p"><a class="delete_link" href="'.url("project/$path/manage/persons/participant/remove/{$row->id}").'">Remove</a></p>'
+                .'<p class="operation-p"><a class="edit_link window_tab" href="'.url("project/$path/manage/persons/participant/edit/{$row->id}").'" target="_blank">Edit</a></p>'
+                .'<p class="operation-p"><a class="tags_link window_tab" href="" target="_blank">Tags</a></p>',
         );
     }
         
@@ -78,11 +80,6 @@ function project_manage_persons_list_callback($path){
     $project->right_part = $content;    
     return theme('project_manage_page',$project);
 }
-
-
-
-
-
 
 
 ////////////////// NOT USED OLD CODE //////////////////////

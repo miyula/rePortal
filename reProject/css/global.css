@@ -29,6 +29,12 @@ a.back_link{
     padding-left: 20px;
     cursor: pointer;
 }
+a.tags_link{
+    background: url('../images/tags-link.png') no-repeat left top;
+    font-size: 14px;
+    padding-left: 20px;
+    cursor: pointer;
+}
 
 img.tool_logo_image{
     width: 120px;

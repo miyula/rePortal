@@ -21,7 +21,7 @@
         <p class="research-tool-name-p"><a class="tab-window-link" href="<?=url("research/tools/view/{$tool->id}")?>"><?=$tool->name?></a></p>
         <ul>
             <li><a class="tab-window-link" href="<?=url("research/tools/view/{$tool->id}")?>">Read more</a></li>
-            <li><a class="tab-window-link" href="">View data</a></li>
+            <li><a class="tab-window-link" href="http://pilot.zokem.com:81/soberit/" target="_blank">View data</a></li>
         </ul>
     </div>
     <?php endforeach; ?>

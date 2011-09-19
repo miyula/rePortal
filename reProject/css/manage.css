@@ -33,7 +33,12 @@ div.right-content-div{
 }
 div.right-content-div table{
     width:99%;
-    table-layout:fixed
+    table-layout:fixed;
+    margin: 10px 0px;
+}
+
+div.right-content-div table p.operation-p{
+    margin: 5px 0px;
 }
 
 div.right-content-div span.sub-title-span{
