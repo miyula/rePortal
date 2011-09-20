@@ -7,6 +7,6 @@ dependencies[]  = reProject
 dependencies[]  = MessageSend
 dependencies[]  = reProjectContent
 dependencies[]  = reProjectUser
-version         = "6.x-0"
+version         = "6.x-1.0"
 core            = 6.x
 php             = 5.x

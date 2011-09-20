@@ -1,11 +1,12 @@
-; $Id$
-name            = "Project User"
+
+name            = Project User
 description     = "Provide functions for manage project user"
 package         = reProject
 dependencies[]  = phpmailer
 dependencies[]  = reProject
 dependencies[]  = MessageSend
 dependencies[]  = reProjectContent
-version         = "6.x-1"
-core            = 6.x
+version         = "6.x-1.0"
+project         = "reProjectUser"
+core            = "6.x"
 php             = 5.x
