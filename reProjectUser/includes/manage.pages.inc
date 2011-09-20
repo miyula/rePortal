@@ -37,7 +37,8 @@ function project_manage_persons_list_callback($path){
         );
     }
     $content.= theme_table($header, $rows);
-        
+    
+    $content.= '<p>&nbsp;</p>';    
     //get normal user
     $content.= '<h2>Participants list</h2>';
         
@@ -70,7 +71,7 @@ function project_manage_persons_list_callback($path){
                 'colspan' => 3,
             ),
             '<p class="operation-p"><a class="delete_link" href="'.url("project/$path/manage/persons/participant/remove/{$row->id}").'">Remove</a></p>'
-                .'<p class="operation-p"><a class="edit_link window_tab" href="'.url("project/$path/manage/persons/participant/edit/{$row->id}").'" target="_blank">Edit</a></p>'
+                .'<p class="operation-p"><a class="edit_link" href="'.url("project/$path/manage/persons/participant/edit/{$row->id}").'">Edit</a></p>'
                 .'<p class="operation-p"><a class="tags_link window_tab" href="" target="_blank">Tags</a></p>',
         );
     }

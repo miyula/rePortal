@@ -88,6 +88,6 @@ function edit_person_info_card_form_submit($form, &$form_state){
     //update
     $update = 'UPDATE {research_projects_participants_cards} SET name="%s", email="%s", phone="%s", notes="%s" WHERE id=%d and project=%d';
     db_query($update, $name, $email, $phone, $notes, $id, $project);
-    
-    
+    $pObj = load_project($project, 'id');
+    drupal_goto('project/'.$pObj->path.'/manage/persons');
 }
