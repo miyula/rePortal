@@ -23,7 +23,7 @@ function reProjectUser_uninstall(){
 /**
  * Add new table participants_tags
  */
-function reProjectUser_update_6001(){
+function reProjectUser_update_6010(){
     $ret = array();
     
     return $ret;
