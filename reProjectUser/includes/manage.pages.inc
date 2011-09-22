@@ -8,8 +8,12 @@ function project_manage_persons_list_callback($path){
     
     drupal_add_css(drupal_get_path('module','reProjectUser').'/css/user_manage.css');
     
-    jquery_ui_add(array('ui.jquery-ui'));
+    jquery_ui_add(array('jquery-ui'));
     drupal_add_css(jquery_ui_get_path().'/themes/base/jquery-ui.css');
+    drupal_add_js(drupal_get_path('module','reProjectUser').'/js/edit_tags_window.js');
+    
+    //add ajax link Drupal.settings.reProjectUser.base_path
+    drupal_add_js(array('reProjectUser'=>array('base_path'=>url('project/'.$path.'/manage/persons/participant'))),'setting');
     //get right part info
     
     //get researchers
@@ -65,7 +69,7 @@ function project_manage_persons_list_callback($path){
             ),
             '<p class="operation-p"><a class="delete_link" href="'.url("project/$path/manage/persons/participant/remove/{$row->id}").'">Remove</a></p>'
                 .'<p class="operation-p"><a class="edit_link" href="'.url("project/$path/manage/persons/participant/edit/{$row->id}").'">Edit</a></p>'
-                .'<p class="operation-p"><a class="tags_link window_tab" href="" target="_blank">Tags</a></p>',
+                .'<p class="operation-p"><a class="tags_link window_tab" href="javascript:onclick_edit_tags('.$row->id.');" target="_blank">Tags</a></p>',
         );
     }
     $content.= theme('participants_tags_div');

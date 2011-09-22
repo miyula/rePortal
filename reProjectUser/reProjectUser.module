@@ -91,6 +91,34 @@ function reProjectUser_menu(){
         'file'              => 'includes/manage.participant.pages.inc',  
     );
     
+    /** participant tags **/
+    $menu['project/%/manage/persons/tagsget/%'] = array(
+        'title'		    => t('Get tags'),
+        'description'       => t('Ajax request for get participant tags'),
+        'page callback'     => 'ajax_get_participant_tags_callback',
+        'page arguments'    => array(1, 5),
+	'access callback'   => 'manage_project_access',
+        'access arguments'  => array(1),
+        'file'              => 'includes/manage.participant.tags.inc',
+    );
+    $menu['project/%/manage/persons/tagsadd/%/%'] = array(
+        'title'		    => t('Get tags'),
+        'description'       => t('Ajax request for add participant tag'),
+        'page callback'     => 'ajax_add_participant_tag_callback',
+        'page arguments'    => array(1, 5, 6),
+	'access callback'   => 'manage_project_access',
+        'access arguments'  => array(1),
+        'file'              => 'includes/manage.participant.tags.inc',
+    );
+    $menu['project/%/manage/persons/tagsremove/%/%'] = array(
+        'title'		    => t('Get tags'),
+        'description'       => t('Ajax request for remove participant tag'),
+        'page callback'     => 'ajax_remove_participant_tag_callback',
+        'page arguments'    => array(1, 5, 6),
+	'access callback'   => 'manage_project_access',
+        'access arguments'  => array(1),
+        'file'              => 'includes/manage.participant.tags.inc',
+    );
     return $menu;
 }
 
@@ -179,4 +207,35 @@ function load_first_guide_node($project){
         project_add_content($project->id, $node->nid, 'firstguide', FALSE);
         return $node;
     }
+}
+
+/**
+ * fetch all participants tags from a project
+ */
+function get_project_all_participants_tags($project){
+    $sql = 'SELECT id, tags FROM {research_projects_participants_tags} WHERE project=%d';
+    $res = db_query($sql, $project);
+    $tags = array();
+    while($row=db_fetch_array($res)){
+	$tags[] = $row;
+    }
+    return $tags;
+}
+
+/**
+ * fetch a participant's all tags
+ */
+function get_participant_all_tags($id, $project){
+    $sql = 'SELECT tags FROM {research_projects_participants_cards} WHERE id=%d AND project=%d';
+    $tags_str = db_result(db_query($sql, $id, $project));
+    $tags = array();
+    if($tags_str){
+	
+	while ($token !== false){
+	    $token = strtok($tags,';');
+	    $token = strtok(';');
+	}
+	return $tags;
+    }
+    return $tags;
 }

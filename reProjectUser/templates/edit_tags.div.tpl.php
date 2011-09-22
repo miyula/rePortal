@@ -8,7 +8,7 @@
  * $project
  */
 ?>
-<div id='edit-tags-div' title='Edit tags'>
+<div id='edit-tags-div' title='Edit tags' style='display:none;' >
     <div id='participants-tags-div'>
         <div class='participant-tag used-tag'>Male</div><div class='participant-tag'>Male</div><div class='participant-tag'>Male</div>
         <div style='clear:both'></div>
