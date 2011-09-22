@@ -1,0 +1,29 @@
+div#new_participant_info_card_form_div div.form-item{
+    float:left;
+    margin-right: 6px;
+}
+
+div#new_participant_info_card_form_div div input{
+    margin-top: 15px;
+}
+
+div#edit-tags-div{
+    width:400px;
+}
+
+div#edit-tags-div div.participant-tag{
+    float:left;
+    display: inline;
+    overflow: auto;
+    border: 1px solid #777;
+    padding: 2px 5px;
+    margin: 2px 5px;
+    font-size: 16px;
+    font-weight: bold;
+    background-color: #fff;
+    cursor: pointer;
+}
+div#edit-tags-div div#participants-tags-div div.used-tag{
+    background-color: #61B4CF;
+    color: #fff;
+}

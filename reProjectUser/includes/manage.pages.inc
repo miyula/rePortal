@@ -4,18 +4,12 @@
  * Menu callback for project/%/manage/persons
  */
 function project_manage_persons_list_callback($path){
-    $project = prepare_project_manage_page($path);
+    $project = prepare_project_manage_page($path);    
     
-    if ($_POST) {
-        $name = $_POST['name'];
-        $email = $_POST['email'];
-        $phone = $_POST['phone'];
-        $notes = $_POST['notes'];
-        $insert = 'INSERT INTO {research_projects_participants_cards}(project, name, email, phone, notes, created, changed) VALUES(%d, "%s","%s", "%s","%s", NOW(), NOW())';
-        db_query($insert, $project->id, $name, $email, $phone, $notes);
-    }
+    drupal_add_css(drupal_get_path('module','reProjectUser').'/css/user_manage.css');
     
-    
+    jquery_ui_add(array('ui.jquery-ui'));
+    drupal_add_css(jquery_ui_get_path().'/themes/base/jquery-ui.css');
     //get right part info
     
     //get researchers
@@ -52,11 +46,10 @@ function project_manage_persons_list_callback($path){
     );
     
     $rows[] = array(
-        '<input type="text" name="name" size=15/>',
-        '<input type="text" name="email" size=15/>',
-        '<input type="text" name="phone" size=15/>',
-        '<textarea name="notes" rows="4" cols="30"></textarea>',
-        '<input type="submit" value="Add" />',
+        array(
+            'data'  =>   '<div id="new_participant_info_card_form_div">'.drupal_get_form('new_participant_info_card_form', $project).'</div>',
+            'colspan' => 5,
+        ),
     );
         
     $sql2 = "SELECT id, name, email, phone, notes FROM {research_projects_participants_cards} WHERE project={$project->id} ORDER BY created DESC";
@@ -67,7 +60,7 @@ function project_manage_persons_list_callback($path){
             array(
                 'data'  =>'<div class="participant-card-email-div">Email: '.$row->email.'</div>'
                          .'<div class="participant-card-phone-div">Phone: '.$row->phone.'</div>'
-                         .'<div class="participant-card-notes-div">Notes: '.$row->notes.'</div>',
+                         .'<div class="participant-card-notes-div">Notes: '.nl2br($row->notes).'</div>',
                 'colspan' => 3,
             ),
             '<p class="operation-p"><a class="delete_link" href="'.url("project/$path/manage/persons/participant/remove/{$row->id}").'">Remove</a></p>'
@@ -75,12 +68,75 @@ function project_manage_persons_list_callback($path){
                 .'<p class="operation-p"><a class="tags_link window_tab" href="" target="_blank">Tags</a></p>',
         );
     }
-        
-    $content.= '<form action="" method="POST"><div class="project-manage-page-table-div">'.theme_table($header, $rows).'</div></form>';
+    $content.= theme('participants_tags_div');
+    $content.= '<div class="project-manage-page-table-div">'.theme_table($header, $rows).'</div>';
     $content.= theme('pager');
     $project->right_part = $content;    
     return theme('project_manage_page',$project);
 }
+
+/** New participant info card form **/
+function new_participant_info_card_form($form_state, $project){
+    $form['project'] = array(
+        '#type'         => 'hidden',
+        '#value'        => $project->id,
+    );
+    $form['name'] = array(
+        '#type'         => 'textfield',
+        '#size'         => 15,
+    );
+    $form['email'] = array(
+        '#type'         => 'textfield',
+        '#size'         => 15,
+    );
+    $form['phone'] = array(
+        '#type'         => 'textfield',
+        '#size'         => 15,
+    );
+    $form['notes'] = array(
+        '#type'         => 'textarea',
+        '#cols'         => 15,
+        '#rows'         => 3,
+    );
+    $form['submit'] = array(
+        '#type'         => 'submit',
+        '#value'        => t('Add'),
+    );
+    return $form;
+}
+function new_participant_info_card_form_validate($form, &$form_state){
+    $name = $form_state['values']['name'];
+    if(empty($name)){
+        form_set_error('name','The name is required.');
+    }
+    
+    $email = $form_state['values']['email'];
+    if(!empty($email) && !valid_email_address($email)){
+        form_set_error('email','Invalid email address.');
+    }
+    
+    $phone = $form_state['values']['phone'];
+    if(!empty($phone) && !valid_phone_number($phone)){
+        form_set_error('phone','Invalid phone number.');
+    }
+    
+    if(empty($email) && empty($phone)){
+        form_set_error('email', 'The email and phone should not all be empty!');
+        form_set_error('phone', 'The email and phone should not all be empty!');
+    }
+    
+}
+function new_participant_info_card_form_submit($form, &$form_state){
+    $project = $form_state['values']['project'];
+    $name = $form_state['values']['name'];
+    $email = $form_state['values']['email'];
+    $phone = $form_state['values']['phone'];
+    $notes = filter_filter('process', 0, -1, $form_state['values']['notes']);
+    $insert = 'INSERT INTO {research_projects_participants_cards}(project, name, email, phone, notes, created, changed) VALUES(%d, "%s","%s", "%s","%s", NOW(), NOW())';
+    db_query($insert, $project, $name, $email, $phone, $notes);
+}
+
+
 
 
 ////////////////// NOT USED OLD CODE //////////////////////

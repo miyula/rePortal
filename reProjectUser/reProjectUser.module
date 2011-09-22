@@ -105,6 +105,13 @@ function reProjectUser_theme(){
 		'project' => NULL,
 	    ),
 	),
+        'participants_tags_div' => array(
+            'template' => 'templates/edit_tags.div',
+            'arguments' => array(
+                'tags'  => NULL,
+                'project' => NULL,
+            )
+        ),
     );
 }
 

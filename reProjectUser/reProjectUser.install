@@ -75,8 +75,7 @@ function research_projects_onetime_invite_code_schema(){
         'unique keys' => array(
             'code' => array('code'),
         ),
-        'primary key' => array('id'),
-            
+        'primary key' => array('id'),    
     );
     return $schema;
 }

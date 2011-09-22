@@ -83,7 +83,7 @@ function edit_person_info_card_form_submit($form, &$form_state){
     $name = $form_state['values']['name'];
     $email = $form_state['values']['email'];
     $phone = $form_state['values']['phone'];
-    $notes = $form_state['values']['notes'];
+    $notes = filter_filter('process', 0, -1, $form_state['values']['notes']);
     
     //update
     $update = 'UPDATE {research_projects_participants_cards} SET name="%s", email="%s", phone="%s", notes="%s" WHERE id=%d and project=%d';

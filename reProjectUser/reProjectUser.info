@@ -6,6 +6,7 @@ dependencies[]  = phpmailer
 dependencies[]  = reProject
 dependencies[]  = MessageSend
 dependencies[]  = reProjectContent
+dependencies[]  = jquery_ui
 version         = "6.x-1.0"
 project         = "reProjectUser"
 core            = "6.x"
