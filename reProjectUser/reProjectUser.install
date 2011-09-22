@@ -26,6 +26,13 @@ function reProjectUser_uninstall(){
 function reProjectUser_update_6010(){
     $ret = array();
     
+    $new_table = 'research_projects_participants_tags';
+    //check if table exist
+    if(!db_table_exists($new_table)){
+        $schema = research_projects_participants_tags_schema();
+        db_create_table($ret, $new_table, $schema[$new_table]);
+    }
+    
     return $ret;
 }
 
