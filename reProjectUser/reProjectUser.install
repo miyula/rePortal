@@ -36,6 +36,25 @@ function reProjectUser_update_6010(){
     return $ret;
 }
 
+/**
+ * Change table participants_cards and participants_tags
+ */
+function reProjectUser_update_6011(){
+    $ret = array();
+    
+    //add column tags default '' in research_projects_participants_cards
+    db_change_field($ret,
+        'research_projects_participants_cards', 'tags', 'tags',
+        array('type' => 'varchar', 'length' => 255, 'not null' => FALSE, 'default' => '',));
+    
+    //change column tags to tag, allow null to not null in research_projects_participants_tags
+    db_change_field($ret,
+        'research_projects_participants_tags', 'tags', 'tag',
+        array('type' => 'text', 'not null' => TRUE, 'default' => '',));
+    
+    return $ret;
+}
+
 
 /**
  * Implementation of hook_schema().
@@ -120,6 +139,7 @@ function research_projects_participants_cards_schema(){
                 'type'      => 'varchar',
                 'length'    => 255,
                 'not null'  => FALSE,
+                'default'   => '',
                 ), 
             'notes' => array(
                 'type'      => 'text',
@@ -157,10 +177,9 @@ function research_projects_participants_tags_schema(){
                 'unsigned'  => TRUE,
                 'not null'  => TRUE,
                 ),
-            'tags'    => array(
+            'tag'    => array(
                 'type'      => 'text',
-                'not null'  => FALSE,
-                'default'   => '',
+                'not null'  => TRUE,
             ),
             'created' => array(
                 'type'      => 'datetime',

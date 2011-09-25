@@ -44,3 +44,9 @@ img.tool_logo_image{
 div.project-introduction-div{
     padding: 20px;
 }
+
+div.loading-div{
+    background: url('../images/loading.gif') no-repeat left top;
+    width: 36px;
+    height: 36px;
+}

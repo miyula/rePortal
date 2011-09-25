@@ -13,7 +13,7 @@ function project_manage_persons_list_callback($path){
     drupal_add_js(drupal_get_path('module','reProjectUser').'/js/edit_tags_window.js');
     
     //add ajax link Drupal.settings.reProjectUser.base_path
-    drupal_add_js(array('reProjectUser'=>array('base_path'=>url('project/'.$path.'/manage/persons/participant'))),'setting');
+    drupal_add_js(array('reProjectUser'=>array('base_path'=>url('project/'.$path.'/manage/persons/'))),'setting');
     //get right part info
     
     //get researchers
@@ -56,14 +56,20 @@ function project_manage_persons_list_callback($path){
         ),
     );
         
-    $sql2 = "SELECT id, name, email, phone, notes FROM {research_projects_participants_cards} WHERE project={$project->id} ORDER BY created DESC";
+    $sql2 = "SELECT id, name, email, phone, tags, notes FROM {research_projects_participants_cards} WHERE project={$project->id} ORDER BY created DESC";
     $res = pager_query($sql2, 30);
     while($row=db_fetch_object($res)){
+        $tags = get_tags_as_array($row->tags);
+        $tags_divs = '';
+        foreach($tags as $tag){
+            $tags_divs.= "<div class='participant-tag used-tag'>$tag</div>"; 
+        }
         $rows[] = array(
             '<div class="participant-card-name-div">'.$row->name.'</div>',
             array(
                 'data'  =>'<div class="participant-card-email-div">Email: '.$row->email.'</div>'
                          .'<div class="participant-card-phone-div">Phone: '.$row->phone.'</div>'
+                         .'<div class="participant-card-tags-div"><div class="tags-title-div">Tags:</div> '.$tags_divs.'<div style="clear:both"></div></div>'
                          .'<div class="participant-card-notes-div">Notes: '.nl2br($row->notes).'</div>',
                 'colspan' => 3,
             ),
