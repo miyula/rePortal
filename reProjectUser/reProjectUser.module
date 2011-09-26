@@ -91,6 +91,34 @@ function reProjectUser_menu(){
         'file'              => 'includes/manage.participant.pages.inc',  
     );
     
+    /** participant tags **/
+    $menu['project/%/manage/persons/tagsget/%'] = array(
+        'title'		    => t('Get tags'),
+        'description'       => t('Ajax request for get participant tags'),
+        'page callback'     => 'ajax_get_participant_tags_callback',
+        'page arguments'    => array(1, 5),
+	'access callback'   => 'manage_project_access',
+        'access arguments'  => array(1),
+        'file'              => 'includes/manage.participant.tags.inc',
+    );
+    $menu['project/%/manage/persons/tagsadd/%/%'] = array(
+        'title'		    => t('Get tags'),
+        'description'       => t('Ajax request for add participant tag'),
+        'page callback'     => 'ajax_add_participant_tag_callback',
+        'page arguments'    => array(1, 5, 6),
+	'access callback'   => 'manage_project_access',
+        'access arguments'  => array(1),
+        'file'              => 'includes/manage.participant.tags.inc',
+    );
+    $menu['project/%/manage/persons/tagsremove/%/%'] = array(
+        'title'		    => t('Get tags'),
+        'description'       => t('Ajax request for remove participant tag'),
+        'page callback'     => 'ajax_remove_participant_tag_callback',
+        'page arguments'    => array(1, 5, 6),
+	'access callback'   => 'manage_project_access',
+        'access arguments'  => array(1),
+        'file'              => 'includes/manage.participant.tags.inc',
+    );
     return $menu;
 }
 
@@ -179,4 +207,119 @@ function load_first_guide_node($project){
         project_add_content($project->id, $node->nid, 'firstguide', FALSE);
         return $node;
     }
+}
+
+
+/**
+ * Split tags into array
+ * @param
+ *   $tags_str, string
+ */
+function get_tags_as_array($tags_str){
+    $tags = array();
+    $token = strtok($tags_str,';');
+    while ($token !== false){
+	if(!empty($token)){
+	    $tags[] = trim($token);
+	}
+	$token = strtok(';');
+    }
+    return $tags;
+}
+
+/**
+ * fetch all participants tags from a project
+ * @param
+ *   $pid, the id of the project
+ */
+function get_project_all_participants_tags($pid){
+    $sql = 'SELECT id, tag FROM {research_projects_participants_tags} WHERE project=%d';
+    $res = db_query($sql, $pid);
+    $tags = array();
+    while($row=db_fetch_array($res)){
+	$tags[] = $row;
+    }
+    return $tags;
+}
+
+/**
+ * fetch a participant's all tags
+ * @param
+ *   $id, the id of participants
+ * @param
+ *   $pid, the id of project
+ */
+function get_participant_all_tags($id, $pid){
+    $sql = 'SELECT tags FROM {research_projects_participants_cards} WHERE id=%d AND project=%d';
+    $tags_str = db_result(db_query($sql, $id, $pid));
+    return get_tags_as_array($tags_str);
+}
+
+/**
+ * Add tag to project
+ * @param
+ *   $pid, the id of project
+ * @param
+ *   $tag, string
+ */
+function add_tag_to_project($pid, $tag){
+    //check if tag already in project
+    $check = 'SELECT COUNT(*) FROM {research_projects_participants_tags} WHERE project=%d AND tag="%s"';
+    if(db_result(db_query($check, $pid, $tag))>0){
+	//tag exist
+	return $tag;
+    }
+    
+    //add new tag
+    $add = 'INSERT INTO {research_projects_participants_tags}(project, tag, created, changed) VALUES(%d, "%s", NOW(), NOW())';
+    if(db_query($add, $pid, $tag)){
+	return $tag;
+    }
+    return FALSE;
+}
+
+/**
+ * Remove tag from project
+ * @param
+ *   $pid, the id of project
+ * @param
+ *   $tag, string
+ */
+function remove_tag_from_project($pid, $tag){
+    
+}
+
+/**
+ * Add tag to participant card
+ * @param
+ *   $pid, the id of project
+ * @param
+ *   $id, the id of participant
+ * @param
+ *   $tag, string
+ */
+function add_tag_to_participant($pid, $id, $tag){
+    //add tag to project if it is new
+    add_tag_to_project($pid, $tag);
+    
+    //get tags
+    $get = 'SELECT tags FROM {research_projects_participants_cards} WHERE id=%d AND project=%d';
+    $tags = db_result(db_query($get, $id, $pid));
+    if(empty($tags)){
+	$tags = ';' . $tag . ';';
+    }else{
+	if(!check_tag_in_participant($tags, $tag)){
+	    $tags.= ';' . $tag . ';';
+	}
+    }
+    //update table
+    $update = '{UPDATE {research_projects_participants_cards} SET tags="%s" WHERE id=%d AND project=%d';
+    return db_query($update, $tags, $id, $pid);
+}
+
+/**
+ * Find if tag already in participant card
+ */
+function check_tag_in_participant($tags, $tag){
+    return (strstr($tags, ';'.$tag.';'));
 }
