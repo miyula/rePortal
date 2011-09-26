@@ -343,3 +343,16 @@ function add_tag_to_participant($pid, $id, $tag){
 function check_tag_in_participant($tags, $tag){
     return (strstr($tags, ';'.$tag.';'));
 }
+
+/**
+ * Remove tag from participant card
+ * @param
+ *   $pid, the id of project
+ * @param
+ *   $id, the id of participant
+ * @param
+ *   $tag, string
+ */
+function remove_tag_from_participant($pid, $id, $tag){
+    
+}

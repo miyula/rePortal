@@ -38,13 +38,24 @@ function onclick_add_new_tag(){
     }
 }
 
-
 /**
  * Div onclick for add exist tag
  */
 function onclick_add_exist_tag(tag){
     var id = $('#edit-participant-input').val();
     var url = Drupal.settings.reProjectUser.base_path+'tagsadd/'+id+'/'+tag;
+    start_refresh_tags();
+    $.getJSON(url, function(data){
+        load_tags_in_window(data);
+    });
+}
+
+/**
+ * Div onclick for remove tag
+ */
+function onclick_remove_tag(tag){
+    var id = $('#edit-participant-input').val();
+    var url = Drupal.settings.reProjectUser.base_path+'tagsremove/'+id+'/'+tag;
     start_refresh_tags();
     $.getJSON(url, function(data){
         load_tags_in_window(data);
@@ -68,7 +79,7 @@ function load_tags_in_window(data){
     if(data.tags){
         var tags = '';
         for(key in data.tags){
-            tags+= "<div class='participant-tag used-tag'>"+data.tags[key]+"</div>";
+            tags+= "<div class='participant-tag used-tag' onclick='onclick_remove_tag("+'"'+data.tags[key]+'"'+")'>"+data.tags[key]+"</div>";
         }
         tags+= "<div style='clear:both'></div>";
         $('#participants-tags-div').html(tags);
