@@ -9,6 +9,7 @@ div#new_participant_info_card_form_div div input{
 
 div#edit-tags-div{
     width:400px;
+    padding: 15px 10px;
 }
 
 div#edit-tags-div div.participant-tag{
@@ -26,4 +27,24 @@ div#edit-tags-div div.participant-tag{
 div#edit-tags-div div#participants-tags-div div.used-tag{
     background-color: #61B4CF;
     color: #fff;
+}
+
+textarea#edit-notes{
+    width: 160px;
+}
+div.participant-card-tags-div div.tags-title-div{
+    float: left;
+    display: inline;
+    overflow: auto;
+}
+div.participant-card-tags-div div.participant-tag{
+    float:left;
+    display: inline;
+    overflow: auto;
+    border: 1px solid #777;
+    padding: 0px 5px;
+    margin: 2px;
+    font-size: 14px;
+    background-color: #fff;
+    cursor: pointer;
 }
