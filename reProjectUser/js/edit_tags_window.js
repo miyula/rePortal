@@ -16,6 +16,7 @@ function onclick_edit_tags(id){
     $('#edit-tags-div').dialog('open');
     $('#edit-participant-input').val(id);
     get_tags_from_participant(id);
+    return false;
 }
 
 /**

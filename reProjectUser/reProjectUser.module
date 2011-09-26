@@ -140,6 +140,12 @@ function reProjectUser_theme(){
                 'project' => NULL,
             )
         ),
+	'participants_card_div' => array(
+	    'template' => 'templates/participant_card.div',
+            'arguments' => array(
+                'row'  => NULL,
+            )
+	),
     );
 }
 

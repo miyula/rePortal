@@ -8,8 +8,8 @@ function project_manage_persons_list_callback($path){
     
     drupal_add_css(drupal_get_path('module','reProjectUser').'/css/user_manage.css');
     
-    jquery_ui_add(array('jquery-ui'));
-    drupal_add_css(jquery_ui_get_path().'/themes/base/jquery-ui.css');
+    //add jQuery ui
+    load_jquery_ui();
     drupal_add_js(drupal_get_path('module','reProjectUser').'/js/edit_tags_window.js');
     
     //add ajax link Drupal.settings.reProjectUser.base_path
@@ -60,17 +60,11 @@ function project_manage_persons_list_callback($path){
     $res = pager_query($sql2, 30);
     while($row=db_fetch_object($res)){
         $tags = get_tags_as_array($row->tags);
-        $tags_divs = '';
-        foreach($tags as $tag){
-            $tags_divs.= "<div class='participant-tag used-tag'>$tag</div>"; 
-        }
+        $row->tags_array = $tags;
         $rows[] = array(
             '<div class="participant-card-name-div">'.$row->name.'</div>',
             array(
-                'data'  =>'<div class="participant-card-email-div">Email: '.$row->email.'</div>'
-                         .'<div class="participant-card-phone-div">Phone: '.$row->phone.'</div>'
-                         .'<div class="participant-card-tags-div"><div class="tags-title-div">Tags:</div> '.$tags_divs.'<div style="clear:both"></div></div>'
-                         .'<div class="participant-card-notes-div">Notes: '.nl2br($row->notes).'</div>',
+                'data'  => theme('participants_card_div', $row),
                 'colspan' => 3,
             ),
             '<p class="operation-p"><a class="delete_link" href="'.url("project/$path/manage/persons/participant/remove/{$row->id}").'">Remove</a></p>'

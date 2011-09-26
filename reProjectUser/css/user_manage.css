@@ -30,8 +30,13 @@ div#edit-tags-div div#participants-tags-div div.used-tag{
 }
 
 textarea#edit-notes{
-    width: 160px;
+    width: 130px;
 }
+
+form#new-participant-info-card-form input.form-text{
+    width: 130px;
+}
+
 div.participant-card-tags-div div.tags-title-div{
     float: left;
     display: inline;
@@ -47,4 +52,21 @@ div.participant-card-tags-div div.participant-tag{
     font-size: 14px;
     background-color: #fff;
     cursor: pointer;
+}
+
+span.title-span{
+    font-weight: bold;
+    display: inline-block;
+    width: 60px;
+}
+div.title-div{
+    font-weight: bold;
+    width: 60px;
+    float: left;
+    overflow:hidden;
+    display: inline;
+}
+
+div.participant-card-notes-div div.notes-content-div{
+    margin-left: 60px;
 }
