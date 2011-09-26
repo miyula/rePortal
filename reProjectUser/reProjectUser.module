@@ -354,5 +354,13 @@ function check_tag_in_participant($tags, $tag){
  *   $tag, string
  */
 function remove_tag_from_participant($pid, $id, $tag){
-    
+    //get tags
+    $get = 'SELECT tags FROM {research_projects_participants_cards} WHERE id=%d AND project=%d';
+    $tags = db_result(db_query($get, $id, $pid));
+    if(!empty($tags)){
+	$new_tags = str_replace(";$tag;", '', $tags);
+    }
+    //update table
+    $update = '{UPDATE {research_projects_participants_cards} SET tags="%s" WHERE id=%d AND project=%d';
+    return db_query($update, $new_tags, $id, $pid);
 }

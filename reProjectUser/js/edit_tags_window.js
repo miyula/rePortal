@@ -54,12 +54,14 @@ function onclick_add_exist_tag(tag){
  * Div onclick for remove tag
  */
 function onclick_remove_tag(tag){
-    var id = $('#edit-participant-input').val();
-    var url = Drupal.settings.reProjectUser.base_path+'tagsremove/'+id+'/'+tag;
-    start_refresh_tags();
-    $.getJSON(url, function(data){
-        load_tags_in_window(data);
-    });
+    if(window.confirm('You are removing tag "'+tag+'".')){
+        var id = $('#edit-participant-input').val();
+        var url = Drupal.settings.reProjectUser.base_path+'tagsremove/'+id+'/'+tag;
+        start_refresh_tags();
+        $.getJSON(url, function(data){
+            load_tags_in_window(data);
+        });   
+    }
 }
 
 /**
