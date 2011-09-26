@@ -41,6 +41,18 @@ function reProjectUser_menu(){
         'access arguments'  => array(1),
         'file'              => 'includes/manage.pages.inc',  
     );
+    $menu['project/%/manage/persons/filter/%'] = array(
+	'title arguments'   => array(1),
+	'title callback'    => 'project_title_callback',
+        'description'       => t('Display list of the project'),
+        'page callback'     => 'project_manage_persons_filter_callback',
+        'page arguments'    => array(1, 5),
+	'access callback'   => 'manage_project_access',
+        'access arguments'  => array(1),
+        'file'              => 'includes/manage.pages.inc',  
+    );
+    
+    /** researcher manage **/
     $menu['project/%/manage/persons/researcher/add'] = array(
 	'title arguments'   => array(1),
 	'title callback'    => 'project_title_callback',
@@ -144,6 +156,8 @@ function reProjectUser_theme(){
 	    'template' => 'templates/participant_card.div',
             'arguments' => array(
                 'row'  => NULL,
+		'path' => NULL,
+		'selected_tag' => NULL,
             )
 	),
     );

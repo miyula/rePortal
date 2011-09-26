@@ -69,4 +69,12 @@ div.title-div{
 
 div.participant-card-notes-div div.notes-content-div{
     margin-left: 60px;
+    width: 360px;
+}
+div.participant-card-tags-div div.selected_tag{
+    background-color: #FF7400;
+    color: #ffffff;
+}
+div.participant-card-tags-div div.selected_tag a{
+    color: #ffffff;
 }

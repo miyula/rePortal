@@ -64,7 +64,7 @@ function project_manage_persons_list_callback($path){
         $rows[] = array(
             '<div class="participant-card-name-div">'.$row->name.'</div>',
             array(
-                'data'  => theme('participants_card_div', $row),
+                'data'  => theme('participants_card_div', $row, $project->path),
                 'colspan' => 3,
             ),
             '<p class="operation-p"><a class="delete_link" href="'.url("project/$path/manage/persons/participant/remove/{$row->id}").'">Remove</a></p>'
@@ -75,6 +75,85 @@ function project_manage_persons_list_callback($path){
     $content.= theme('participants_tags_div');
     $content.= '<div class="project-manage-page-table-div">'.theme_table($header, $rows).'</div>';
     $content.= theme('pager');
+    $project->right_part = $content;    
+    return theme('project_manage_page',$project);
+}
+
+
+/**
+ * Menu callback for project/%/manage/persons/filter/%
+ */
+function project_manage_persons_filter_callback($path, $tag){
+    $project = prepare_project_manage_page($path);    
+    
+    drupal_add_css(drupal_get_path('module','reProjectUser').'/css/user_manage.css');
+    
+    //add jQuery ui
+    load_jquery_ui();
+    drupal_add_js(drupal_get_path('module','reProjectUser').'/js/edit_tags_window.js');
+    
+    //add ajax link Drupal.settings.reProjectUser.base_path
+    drupal_add_js(array('reProjectUser'=>array('base_path'=>url('project/'.$path.'/manage/persons/'))),'setting');
+    //get right part info
+    
+    //get researchers
+    $content.= '<h2>Researchers list</h2>';
+    $content.= '<p><a href="'.url('project/'.$path.'/manage/persons/researcher/add').'" class="add_link">Add researcher</a></p>';
+    $rows = array();
+    $header = array(
+        //array('data'=>'Photo'),
+        array('data'=>'Name'),
+        array('data'=>'Email'),
+    );
+        
+    $sql = "SELECT name, mail FROM {research_projects_persons_list} AS p, {users} AS u WHERE p.project=%d AND p.user=u.uid AND p.role='researcher'";
+    $res = db_query($sql, $project->id);
+    while($row=db_fetch_object($res)){
+        $rows[] = array(
+            $row->name,
+            $row->mail,
+        );
+    }
+    $content.= theme_table($header, $rows);
+    
+    $content.= '<p>&nbsp;</p>';    
+    //get normal user
+    $content.= '<h2>Participants list</h2>';
+    $content.= '<p><a href="'.url("project/$path/manage/persons").'" class="reload_link">Reload all</a></p>';   
+    $rows = array();
+    $header = array(
+        array('data'=>'Name'),
+        array('data'=>'Email'),
+        array('data'=>'Phone'),
+        array('data'=>'Notes'),
+        array('data'=>'Operations'),
+    );
+    
+    $rows[] = array(
+        array(
+            'data'  =>   '<div id="new_participant_info_card_form_div">'.drupal_get_form('new_participant_info_card_form', $project).'</div>',
+            'colspan' => 5,
+        ),
+    );
+        
+    $sql2 = "SELECT id, name, email, phone, tags, notes FROM {research_projects_participants_cards} WHERE project=%d AND tags LIKE '%;$tag;%' ORDER BY created DESC";
+    $res = db_query($sql2, $project->id, $tag);
+    while($row=db_fetch_object($res)){
+        $tags = get_tags_as_array($row->tags);
+        $row->tags_array = $tags;
+        $rows[] = array(
+            '<div class="participant-card-name-div">'.$row->name.'</div>',
+            array(
+                'data'  => theme('participants_card_div', $row, $project->path, $tag),
+                'colspan' => 3,
+            ),
+            '<p class="operation-p"><a class="delete_link" href="'.url("project/$path/manage/persons/participant/remove/{$row->id}").'">Remove</a></p>'
+                .'<p class="operation-p"><a class="edit_link" href="'.url("project/$path/manage/persons/participant/edit/{$row->id}").'">Edit</a></p>'
+                .'<p class="operation-p"><a class="tags_link window_tab" href="javascript:onclick_edit_tags('.$row->id.');" target="_blank">Tags</a></p>',
+        );
+    }
+    $content.= theme('participants_tags_div');
+    $content.= '<div class="project-manage-page-table-div">'.theme_table($header, $rows).'</div>';
     $project->right_part = $content;    
     return theme('project_manage_page',$project);
 }
