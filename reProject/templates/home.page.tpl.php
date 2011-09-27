@@ -31,5 +31,5 @@
 
 <!-- footer navigation -->
 <div class="footer-navigation">
-    <p><a href="<?=url('project/'.$project->path.'/manage'); ?>">Manage</a> | <a href="<?=url('project/'.$project->path.'/help'); ?>">Help</a></p>
+    <p><a href="<?=url('project/'.$project->path.'/manage'); ?>">Manage</a> | <a href="<?=url('project/'.$project->path.'/content/Help_page'); ?>">Help</a></p>
 </div>
