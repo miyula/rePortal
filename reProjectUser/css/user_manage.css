@@ -36,6 +36,9 @@ textarea#edit-notes{
 form#new-participant-info-card-form input.form-text{
     width: 130px;
 }
+form#new-participant-info-card-form div.textarea-identifier{
+    display:none;
+}
 
 div.participant-card-tags-div div.tags-title-div{
     float: left;
