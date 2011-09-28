@@ -146,6 +146,16 @@ function reTool_menu(){
         'access arguments'  => array(1),
         'file'              => 'includes/manage.pages.inc',  
     );
+    $menu['project/%/manage/tools/editlink/%'] = array(
+        'title arguments'   => array(1),
+	'title callback'    => 'project_title_callback',
+        'description'       => t('Remove the tool'),
+        'page callback'     => 'project_manage_tools_editlink_callback',
+        'page arguments'    => array(1, 5),
+	'access callback'   => 'manage_project_access',
+        'access arguments'  => array(1),
+        'file'              => 'includes/manage.pages.inc',
+    );
     
     return $menu;
 }

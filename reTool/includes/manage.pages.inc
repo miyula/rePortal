@@ -80,3 +80,8 @@ function project_manage_tools_remove_callback($path, $tool_id){
     project_remove_tool($project, $tool_id);
     drupal_goto('project/'.$path.'/manage/tools');
 }
+
+/**
+ * Menu callback for project/%/manage/tools/editlink/%
+ */
+function 

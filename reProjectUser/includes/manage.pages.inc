@@ -69,7 +69,7 @@ function project_manage_persons_list_callback($path){
             ),
             '<p class="operation-p"><a class="delete_link" href="'.url("project/$path/manage/persons/participant/remove/{$row->id}").'">Remove</a></p>'
                 .'<p class="operation-p"><a class="edit_link" href="'.url("project/$path/manage/persons/participant/edit/{$row->id}").'">Edit</a></p>'
-                .'<p class="operation-p"><a class="tags_link window_tab" href="javascript:onclick_edit_tags('.$row->id.');" target="_blank">Tags</a></p>',
+                .'<p class="operation-p"><a class="tags_link window_tab" href="javascript:void(0);" onclick="onclick_edit_tags('."'".$row->id."'".');" >Tags</a></p>',
         );
     }
     $content.= theme('participants_tags_div');
@@ -149,7 +149,7 @@ function project_manage_persons_filter_callback($path, $tag){
             ),
             '<p class="operation-p"><a class="delete_link" href="'.url("project/$path/manage/persons/participant/remove/{$row->id}").'">Remove</a></p>'
                 .'<p class="operation-p"><a class="edit_link" href="'.url("project/$path/manage/persons/participant/edit/{$row->id}").'">Edit</a></p>'
-                .'<p class="operation-p"><a class="tags_link window_tab" href="javascript:onclick_edit_tags('.$row->id.');" target="_blank">Tags</a></p>',
+                .'<p class="operation-p"><a class="tags_link window_tab" href="javascript:void(0);" onclick="onclick_edit_tags('."'".$row->id."'".');">Tags</a></p>',
         );
     }
     $content.= theme('participants_tags_div');
