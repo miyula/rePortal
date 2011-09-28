@@ -84,4 +84,3 @@ function project_manage_tools_remove_callback($path, $tool_id){
 /**
  * Menu callback for project/%/manage/tools/editlink/%
  */
-function 
