@@ -280,31 +280,9 @@ function create_new_project($project){
         //update project activity
         update_project_activity($project->id, 1);
         
-        //step.2 create default page for project
+        //invoke hook_create_project().
+        module_invoke_all('create_project', $project);
         
-        global $user;
-        
-        //create defautl home page
-        $node = new stdClass;
-        $node->title = "Home page";
-        $node->body = "Please input home page information here for your project. The home page is a public page that everyone can see. Please don't put any confidential informatoin here!";
-        $node->uid = $user->uid;
-        $node->type = 'projectcontent';
-        node_save($node);
-        project_add_content($project->id, $node->nid, 'homepage', FALSE);
-        
-        //create defautl help page
-        $node = new stdClass;
-        $node->title = "Help page";
-        $node->body = "Please input help infor here. The help page is to guide people who are interested in how to participate or contact project. The help page is a public page that everyone can see. Please don't put any confidential informatoin here!";
-        $node->uid = $user->uid;
-        $node->type = 'projectcontent';
-        node_save($node);
-        project_add_content($project->id, $node->nid, 'helppage', FALSE);
-        
-        //create term of use page
-        load_term_of_use_node($project);
-        load_first_guide_node($project);
         return TRUE;
         
         

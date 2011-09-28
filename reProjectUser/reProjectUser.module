@@ -41,6 +41,18 @@ function reProjectUser_menu(){
         'access arguments'  => array(1),
         'file'              => 'includes/manage.pages.inc',  
     );
+    $menu['project/%/manage/persons/filter/%'] = array(
+	'title arguments'   => array(1),
+	'title callback'    => 'project_title_callback',
+        'description'       => t('Display list of the project'),
+        'page callback'     => 'project_manage_persons_filter_callback',
+        'page arguments'    => array(1, 5),
+	'access callback'   => 'manage_project_access',
+        'access arguments'  => array(1),
+        'file'              => 'includes/manage.pages.inc',  
+    );
+    
+    /** researcher manage **/
     $menu['project/%/manage/persons/researcher/add'] = array(
 	'title arguments'   => array(1),
 	'title callback'    => 'project_title_callback',
@@ -144,6 +156,8 @@ function reProjectUser_theme(){
 	    'template' => 'templates/participant_card.div',
             'arguments' => array(
                 'row'  => NULL,
+		'path' => NULL,
+		'selected_tag' => NULL,
             )
 	),
     );
@@ -328,4 +342,25 @@ function add_tag_to_participant($pid, $id, $tag){
  */
 function check_tag_in_participant($tags, $tag){
     return (strstr($tags, ';'.$tag.';'));
+}
+
+/**
+ * Remove tag from participant card
+ * @param
+ *   $pid, the id of project
+ * @param
+ *   $id, the id of participant
+ * @param
+ *   $tag, string
+ */
+function remove_tag_from_participant($pid, $id, $tag){
+    //get tags
+    $get = 'SELECT tags FROM {research_projects_participants_cards} WHERE id=%d AND project=%d';
+    $tags = db_result(db_query($get, $id, $pid));
+    if(!empty($tags)){
+	$new_tags = str_replace(";$tag;", '', $tags);
+    }
+    //update table
+    $update = '{UPDATE {research_projects_participants_cards} SET tags="%s" WHERE id=%d AND project=%d';
+    return db_query($update, $new_tags, $id, $pid);
 }

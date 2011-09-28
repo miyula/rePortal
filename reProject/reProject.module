@@ -264,22 +264,6 @@ function log_operation($project_id, $type, $content, $link, $module){
     db_query($sql, $project_id, $user->uid, $type, $ip, $content, $link, $module);
 }
 
-
-
-/**
- * Remove the content from project
- * @param
- *   $pid,  the id of project
- * @param
- *   $nid,  the id of node
- */
-function project_remove_content($pid, $nid){
-    $sql = "DELETE {research_projects_contents} WHERE project=%d AND node=%d AND deletable=1";
-    db_query($sql, $pid, $nid);
-    //remove node from database
-    node_delete($nid);
-}
-
 /**
  * Update project activity
  * @param
