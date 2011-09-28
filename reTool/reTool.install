@@ -8,6 +8,7 @@ function reTool_install(){
     drupal_install_schema('research_tools');
     drupal_install_schema('research_project_tools_list');
     drupal_install_schema('research_tool_links');
+    drupal_install_schema('research_project_tool_links');
 }
 
 /**
@@ -18,6 +19,21 @@ function reTool_uninstall(){
     drupal_uninstall_schema('research_tools');
     drupal_uninstall_schema('research_project_tools_list');
     drupal_uninstall_schema('research_tool_links');
+    drupal_uninstall_schema('research_project_tool_links');
+}
+
+/**
+ * Implementation of hook_update_N().
+ * Create new table {research_project_tool_links}
+ */
+function reTool_update_1(){
+   $ret = array();
+   
+   //create new table
+   $schema = research_project_tool_links_schema();
+   db_create_table($ret, 'research_project_tool_links', $schema['research_project_tool_links']);
+   
+   return $ret;
 }
 
 /**
@@ -115,6 +131,57 @@ function research_tool_links_schema(){
                 'type' => 'varchar',
                 'length' => 255,
                 'not null' => TRUE,
+            ),
+            'created' => array(
+                'type' => 'datetime',
+                'not null' => TRUE,
+            ),
+            'changed' => array(
+                'type' => 'datetime',
+                'not null' => TRUE,
+            ),
+        ),
+        'primary key' => array('id'),
+    );
+    return $schema;
+}
+
+/**
+ * Implementation of hook_schema().
+ */
+function research_project_tool_links_schema(){
+    $schema['research_project_tool_links'] = array(
+        'fields' => array(
+            'id' => array(
+                'type' => 'serial',
+                'unsigned' => TRUE,
+                'not null' => TRUE,
+            ),
+            'project' => array(
+                'type' => 'int',
+                'unsigned' => TRUE,
+                'not null' => TRUE,
+            ),
+            'tool' => array(
+                'type' => 'int',
+                'unsigned' => TRUE,
+                'not null' => TRUE,
+            ),
+            'title' => array(
+                'type' => 'varchar',
+                'length' => 45,
+                'not null' => TRUE,
+            ),
+            'url' => array(
+                'type' => 'varchar',
+                'length' => 255,
+                'not null' => TRUE,
+            ),
+            'permission' => array(
+                'type' => 'varchar',
+                'length' => 45,
+                'not null' => TRUE,
+                'default' => 'PUBLIC',
             ),
             'created' => array(
                 'type' => 'datetime',
