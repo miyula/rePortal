@@ -155,10 +155,11 @@ function project_content_edit_form_submit($form, &$form_state){
         db_query($update, $permission, $id);
     }else{
         $node = new stdClass;
+        $node->type = 'projectcontent';
         $node->title = $title;
         $node->body = $body;
         node_save($node);
-        project_add_content($project_id, $node->nid, $permission);
+        project_add_content($project_id, $node->nid, $permission, 'default', 1);
     }
     drupal_goto(get_project_url($project_id).'/manage/contents');
 
