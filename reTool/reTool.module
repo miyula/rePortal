@@ -205,7 +205,7 @@ function reTool_theme(){
 function reTool_project_manage_navigation($project){
     //return manage navigation menus
     $navigation[] = array(
-        'title' => 'Tools manage',
+        'title' => 'Manage tools',
         'url'   => 'project/'.$project->path.'/manage/tools',
         'weight'=> 0,
     );

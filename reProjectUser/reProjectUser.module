@@ -188,7 +188,7 @@ function reProjectUser_theme(){
 function reProjectUser_project_manage_navigation($project){
     //return manage navigation menus
     $navigation[] = array(
-        'title' => 'Persons manage',
+        'title' => 'Manage persons',
         'url'   => 'project/'.$project->path.'/manage/persons',
         'weight'=> 0,
     );

@@ -132,7 +132,7 @@ function reProjectContent_create_project($project){
 function reProjectContent_project_manage_navigation($project){
     //return manage navigation menus
     $navigation[] = array(
-        'title' => 'Content manage',
+        'title' => 'Manage contents',
         'url'   => 'project/'.$project->path.'/manage/contents',
         'weight'=> 0,
     );
