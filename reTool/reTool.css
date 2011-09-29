@@ -1,0 +1,6 @@
+div#new_tool_link_form_div div.form-item, div#new_tool_link_form_div input#edit-add{
+    float:left;
+    display: inline;
+    overflow: auto;
+    margin: 5px;
+}

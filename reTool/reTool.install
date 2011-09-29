@@ -183,6 +183,12 @@ function research_project_tool_links_schema(){
                 'not null' => TRUE,
                 'default' => 'PUBLIC',
             ),
+            'weight' => array(
+                'type' => 'int',
+                'size' => 'tiny',
+                'not null' => TRUE,
+                'default' => 0,
+            ),
             'created' => array(
                 'type' => 'datetime',
                 'not null' => TRUE,

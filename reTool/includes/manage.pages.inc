@@ -21,7 +21,8 @@ function project_manage_tools_list_callback($path){
         $rows[] = array(
             "<image src='{$row->logo}' width='100px' />",
             "<a href='".url('research/tools/view/'.$row->id)."' target='_blank'>{$row->name}</a>",
-            "<a href='".url("project/$path/manage/tools/remove/{$row->id}")."' class='delete_link'>Remove</a>",
+            "<p><a href='".url("project/$path/manage/tools/remove/{$row->id}")."' class='delete_link'>Remove</a></p>"
+            ."<p><a href='".url("project/$path/manage/tools/editlink/{$row->id}")."' class='links_link'>Related links</a></p>",
         );
     }
     $content.= theme_table($header, $rows);
@@ -84,3 +85,85 @@ function project_manage_tools_remove_callback($path, $tool_id){
 /**
  * Menu callback for project/%/manage/tools/editlink/%
  */
+function project_manage_tools_editlink_callback($path, $tool_id){
+    $project = prepare_project_manage_page($path);
+    
+    drupal_add_css(drupal_get_path('module','reTool').'/reTool.css');
+    
+    $project->subtitle = 'Edit tool releated links';
+    $content.= '<p class="message">The links will be showed on tool block in project home page.</p>';
+    
+    $rows = array();
+    $header = array(
+        array('data'=>'Title'),
+        array('data'=>'Link'),
+        array('data'=>'Permission'),
+        array('data'=>'Weight'),
+        array('data'=>'Operation'),
+    );
+    $rows[] = array(
+        array(
+            'data' => '<div id="new_tool_link_form_div">'.drupal_get_form('add_new_tool_related_link_form', $tool).'</div>',
+            'colspan' => 5,
+        ),
+    );
+    
+    
+    $content.= theme_table($header, $rows);
+    
+    $project->right_part = $content;
+    return theme('project_manage_page',$project);
+}
+/** add new tool related link form **/
+function add_new_tool_related_link_form($form_state, $tool){
+    $form['project'] = array(
+        '#type'     => 'hidden',
+        '#value'    => $tool->project,
+    );
+    $form['tool'] = array(
+        '#type'     => 'hidden',
+        '#value'    => $tool->id,
+    );
+    $form['title'] = array(
+        '#type'     => 'textfield',
+        '#size'     => 15,
+        '#required' => TRUE,
+    );
+    $form['url'] = array(
+        '#type'     => 'textfield',
+        '#size'     => 20,
+        '#required' => TRUE,
+    );
+    $options = array(
+        'PUBLIC'   => 'Public',
+        'CONFIDENTIAL' => 'Only available for researchers',
+    );
+    $form['permission'] = array(
+        '#type'     => 'select',
+        '#options'  => $options,
+    );
+    $form['weight'] = array(
+        '#type'     => 'weight',
+        '#required' => TRUE,
+    );
+    $form['add'] = array(
+        '#type'     => 'submit',
+        '#value'    => t('Add'),
+    );
+    return $form;
+}
+function add_new_tool_related_link_submit($form, &$form_state){
+    $project = $form_state['values']['project'];
+    $tool = $form_state['values']['tool'];
+    $title = $form_state['values']['title'];
+    $url = $form_state['values']['url'];
+    $weight = $form_state['values']['weight'];
+    $permission = $form_state['values']['permission'];
+    
+    $add = 'INSERT INTO {research_project_tool_links}(project, tool, title, url, weight, permission, created, changed) VALUES(%d, %d, "%s", "%s", %d, "%s", NOW(), NOW())';
+    db_query($add, $project, $tool, $title, $url, $weight, $permission);
+}
+/** manage_tool_related_links form **/
+function manage_tool_related_links_form($form_state, $links){
+    
+}
