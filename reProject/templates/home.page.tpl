@@ -21,7 +21,7 @@
         <p class="research-tool-name-p"><a class="tab-window-link" href="<?=url("research/tools/{$tool['id']}")?>"><?=$tool['name']?></a></p>
         <ul>
             <li><a class="tab-window-link" href="<?=url("research/tools/{$tool['id']}")?>">Read more</a></li>
-            <li><a class="tab-window-link" href="<?=$tool['download']?>">View data</a></li>
+            
         </ul>
     </div>
     <?php endforeach; ?>

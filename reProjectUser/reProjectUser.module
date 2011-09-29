@@ -364,3 +364,34 @@ function remove_tag_from_participant($pid, $id, $tag){
     $update = '{UPDATE {research_projects_participants_cards} SET tags="%s" WHERE id=%d AND project=%d';
     return db_query($update, $new_tags, $id, $pid);
 }
+
+/**
+ * Check if the user is the researcher in the project
+ * @param
+ *   $pid, the id of project
+ * @param
+ *   $user, the user object
+ */
+function is_project_researcher($pid, $user){
+    $project = load_project($pid, 'id');
+    if($project){
+        if((bool)$user->uid && $user->status==1){
+            if($project->creator==$user->uid){
+                return TRUE;
+            }
+            //find user in person list
+            $sql = "SELECT COUNT(*) FROM {research_projects_persons_list} WHERE project=%d AND user=%d AND role='researcher'";
+            if(db_result(db_query($sql, $project->id, $user->uid))>0){
+                return TRUE;
+            }
+	}
+    }
+    return FALSE;
+}
+
+/**
+ * Check if the user is the participant in the project
+ */
+function is_project_participant($pid, $uid){
+    
+}

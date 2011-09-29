@@ -71,6 +71,7 @@ function project_display_callback($path){
         $tools = array();
         $res = db_query($sql, $project->id);
         while($tool=db_fetch_object($res)){
+            $tool->links = load_project_tool_links($project->id, $tool->id);
             $tools[] = $tool;
         }
         $project->tools_list = $tools;

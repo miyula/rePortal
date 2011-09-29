@@ -93,13 +93,18 @@ function project_manage_tools_editlink_callback($path, $tool_id){
     $project->subtitle = 'Edit tool releated links';
     $content.= '<p class="message">The links will be showed on tool block in project home page.</p>';
     
+    //get tool info
+    $tool = new stdClass;
+    $tool->project = $project->id;
+    $tool->id = $tool_id;
+    
     $rows = array();
     $header = array(
-        array('data'=>'Title'),
-        array('data'=>'Link'),
-        array('data'=>'Permission'),
-        array('data'=>'Weight'),
-        array('data'=>'Operation'),
+        array('data'=>'Title', 'width'=>'100px'),
+        array('data'=>'Link', 'width'=>'320px'),
+        array('data'=>'Permission','width'=>'150px'),
+        array('data'=>'Weight', 'width'=>'70px'),
+        array('data'=>'Operation','width'=>'100px'),
     );
     $rows[] = array(
         array(
@@ -108,11 +113,36 @@ function project_manage_tools_editlink_callback($path, $tool_id){
         ),
     );
     
+    //get links list
+    $get = 'SELECT id, project, tool, title, url, permission, weight FROM {research_project_tool_links} WHERE project=%d AND tool=%d ORDER BY weight';
+    $res = db_query($get, $project->id, $tool_id);
+    while($row = db_fetch_object($res)){
+        $rows[] = array(
+            '<div class="project-tool-title-div">'.$row->title.'</div>',
+            '<div class="project-tool-link-div">'.l($row->url,$row->url, array('att'=>'')).'</div>',
+            $row->permission,
+            $row->weight,
+            '<a href="'.url("project/$path/manage/tools/removelink/$tool_id/{$row->id}").'" class="delete_link">Remove</a>'
+        );
+    }
+    
     
     $content.= theme_table($header, $rows);
     
     $project->right_part = $content;
     return theme('project_manage_page',$project);
+}
+
+/**
+ * Menu callback for project/%/manage/tools/removelink/%/%
+ */
+function project_manage_tools_link_remove_callback($path, $tool_id, $link_id){
+    $project = prepare_project_manage_page($path);
+    
+    //remove
+    $remove = 'DELETE FROM {research_project_tool_links} WHERE id=%d AND project=%d AND tool=%d';
+    db_query($remove, $link_id, $project->id, $tool_id);
+    drupal_goto("project/$path/manage/tools/editlink/$tool_id");
 }
 /** add new tool related link form **/
 function add_new_tool_related_link_form($form_state, $tool){
@@ -136,7 +166,7 @@ function add_new_tool_related_link_form($form_state, $tool){
     );
     $options = array(
         'PUBLIC'   => 'Public',
-        'CONFIDENTIAL' => 'Only available for researchers',
+        'CONFIDENTIAL' => 'Only for researchers',
     );
     $form['permission'] = array(
         '#type'     => 'select',
@@ -152,7 +182,7 @@ function add_new_tool_related_link_form($form_state, $tool){
     );
     return $form;
 }
-function add_new_tool_related_link_submit($form, &$form_state){
+function add_new_tool_related_link_form_submit($form, &$form_state){
     $project = $form_state['values']['project'];
     $tool = $form_state['values']['tool'];
     $title = $form_state['values']['title'];

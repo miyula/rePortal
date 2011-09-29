@@ -37,6 +37,20 @@ function reTool_update_1(){
 }
 
 /**
+ * Implementation of hook_update_N().
+ * Add new column weight to table {research_project_tool_links}
+ */
+function reTool_update_2(){
+   $ret = array();
+   
+   //add new column weight
+   db_add_field($ret, 'research_project_tool_links', 'weight',
+       array('type' => 'int', 'size' => 'tiny', 'not null' => TRUE, 'default' => 0,));
+   
+   return $ret;
+}
+
+/**
  * Implementation of hook_schema().
  */
 function research_tools_schema(){

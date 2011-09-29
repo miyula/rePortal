@@ -62,6 +62,13 @@ a.links_link{
     padding-right: 5px;
     cursor: pointer;
 }
+a.list_link{
+    background: url('../images/list-link.png') no-repeat left top;
+    font-size: 14px;
+    padding-left: 20px;
+    padding-right: 5px;
+    cursor: pointer;
+}
 
 img.tool_logo_image{
     width: 120px;
