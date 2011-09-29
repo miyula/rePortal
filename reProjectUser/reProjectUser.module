@@ -131,6 +131,26 @@ function reProjectUser_menu(){
         'access arguments'  => array(1),
         'file'              => 'includes/manage.participant.tags.inc',
     );
+    $menu['project/%/manage/persons/tags/manage'] = array(
+        'title arguments'   => array(1),
+	'title callback'    => 'project_title_callback',
+        'description'       => t('Manage project participants tags'),
+        'page callback'     => 'manage_participant_tags_callback',
+        'page arguments'    => array(1),
+	'access callback'   => 'manage_project_access',
+        'access arguments'  => array(1),
+        'file'              => 'includes/manage.participant.tags.inc',
+    );
+    $menu['project/%/manage/persons/tags/remove/%'] = array(
+        'title arguments'   => array(1),
+	'title callback'    => 'project_title_callback',
+        'description'       => t('Remove project participants tag'),
+        'page callback'     => 'manage_participant_tag_remove_callback',
+        'page arguments'    => array(1, 6),
+	'access callback'   => 'manage_project_access',
+        'access arguments'  => array(1),
+        'file'              => 'includes/manage.participant.tags.inc',
+    );
     return $menu;
 }
 
@@ -148,7 +168,6 @@ function reProjectUser_theme(){
         'participants_tags_div' => array(
             'template' => 'templates/edit_tags.div',
             'arguments' => array(
-                'tags'  => NULL,
                 'project' => NULL,
             )
         ),
@@ -394,4 +413,22 @@ function is_project_researcher($pid, $user){
  */
 function is_project_participant($pid, $uid){
     
+}
+
+/**
+ * Get project all participants
+ * @param
+ *   $pid, the id of the project
+ *
+ * @return
+ *   Array
+ */
+function get_project_all_participants($pid){
+    $get = 'SELECT id, project, user, name, email, phone, tags, notes, created, changed FROM {research_projects_participants_cards} WHERE project=%d';
+    $res = db_query($get, $pid);
+    $participants = array();
+    while($row = db_fetch_object($res)){
+	$participants[] = $row;
+    }
+    return $participants;
 }
