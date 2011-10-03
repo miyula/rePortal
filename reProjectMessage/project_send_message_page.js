@@ -29,10 +29,14 @@ $(document).ready(function(){
             var url = Drupal.settings.projectmanage.base_path+'message/templates/get/'+tid;
             $.getJSON(url,function(data){
                 if(data.title && data.content){
-                   $('#edit-title').val(data.title);
-                   Drupal.ckeditorToggle('edit-body','Switch to plain text editor','Switch to rich text editor',1);
-                   $('#edit-body').val(data.content);
-                   Drupal.ckeditorToggle('edit-body','Switch to plain text editor','Switch to rich text editor',1);
+                    $('#edit-title').val(data.title);
+                    try{
+                        Drupal.ckeditorToggle('edit-body','Switch to plain text editor','Switch to rich text editor',1);
+                    }catch(err){}
+                    $('#edit-body').val(data.content);
+                    try{
+                        Drupal.ckeditorToggle('edit-body','Switch to plain text editor','Switch to rich text editor',1);
+                    }catch(err){}
                 }
             }); 
         }
