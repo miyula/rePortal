@@ -81,7 +81,7 @@ function message_sms_sending_form_validate($form, &$form_state){
 }
 function message_sms_sending_form_submit($form, &$form_state){
     $to = $form_state['values']['to-list'];
-    $body = $form_state['values']['body'];
+    $body = strip_tags($form_state['values']['body']);
     $to_phone = $form_state['values']['to-phone']; 
     
     send_group_sms($to_phone,$body);
