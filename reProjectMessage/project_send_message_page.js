@@ -31,7 +31,7 @@ $(document).ready(function(){
                 if(data.title && data.content){
                    $('#edit-title').val(data.title);
                    $('#edit-body').val(data.content);
-                   Drupal.ckeditorToggle('edit-body');
+                   Drupal.ckeditorToggle('edit-body','Switch to plain text editor','Switch to rich text editor',1);
                 }
             }); 
         }
