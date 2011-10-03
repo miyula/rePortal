@@ -11,6 +11,9 @@ function project_manage_message_email_callback($path){
     //add js
     drupal_add_js(drupal_get_path('module','reProjectMessage').'/project_send_message_page.js');
     
+    //add ajax link Drupal.settings.projectmanage.base_path
+    drupal_add_js(array('projectmanage'=>array('base_path'=>url('project/'.$path.'/manage/'))),'setting');
+    
     //get person list
     $get = 'SELECT id, user, name, email, phone, tags, notes FROM {research_projects_participants_cards} WHERE project=%d ORDER BY created';
     $res = db_query($get, $project->id);

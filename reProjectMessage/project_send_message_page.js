@@ -23,6 +23,19 @@ $(document).ready(function(){
             }
         });
     });
+    $('#edit-templates').change(function(){
+        var tid = $(this).val();
+        if(tid>0){
+            var url = Drupal.settings.projectmanage.base_path+'message/templates/get/'+tid;
+            $.getJSON(url,function(data){
+                if(data.title && data.content){
+                   $('#edit-title').val(data.title);
+                   $('#edit-body').val(data.content);
+                }
+            }); 
+        }
+        
+    });
 });
 
 function renew_to_list(){
