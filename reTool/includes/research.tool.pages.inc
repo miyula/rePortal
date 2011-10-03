@@ -143,7 +143,7 @@ function research_tool_form(&$form_state, $tool=null){
     );
     $form['submit'] = array(
         '#type'             => 'submit',
-        '#value'            => t('Add'),
+        '#value'            => t('Save'),
     );
     
     return $form;
