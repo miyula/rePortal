@@ -70,7 +70,7 @@ function research_tools_view_callback($tool_id){
         }
         $tool->links = $links;
         
-        return theme('research_tool_view_page', $tool);
+        return add_translation_widget(theme('research_tool_view_page', $tool));
     }else{
         drupal_not_found();
     }

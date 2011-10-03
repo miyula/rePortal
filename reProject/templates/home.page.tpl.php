@@ -7,7 +7,7 @@
  * $project, the project object
  */
 ?>
-<div class="project-introduction-div"><?=$project->homepage->body;?></div>
+<div class="project-introduction-div"><?=add_translation_widget($project->homepage->body);?></div>
 
 <!-- start part of Research tools -->
 <div id="research-tools-div">
