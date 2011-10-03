@@ -30,6 +30,7 @@ $(document).ready(function(){
             $.getJSON(url,function(data){
                 if(data.title && data.content){
                    $('#edit-title').val(data.title);
+                   Drupal.ckeditorToggle('edit-body','Switch to plain text editor','Switch to rich text editor',1);
                    $('#edit-body').val(data.content);
                    Drupal.ckeditorToggle('edit-body','Switch to plain text editor','Switch to rich text editor',1);
                 }
