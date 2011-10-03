@@ -31,6 +31,7 @@ $(document).ready(function(){
                 if(data.title && data.content){
                    $('#edit-title').val(data.title);
                    $('#edit-body').val(data.content);
+                   Drupal.ckeditorToggle('edit-body');
                 }
             }); 
         }
