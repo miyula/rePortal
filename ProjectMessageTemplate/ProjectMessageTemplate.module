@@ -214,6 +214,11 @@ function project_message_template_form_submit($form, &$form_state){
     $title = $form_state['values']['title'];
     $content = $form_state['values']['content'];
     
+    //remove html, php tags
+    if($type=='sms'){
+        $content = strip_tags($content);
+    }
+    
     if($id>0){
         //update
         $update = "UPDATE {project_message_templates} SET project=%d, type='%s', title='%s', content='%s', changed=NOW() WHERE id=%d";
