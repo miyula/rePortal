@@ -14,7 +14,8 @@ function ProjectMessageTemplate_menu(){
         'description'       => t('The display the list of message templates'),
         'page callback'     => 'project_manage_message_templates_callback',
         'page arguments'    => array(1),
-        'access arguments'  => array('create research project'),
+        'access callback'   => 'manage_project_access',
+        'access arguments'  => array(1),
         'type'              => MENU_CALLBACK,
     );
     $menu['project/%/manage/message/templates/add'] = array(
@@ -22,7 +23,8 @@ function ProjectMessageTemplate_menu(){
         'description'       => t('Add new message template'),
         'page callback'     => 'project_manage_message_templates_add_callback',
         'page arguments'    => array(1),
-        'access arguments'  => array('create research project'),
+        'access callback'   => 'manage_project_access',
+        'access arguments'  => array(1),
         'type'              => MENU_CALLBACK,
     );
     $menu['project/%/manage/message/templates/view/%'] = array(
@@ -30,7 +32,8 @@ function ProjectMessageTemplate_menu(){
         'description'       => t('View message template'),
         'page callback'     => 'project_manage_message_templates_view_callback',
         'page arguments'    => array(1, 6),
-        'access arguments'  => array('create research project'),
+        'access callback'   => 'manage_project_access',
+        'access arguments'  => array(1),
         'type'              => MENU_CALLBACK,
     );
     $menu['project/%/manage/message/templates/edit/%'] = array(
@@ -38,7 +41,8 @@ function ProjectMessageTemplate_menu(){
         'description'       => t('Edit the message template'),
         'page callback'     => 'project_manage_message_templates_edit_callback',
         'page arguments'    => array(1, 6),
-        'access arguments'  => array('create research project'),
+        'access callback'   => 'manage_project_access',
+        'access arguments'  => array(1),
         'type'              => MENU_CALLBACK,
     );
     $menu['project/%/manage/message/templates/delete/%'] = array(
@@ -46,9 +50,22 @@ function ProjectMessageTemplate_menu(){
         'description'       => t('DELETE the message template'),
         'page callback'     => 'project_manage_message_templates_delete_callback',
         'page arguments'    => array(1, 6),
-        'access arguments'  => array('create research project'),
+        'access callback'   => 'manage_project_access',
+        'access arguments'  => array(1),
         'type'              => MENU_CALLBACK,
     );
+    
+    //Ajax request
+    $menu['project/%/manage/message/templates/get/%'] = array(
+        'title'             => t('Get template'),
+        'description'       => t('Get template content by id'),
+        'page callback'     => 'ajax_project_manage_message_templates_get_callback',
+        'page arguments'    => array(1, 6),
+        'access callback'   => 'manage_project_access',
+        'access arguments'  => array(1),
+        'type'              => MENU_CALLBACK,
+    );
+    
     return $menu;
 }
 
@@ -56,38 +73,33 @@ function ProjectMessageTemplate_menu(){
  * Menu callback for project/%/manage/message/templates
  */
 function project_manage_message_templates_callback($path){
-    //get project id
-    $project = load_project($path);
-    if($project){
+    $project = prepare_project_manage_page($path);
+    
+    $content = '<p><a href="'.url("project/$path/manage/message/templates/add").'" class="add_link">Create new template</a></p>';
+    $rows = array();
+    $header = array(
+        array('data'=>'Title'),
+        array('data'=>'Type'),
+        array('data'=>'Abstract'),
+    );
         
-        $content = '';
-        $rows = array();
-        $header = array(
-            array('data'=>'Title'),
-            array('data'=>'Type'),
-            array('data'=>'Abstract'),
+    //get templates
+    $sql = "SELECT id,  project, type, title, content FROM  {project_message_templates} WHERE project={$project->id} ORDER BY created DESC";
+    $res = pager_query($sql, 30);
+        
+    while($row = db_fetch_object($res)){
+        $rows[] = array(
+            l($row->title, 'project/'.$path.'/manage/message/templates/edit/'.$row->id),
+            $row->type,
+            l(node_teaser($row->content, null, 600), 'project/'.$path.'/manage/message/templates/edit/'.$row->id),
         );
-        
-        //get templates
-        $sql = "SELECT id,  project, type, title, content FROM  {project_message_templates} WHERE project=%d ORDER BY created DESC";
-        $res = pager_query($sql, 30, 0, $project->id);
-        
-        while($row = db_fetch_object($res)){
-            $rows[] = array(
-                l($row->title, 'project/'.$path.'/manage/message/templates/edit/'.$row->id),
-                $row->type,
-                l(node_teaser($row->content, null, 600), 'project/'.$path.'/manage/message/templates/edit/'.$row->id),
-            );
-        }
-    
-        $content.= theme_table($header, $rows);
-        $content.= theme('pager');
-    
-        return $content;
-        
-    }else{
-        drupal_not_found();
     }
+    
+    $content.= theme_table($header, $rows);
+    $content.= theme('pager');
+    $project->subtitle = 'Message templates';
+    $project->right_part = $content;    
+    return theme('project_manage_page',$project);
 }
 
 /**
@@ -110,8 +122,7 @@ function project_manage_message_templates_add_callback($path){
  * Menu callback for project/%/manage/message/templates/view/%
  */
 function project_manage_message_templates_view_callback($path, $tpl_id){
-    $sql = "SELECT id,  project, type, title, content FROM  {project_message_templates} WHERE id=%d";
-    $tpl = db_fetch_object($sql, $tpl_id);
+    
     
 }
 
@@ -119,10 +130,15 @@ function project_manage_message_templates_view_callback($path, $tpl_id){
  * Menu callback for project/%/manage/message/templates/edit/%
  */
 function project_manage_message_templates_edit_callback($path, $tpl_id){
+    $project = prepare_project_manage_page($path);
+    
     //get template info
-    $sql = "SELECT id,  project, type, title, content FROM  {project_message_templates} WHERE id=%d";
-    $tpl = db_fetch_object($sql, $tpl_id);
-    return drupal_get_form('project_message_template_form', $tpl);
+    $tpl = get_message_template_by_id($tpl_id);
+    if($tpl->project==$project->id){
+        return drupal_get_form('project_message_template_form', $tpl);
+    }else{
+        drupal_not_found();   
+    }
 }
 
 /**
@@ -130,6 +146,28 @@ function project_manage_message_templates_edit_callback($path, $tpl_id){
  */
 function project_manage_message_templates_delete_callback($path, $tpl_id){
     
+}
+
+
+/**
+ * Menu callback for project/%/manage/message/templates/get/%
+ */
+function ajax_project_manage_message_templates_get_callback($path, $tpl_id){
+    drupal_set_header('Content-Type: text/plain; charset: utf-8');
+    
+    $project = load_project($path);
+    if($project){
+        //get template info
+        $tpl = get_message_template_by_id($tpl_id);
+        if($tpl->project==$project->id){
+            $result = (array) $tpl;
+            print json_encode($result);
+            exit;
+        }
+    }
+    $result = array('error'=>'1', 'error_message'=>'No template be found.');
+    print  json_encode($result);
+    exit;
 }
 
 /** message template form **/
@@ -195,4 +233,38 @@ function project_message_template_delete_form(&$form_state, $mTemplate=NULL){
 }
 function project_message_template_delete_form_submit($form, &$form_state){
     
+}
+
+/**   Database handle **/
+/**
+ * get message template object by id
+ * @param
+ *   $id, the id of the template
+ * @return
+ *   message template object
+ */
+function get_message_template_by_id($id){
+    $sql = "SELECT id,  project, type, title, content FROM  {project_message_templates} WHERE id=%d";
+    return db_fetch_object(db_query($sql, $id));
+    
+}
+
+/**
+ * Get message templates options by type
+ * @param
+ *   $pid, the id of the project
+ * @param
+ *   $type, string, sms/email
+ * @return
+ *   Array
+ */
+function get_message_templates_options_by_type($pid, $type){
+    $options = array();
+    $options[0] = '--Select a template--';
+    $sql = "SELECT id, title FROM  {project_message_templates} WHERE project=%d AND TYPE='%s' ORDER BY created";
+    $res = db_query($sql, $pid, $type);
+    while($row=db_fetch_object($res)){
+        $options[$row->id] = $row->title;   
+    }
+    return $options; 
 }

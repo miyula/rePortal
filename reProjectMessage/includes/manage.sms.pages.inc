@@ -9,7 +9,7 @@ function project_manage_message_sms_callback($path){
     //add css
     drupal_add_css(drupal_get_path('module','reProjectMessage').'/message.css');
     //add js
-    drupal_add_js(drupal_get_path('module','reProjectMessage').'/person_list.js');
+    drupal_add_js(drupal_get_path('module','reProjectMessage').'/project_send_message_page.js');
     
     //get person list
     $get = 'SELECT id, user, name, email, phone, tags, notes FROM {research_projects_participants_cards} WHERE project=%d ORDER BY created';
@@ -19,7 +19,7 @@ function project_manage_message_sms_callback($path){
         $list[] = $p;
     }
     $content.= theme('project_person_list_div', $list, 'sms');
-    $content.= drupal_get_form('message_sms_sending_form');
+    $content.= drupal_get_form('message_sms_sending_form', $project);
     
     $project->subtitle = t('Send SMS');
     $project->title_tabs = '<a href="'.url("project/$path/manage/message/email").'" class="mail-link">send email</a>';
@@ -29,7 +29,7 @@ function project_manage_message_sms_callback($path){
 
 /** SMS sending form **/
 
-function message_sms_sending_form(){
+function message_sms_sending_form($form_state, $project){
     $form['to-list'] = array(
         '#type'         => 'textarea',
         '#title'        => t('To'),
@@ -39,8 +39,8 @@ function message_sms_sending_form(){
     );
     $form['templates'] = array(
         '#type'         => 'select',
-        '#title'        => t('Select a template as message.'),
-        '#options'      => array('--No template--'),
+        '#title'        => t('Select a template as message (<a href="'.url("project/{$project->path}/manage/message/templates").'">Manage templates</a>).'),
+        '#options'      => get_message_templates_options_by_type($project->id, 'sms'),
         '#required'     => FALSE,
     );
     $form['body'] = array(
