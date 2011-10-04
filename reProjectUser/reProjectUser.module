@@ -385,6 +385,29 @@ function remove_tag_from_participant($pid, $id, $tag){
 }
 
 /**
+ * Count participants by tag
+ * @param
+ *   $pid, the id of project
+ * @param
+ *   $tag, string
+ * @return
+ *   intenger
+ */
+function count_participants_by_tag($pid, $tag){
+    $count = 'SELECT COUNT(*) FROM {research_projects_participants_cards} WHERE project=%d AND tags like "%;%s;%"';
+    return db_result(db_query($count, $pid, $tag));
+}
+/**
+ * Count participants by project
+ * @param
+ *   $pid, the id of project
+ */
+function count_participants_by_project($pid){
+    $count = 'SELECT COUNT(*) FROM {research_projects_participants_cards} WHERE project=%d';
+    return db_result(db_query($count, $pid));
+}
+
+/**
  * Check if the user is the researcher in the project
  * @param
  *   $pid, the id of project
