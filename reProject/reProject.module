@@ -234,6 +234,7 @@ function prepare_project_manage_page($path){
     $project = load_project($path);
     if($project){
         drupal_add_css(drupal_get_path('module','reProject').'/css/manage.css');
+	drupal_add_js(drupal_get_path('module','reProject').'/js/manage.js');
         //get navigation list
         $navigation = module_invoke_all('project_manage_navigation', $project);
         usort($navigation, "weight_sort");
