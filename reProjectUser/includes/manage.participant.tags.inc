@@ -73,7 +73,7 @@ function manage_participant_tags_callback($path){
         $tag_count = count_participants_by_tag($project->id, $tag['tag']);
         $rows[] = array(
             $tag['tag'],
-            $tag_count.'/'.$participants_count.' ('.($tag_count/$participants_count*100).'%)',
+            $tag_count.'/'.$participants_count.' ('.number_format($tag_count/$participants_count*100, 2).'%)',
             '<a class="delete_link" href="'.url("project/$path/manage/persons/tags/remove/{$tag['tag']}").'">Remove</a>',
         );
     }
