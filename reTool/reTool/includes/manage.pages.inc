@@ -22,7 +22,7 @@ function project_manage_tools_list_callback($path){
             "<image src='{$row->logo}' width='100px' />",
             "<a href='".url('research/tools/view/'.$row->id)."' target='_blank'>{$row->name}</a>",
             "<p><a href='".url("project/$path/manage/tools/remove/{$row->id}")."' class='delete_link'>Remove</a></p>"
-            ."<p><a href='".url("project/$path/manage/tools/editlink/{$row->id}")."' class='links_link'>Related links</a></p>",
+            ."<p><a href='".url("project/$path/manage/tools/editlinks/{$row->id}")."' class='links_link'>Related links</a></p>",
         );
     }
     $content.= theme_table($header, $rows);
@@ -83,7 +83,7 @@ function project_manage_tools_remove_callback($path, $tool_id){
 }
 
 /**
- * Menu callback for project/%/manage/tools/editlink/%
+ * Menu callback for project/%/manage/tools/editlinks/%
  */
 function project_manage_tools_editlink_callback($path, $tool_id){
     $project = prepare_project_manage_page($path);
@@ -122,7 +122,8 @@ function project_manage_tools_editlink_callback($path, $tool_id){
             '<div class="project-tool-link-div">'.l($row->url,$row->url, array('att'=>'')).'</div>',
             $row->permission,
             $row->weight,
-            '<a href="'.url("project/$path/manage/tools/removelink/$tool_id/{$row->id}").'" class="delete_link">Remove</a>'
+            '<p><a href="'.url("project/$path/manage/tools/removelink/$tool_id/{$row->id}").'" class="delete_link">Remove</a></p>'.
+            '<p><a href="'.url("project/$path/manage/tools/editlink/$tool_id/{$row->id}").'" class="edit_link">Edit</a></p>',
         );
     }
     
@@ -142,7 +143,24 @@ function project_manage_tools_link_remove_callback($path, $tool_id, $link_id){
     //remove
     $remove = 'DELETE FROM {research_project_tool_links} WHERE id=%d AND project=%d AND tool=%d';
     db_query($remove, $link_id, $project->id, $tool_id);
-    drupal_goto("project/$path/manage/tools/editlink/$tool_id");
+    drupal_goto("project/$path/manage/tools/editlinks/$tool_id");
+}
+
+/**
+ * Menu callback for project/%/manage/tools/editlink/%/%
+ */
+function project_manage_tools_edit_selected_link_callback($path, $tool_id, $link_id){
+    $project = prepare_project_manage_page($path);
+    
+    $link = get_project_link($link_id);
+    if($link && $link->project==$project->id && $link->tool==$tool_id){
+        $project->subtitle = 'Edit tool link';
+        $content.= drupal_get_form('edit_tool_related_link_form', $link);
+        $project->right_part = $content;
+        return theme('project_manage_page',$project);
+    }else{
+        drupal_not_found();
+    }    
 }
 /** add new tool related link form **/
 function add_new_tool_related_link_form($form_state, $tool){
@@ -193,7 +211,64 @@ function add_new_tool_related_link_form_submit($form, &$form_state){
     $add = 'INSERT INTO {research_project_tool_links}(project, tool, title, url, weight, permission, created, changed) VALUES(%d, %d, "%s", "%s", %d, "%s", NOW(), NOW())';
     db_query($add, $project, $tool, $title, $url, $weight, $permission);
 }
-/** manage_tool_related_links form **/
-function manage_tool_related_links_form($form_state, $links){
+/** edit_tool_related_link form **/
+function edit_tool_related_link_form($form_state, $link){
+    $form['id'] = array(
+        '#type'     => 'hidden',
+        '#value'    => $link->id,  
+    );
+    $form['project'] = array(
+        '#type'     => 'hidden',
+        '#value'    => $link->project,
+    );
+    $form['tool'] = array(
+        '#type'     => 'hidden',
+        '#value'    => $link->tool,
+    );
+    $form['title'] = array(
+        '#type'     => 'textfield',
+        '#title'    => t('Link title'),
+        '#required' => TRUE,
+        '#default_value' => $link->title,
+    );
+    $form['url'] = array(
+        '#type'     => 'textfield',
+        '#title'    => t('URL'),
+        '#required' => TRUE,
+        '#default_value' => $link->url,
+    );
+    $options = array(
+        'PUBLIC'   => 'Public',
+        'CONFIDENTIAL' => 'Only for researchers',
+    );
+    $form['permission'] = array(
+        '#type'     => 'select',
+        '#title'    => t('Permission'),
+        '#options'  => $options,
+        '#default_value' => $link->permission,
+    );
+    $form['weight'] = array(
+        '#type'     => 'weight',
+        '#title'    => t('Weight'),
+        '#required' => TRUE,
+        '#default_value' => $link->weight,
+    );
+    $form['save'] = array(
+        '#type'     => 'submit',
+        '#value'    => t('Save'),
+    );
+    return $form;
+}
+function edit_tool_related_link_form_submit($form, &$form_state){
+    $id = $form_state['values']['id'];
+    $project = $form_state['values']['project'];
+    $tool = $form_state['values']['tool'];
+    $title = $form_state['values']['title'];
+    $url = $form_state['values']['url'];
+    $weight = $form_state['values']['weight'];
+    $permission = $form_state['values']['permission'];
     
+    $update = 'UPDATE {research_project_tool_links} SET title="%s", url="%s", weight=%d, permission="%s", changed=NOW() WHERE id=%d AND project=%d AND tool=%d';
+    db_query($update, $title, $url, $weight, $permission, $id, $project, $tool);
+    drupal_goto(get_project_url($project).'/manage/tools/editlinks/'.$tool);
 }
