@@ -146,12 +146,32 @@ function reTool_menu(){
         'access arguments'  => array(1),
         'file'              => 'includes/manage.pages.inc',  
     );
-    $menu['project/%/manage/tools/editlink/%'] = array(
+    $menu['project/%/manage/tools/editlinks/%'] = array(
+        'title arguments'   => array(1),
+	'title callback'    => 'project_title_callback',
+        'description'       => t('Edit links for tool'),
+        'page callback'     => 'project_manage_tools_editlink_callback',
+        'page arguments'    => array(1, 5),
+	'access callback'   => 'manage_project_access',
+        'access arguments'  => array(1),
+        'file'              => 'includes/manage.pages.inc',
+    );
+    $menu['project/%/manage/tools/removelink/%/%'] = array(
         'title arguments'   => array(1),
 	'title callback'    => 'project_title_callback',
         'description'       => t('Remove the tool'),
-        'page callback'     => 'project_manage_tools_editlink_callback',
-        'page arguments'    => array(1, 5),
+        'page callback'     => 'project_manage_tools_link_remove_callback',
+        'page arguments'    => array(1, 5, 6),
+	'access callback'   => 'manage_project_access',
+        'access arguments'  => array(1),
+        'file'              => 'includes/manage.pages.inc',
+    );
+    $menu['project/%/manage/tools/editlink/%/%'] = array(
+        'title arguments'   => array(1),
+	'title callback'    => 'project_title_callback',
+        'description'       => t('Edit the link of tool'),
+        'page callback'     => 'project_manage_tools_edit_selected_link_callback',
+        'page arguments'    => array(1, 5, 6),
 	'access callback'   => 'manage_project_access',
         'access arguments'  => array(1),
         'file'              => 'includes/manage.pages.inc',
@@ -195,7 +215,7 @@ function reTool_theme(){
 function reTool_project_manage_navigation($project){
     //return manage navigation menus
     $navigation[] = array(
-        'title' => 'Tools manage',
+        'title' => 'Manage tools',
         'url'   => 'project/'.$project->path.'/manage/tools',
         'weight'=> 0,
     );
@@ -247,4 +267,39 @@ function check_project_using_tool($project, $tid){
     }else{
         return FALSE;
     }
+}
+
+/**
+ * Get tool links related to the project
+ * @param
+ *   $pid, the id of project
+ * @param
+ *   $tid, the id of tool
+ */
+function load_project_tool_links($pid, $tid){
+    global $user;
+    
+    $sql = 'SELECT title, url FROM {research_project_tool_links} ';
+    if(is_project_researcher($pid, $user)){
+        $sql.= 'WHERE project=%d AND tool=%d ';
+    }else{
+        $sql.= 'WHERE project=%d AND tool=%d AND permission="PUBLIC" ';
+    }
+    $sql.= 'ORDER BY weight';
+    $res=db_query($sql, $pid, $tid);
+    $links = array();
+    while($row=db_fetch_object($res)){
+        $links[] = $row;
+    }
+    return $links;
+}
+
+/**
+ * Get related link object
+ * @param
+ *    $lid, the id of the link
+ */
+function get_project_link($lid){
+    $get = 'SELECT id, project, tool, title, url, permission, weight FROM {research_project_tool_links} WHERE id=%d';
+    return db_fetch_object(db_query($get, $lid));    
 }

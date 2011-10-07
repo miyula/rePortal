@@ -70,7 +70,7 @@ function research_tools_view_callback($tool_id){
         }
         $tool->links = $links;
         
-        return theme('research_tool_view_page', $tool);
+        return add_translation_widget(theme('research_tool_view_page', $tool));
     }else{
         drupal_not_found();
     }
@@ -106,10 +106,11 @@ function research_tools_delete_callback(){
 
 /************ research tool form **************/
 function research_tool_form(&$form_state, $tool=null){
+    
     $form['#attributes']['enctype'] = 'multipart/form-data';
     $form['id'] = array(
         '#type'             => 'hidden',
-        '#value'            => isset($tool->id)?isset($tool->id):0,
+        '#value'            => isset($tool->id)?$tool->id:0,
     );
     $form['name'] = array(
         '#type'             => 'textfield',
@@ -131,7 +132,7 @@ function research_tool_form(&$form_state, $tool=null){
     }
     $form['logo-path'] = array(
         '#type'             => 'hidden',
-        '#value'            => isset($tool->logo)?isset($tool->logo):'',
+        '#value'            => isset($tool->logo)?$tool->logo:'',
     );
     $form['introduction'] = array(
         '#type'             => 'textarea',
@@ -142,7 +143,7 @@ function research_tool_form(&$form_state, $tool=null){
     );
     $form['submit'] = array(
         '#type'             => 'submit',
-        '#value'            => t('Add'),
+        '#value'            => t('Save'),
     );
     
     return $form;

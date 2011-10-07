@@ -24,8 +24,9 @@ function projects_new_editpages_callback(){
  * Menu callback for projects/list
  */
 function projects_list_callback(){
-    
-    $content = '';
+    if(user_access('create research project')){
+        $content.= '<p style="text-align:right;"><a href="'.url('projects/new').'" class="add_link">Create new project</a></p>';
+    }
     $rows = array();
     $header = array(
         array('data'=>'Project name'),
@@ -70,6 +71,7 @@ function project_display_callback($path){
         $tools = array();
         $res = db_query($sql, $project->id);
         while($tool=db_fetch_object($res)){
+            $tool->links = load_project_tool_links($project->id, $tool->id);
             $tools[] = $tool;
         }
         $project->tools_list = $tools;

@@ -131,6 +131,26 @@ function reProjectUser_menu(){
         'access arguments'  => array(1),
         'file'              => 'includes/manage.participant.tags.inc',
     );
+    $menu['project/%/manage/persons/tags/manage'] = array(
+        'title arguments'   => array(1),
+	'title callback'    => 'project_title_callback',
+        'description'       => t('Manage project participants tags'),
+        'page callback'     => 'manage_participant_tags_callback',
+        'page arguments'    => array(1),
+	'access callback'   => 'manage_project_access',
+        'access arguments'  => array(1),
+        'file'              => 'includes/manage.participant.tags.inc',
+    );
+    $menu['project/%/manage/persons/tags/remove/%'] = array(
+        'title arguments'   => array(1),
+	'title callback'    => 'project_title_callback',
+        'description'       => t('Remove project participants tag'),
+        'page callback'     => 'manage_participant_tag_remove_callback',
+        'page arguments'    => array(1, 6),
+	'access callback'   => 'manage_project_access',
+        'access arguments'  => array(1),
+        'file'              => 'includes/manage.participant.tags.inc',
+    );
     return $menu;
 }
 
@@ -148,7 +168,6 @@ function reProjectUser_theme(){
         'participants_tags_div' => array(
             'template' => 'templates/edit_tags.div',
             'arguments' => array(
-                'tags'  => NULL,
                 'project' => NULL,
             )
         ),
@@ -169,7 +188,7 @@ function reProjectUser_theme(){
 function reProjectUser_project_manage_navigation($project){
     //return manage navigation menus
     $navigation[] = array(
-        'title' => 'Persons manage',
+        'title' => 'Manage persons',
         'url'   => 'project/'.$project->path.'/manage/persons',
         'weight'=> 0,
     );
@@ -363,4 +382,76 @@ function remove_tag_from_participant($pid, $id, $tag){
     //update table
     $update = '{UPDATE {research_projects_participants_cards} SET tags="%s" WHERE id=%d AND project=%d';
     return db_query($update, $new_tags, $id, $pid);
+}
+
+/**
+ * Count participants by tag
+ * @param
+ *   $pid, the id of project
+ * @param
+ *   $tag, string
+ * @return
+ *   intenger
+ */
+function count_participants_by_tag($pid, $tag){
+    $count = 'SELECT COUNT(*) FROM {research_projects_participants_cards} WHERE project=%d AND tags like "%;%s;%"';
+    return db_result(db_query($count, $pid, $tag));
+}
+/**
+ * Count participants by project
+ * @param
+ *   $pid, the id of project
+ */
+function count_participants_by_project($pid){
+    $count = 'SELECT COUNT(*) FROM {research_projects_participants_cards} WHERE project=%d';
+    return db_result(db_query($count, $pid));
+}
+
+/**
+ * Check if the user is the researcher in the project
+ * @param
+ *   $pid, the id of project
+ * @param
+ *   $user, the user object
+ */
+function is_project_researcher($pid, $user){
+    $project = load_project($pid, 'id');
+    if($project){
+        if((bool)$user->uid && $user->status==1){
+            if($project->creator==$user->uid){
+                return TRUE;
+            }
+            //find user in person list
+            $sql = "SELECT COUNT(*) FROM {research_projects_persons_list} WHERE project=%d AND user=%d AND role='researcher'";
+            if(db_result(db_query($sql, $project->id, $user->uid))>0){
+                return TRUE;
+            }
+	}
+    }
+    return FALSE;
+}
+
+/**
+ * Check if the user is the participant in the project
+ */
+function is_project_participant($pid, $uid){
+    
+}
+
+/**
+ * Get project all participants
+ * @param
+ *   $pid, the id of the project
+ *
+ * @return
+ *   Array
+ */
+function get_project_all_participants($pid){
+    $get = 'SELECT id, project, user, name, email, phone, tags, notes, created, changed FROM {research_projects_participants_cards} WHERE project=%d';
+    $res = db_query($get, $pid);
+    $participants = array();
+    while($row = db_fetch_object($res)){
+	$participants[] = $row;
+    }
+    return $participants;
 }

@@ -11,7 +11,7 @@ div.research-tool-block{
     -moz-border-radius: 5px;
     text-align: center;
     width: 200px;
-    height: 250px;
+    min-height: 250px;
     margin: 10px;
     float: left;
     display: inline;
