@@ -39,7 +39,7 @@ function project_manage_persons_list_callback($path){
     $content.= '<p>&nbsp;</p>';    
     //get normal user
     $content.= '<h2>Participants list</h2>';
-        
+    $content.= '<p><a href="'.url("project/$path/manage/persons/tags/manage").'" class="view_link">View all tags</a></p>';    
     $rows = array();
     $header = array(
         array('data'=>'Name'),

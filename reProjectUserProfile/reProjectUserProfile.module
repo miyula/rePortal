@@ -1,0 +1,47 @@
+<?php
+
+/**
+ * @file
+ * Support separate user profile page, overwrite user page.
+ */
+
+/**
+ * Implementation of hook_menu().
+ */
+function reProjectUserProfile_menu(){
+    $menu['user/%user/edit/personal_info'] = array(
+        'title' => t('Edit personal information'),
+        'description'       => t('Display edit personal information form. '),
+        'page callback'     => 'user_edit_personal_info_callback',
+        'page arguments'    => array(1, 'user'),
+        'access callback'  => 'edit_personal_info_access',
+        'access arguments' => array(1, 'user'),
+        'file'              => 'personal_info.page.inc',
+        'type'              => MENU_LOCAL_TASK,
+    );
+    return $menu;
+}
+
+/**
+ * Access callback for checking if current user has the permission to edit the profile
+ */
+function edit_personal_info_access($u){
+    global $user;
+    if($user->status>0 && $user->uid==$u->uid){
+        return TRUE;
+    }
+    return FALSE;
+}
+
+/****************** module function ******************/
+/**
+ * Get user personal infor, return object
+ * @param
+ *    $uid, the id fo user
+ */
+function load_user_personal_info($uid){
+    $sql = 'SELECT uid, user, firstname, lastname, birthday, weight, height FROM {users}  LEFT JOIN {research_project_user_profile} ON user=uid WHERE uid=%d';
+    $person_info = db_fetch_object(db_query($sql, $uid));
+    return $person_info;
+}
+
