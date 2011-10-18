@@ -38,10 +38,24 @@ function edit_personal_info_access($u){
  * Get user personal infor, return object
  * @param
  *    $uid, the id fo user
+ * @return
+ *    Object|FALSE
  */
 function load_user_personal_info($uid){
-    $sql = 'SELECT uid, user, firstname, lastname, birthday, weight, height FROM {users}  LEFT JOIN {research_project_user_profile} ON user=uid WHERE uid=%d';
-    $person_info = db_fetch_object(db_query($sql, $uid));
-    return $person_info;
+    $check = 'SELECT COUNT(uid) FROM {users} WHERE uid=%d';
+    if($uid>0 && db_result(db_query($check, $uid))>0){
+        $sql = 'SELECT user, firstname, lastname, birthday, IF(birthday="", "", ((YEAR(CURDATE())-YEAR(birthday))-(RIGHT(CURDATE(),5)<RIGHT(birthday,5)))) AS age, weight, height FROM {research_project_user_profile} WHERE user=%d';
+        $info = db_fetch_object(db_query($sql, $uid));
+        if(!$info){
+            //insert new
+            $insert = 'INSERT INTO {research_project_user_profile}  (user, created, changed) '
+                      .'VALUES(%d, NOW(), NOW())';
+            db_query($insert, $uid);
+            $info = new stdClass;
+            $info->user = $uid;
+        }
+        return $info;
+    }           
+    return FALSE;
 }
 

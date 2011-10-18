@@ -45,7 +45,8 @@ function research_project_user_profile_schema(){
                 'not null'        => TRUE,
             ),
             'birthday' => array(
-                'type'      => 'datetime',
+                'type'            => 'varchar',
+                'length'         => 10,
                 'not null'  => TRUE,
             ),
             'weight' => array(
