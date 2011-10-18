@@ -5,7 +5,6 @@
  */
 function user_edit_personal_info_callback($user){
     $info = load_user_personal_info($user->uid);
-    print_r($info);
     if($info){
         return drupal_get_form('edit_personal_information_form', $info);
     }else{
@@ -31,6 +30,18 @@ function edit_personal_information_form($form_state, $info){
         '#title' => t('Lastname'),
         '#maxlength' => 45,
         '#default_value' => isset($info->lastname)?$info->lastname:'',
+        '#required' => TRUE,
+    );
+    $gender_option = array(
+        'f' => t('Female'),
+        'm' => t('Male'),
+        's' => t('Secret'),
+    );
+    $form['gender'] = array(
+        '#type' => 'radios',
+        '#title' => t('Gender'),
+        '#options' => $gender_option,
+        '#default_value' => empty($info->gender)?'s':$info->gender,
         '#required' => TRUE,
     );
     $form['birthday'] = array(
@@ -93,13 +104,14 @@ function edit_personal_information_form_submit($form, &$form_state){
     $user = $form_state['values']['user'];
     $firstname = $form_state['values']['firstname'];
     $lastname = $form_state['values']['lastname'];
+    $gender = $form_state['values']['gender'];
     $birthday = $form_state['values']['birthday'];
     $weight = $form_state['values']['weight'];
     $height = $form_state['values']['height'];
     
     //update
-    $update = 'UPDATE {research_project_user_profile} SET firstname="%s", lastname="%s", birthday="%s", weight=%f, height=%f, changed=NOW() WHERE user=%d';
-    db_query($update, $firstname, $lastname, $birthday, $weight, $height, $user);
+    $update = 'UPDATE {research_project_user_profile} SET firstname="%s", lastname="%s", gender="%s", birthday="%s", weight=%f, height=%f, changed=NOW() WHERE user=%d';
+    db_query($update, $firstname, $lastname, $gender, $birthday, $weight, $height, $user);
     
     drupal_goto('user');
 }
