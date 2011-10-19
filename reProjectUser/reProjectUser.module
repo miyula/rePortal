@@ -22,15 +22,6 @@ function reProjectUser_menu(){
         'type'              => MENU_CALLBACK,
     );
     
-    $menu['project/%/manage/contents/termofuse'] = array(
-        'title'             => t('Edit term of use'),
-        'page callback'     => 'project_manage_content_termofuse_callback',
-        'page arguments'    => array(1),
-        'access arguments'  => array('access content'),
-        'file'              => 'includes/manage.contents.pages.inc',
-        'type'              => MENU_CALLBACK,
-    );
-    
     $menu['project/%/manage/persons'] = array(
 	'title arguments'   => array(1),
 	'title callback'    => 'project_title_callback',
@@ -51,7 +42,7 @@ function reProjectUser_menu(){
         'access arguments'  => array(1),
         'file'              => 'includes/manage.pages.inc',  
     );
-    
+
     /** researcher manage **/
     $menu['project/%/manage/persons/researcher/add'] = array(
 	'title arguments'   => array(1),
@@ -187,12 +178,20 @@ function reProjectUser_theme(){
  */
 function reProjectUser_project_manage_navigation($project){
     //return manage navigation menus
-    $navigation[] = array(
-        'title' => 'Manage persons',
-        'url'   => 'project/'.$project->path.'/manage/persons',
+    $navigation['manage']['sub_items']['persons'] = array(
+        'title' => 'Persons',
+        'url'   => generate_project_url($project->path).'/manage/persons',
+	'class' => 'person_link',
         'weight'=> 0,
     );
     return $navigation;
+}
+
+/**
+ * Implements hook_create_project().
+ */
+function reProjectUser_create_project($project){
+
 }
 
 /**

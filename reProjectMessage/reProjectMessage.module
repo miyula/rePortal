@@ -42,9 +42,10 @@ function reProjectMessage_menu(){
  */
 function reProjectMessage_project_manage_navigation($project){
     //return manage navigation menus
-    $navigation[] = array(
+    $navigation['send_message'] = array(
         'title' => 'Send message',
-        'url'   => 'project/'.$project->path.'/manage/message',
+        'url'   => generate_project_url($project->path).'/manage/message',
+	'class' => 'message_link',
         'weight'=> 1,
     );
     return $navigation;

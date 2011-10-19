@@ -8,6 +8,7 @@ function reProjectUser_install(){
     drupal_install_schema('research_projects_onetime_invite_code');
     drupal_install_schema('research_projects_participants_cards');
     drupal_install_schema('research_projects_participants_tags');
+    drupal_install_schema('research_project_invitation_templates');
 }
 
 /**
@@ -18,6 +19,7 @@ function reProjectUser_uninstall(){
     drupal_uninstall_schema('research_projects_onetime_invite_code');
     drupal_uninstall_schema('research_projects_participants_cards');
     drupal_uninstall_schema('research_projects_participants_tags');
+    drupal_uninstall_schema('research_project_invitation_templates');
 }
 
 /**
@@ -51,6 +53,22 @@ function reProjectUser_update_6011(){
     db_change_field($ret,
         'research_projects_participants_tags', 'tags', 'tag',
         array('type' => 'text', 'not null' => TRUE, 'default' => '',));
+    
+    return $ret;
+}
+
+/**
+ * Add table
+ */
+function reProjectUser_update_6012(){
+    $ret = array();
+    
+    $new_table = 'research_project_invitation_templates';
+    //check if table exist
+    if(!db_table_exists($new_table)){
+        $schema = research_project_invitation_templates_schema();
+        db_create_table($ret, $new_table, $schema[$new_table]);
+    }
     
     return $ret;
 }
@@ -181,6 +199,44 @@ function research_projects_participants_tags_schema(){
                 'type'      => 'text',
                 'not null'  => TRUE,
             ),
+            'created' => array(
+                'type'      => 'datetime',
+                'not null'  => TRUE,
+            ),
+            'changed' => array(
+                'type'      => 'datetime',
+                'not null'  => TRUE,
+            ),
+        ),
+        'primary key' => array('id'),
+            
+    );
+    return $schema;
+}
+
+function research_project_invitation_templates_schema(){
+    $schema['research_project_invitation_templates'] = array(
+        'fields' => array(
+            'id' => array(
+                'type'      => 'serial',
+                'unsigned'  => TRUE,
+                'not null'  => TRUE,
+                ),
+            'project' => array(
+                'type'      => 'int',
+                'unsigned'  => TRUE,
+                'not null'  => TRUE,
+                ),
+            'templates'    => array(
+                'type'      => 'int',
+                'unsigned'  => TRUE,
+                'not null'  => TRUE,
+                ),
+            'for'    => array(
+                'type'      => 'varchar',
+                'length'    => 20,
+                'not null'  => TRUE,
+                ),
             'created' => array(
                 'type'      => 'datetime',
                 'not null'  => TRUE,

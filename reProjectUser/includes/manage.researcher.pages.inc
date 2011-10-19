@@ -22,6 +22,7 @@ function project_invite_research_form(&$form_state, $pid){
         '#description' => t('The email account of the researcher in this protal.'),
         '#required' => TRUE,
     );
+    
     $form['submit'] = array(
         '#type' => 'submit',
         '#value' => t('Add'),
