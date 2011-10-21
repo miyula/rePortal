@@ -1,0 +1,10 @@
+; $Id$
+name            = "Research Join"
+description     = "Provide way to mange research join"
+package         = reProject
+dependencies[]  = reProject
+dependencies[]  = reProjectUser
+dependencies[]  = MessageSend
+version         = "6.x-1.0"
+core            = 6.x
+php             = 5.x
