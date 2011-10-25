@@ -16,12 +16,12 @@
     <?php foreach($project->tools_list as $tool): ?>
     <div class="research-tool-block">
         <div class="research-tool-log-div">
-            <a class="tab-window-link" href=""><img class="research-tool-logo" src="<?=$tool['logo']?>" alt="<?=$tool['name']?>"/></a>
+            <img class="research-tool-logo" src="<?=$tool['logo']?>" alt="<?=$tool['name']?>"/>
         </div>
         <p class="research-tool-name-p"><a class="tab-window-link" href="<?=url("research/tools/{$tool['id']}")?>"><?=$tool['name']?></a></p>
         <ul>
             <li><a class="tab-window-link" href="<?=url("research/tools/{$tool['id']}")?>">Read more</a></li>
-            <li><a class="tab-window-link" href="<?=$tool['download']?>">View data</a></li>
+            
         </ul>
     </div>
     <?php endforeach; ?>

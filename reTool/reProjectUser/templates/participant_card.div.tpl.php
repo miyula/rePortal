@@ -17,10 +17,12 @@
 </div>
 <div class="participant-card-tags-div">
     <div class="title-div">Tags</div>
-    <?php foreach($row->tags_array as $tag): ?>
-    <div class='participant-tag<?=($tag==$selected_tag?' selected_tag':'');?>' ><a href='<?=url("project/$path/manage/persons/filter/$tag");?>'><?=$tag; ?></a></div>
-    <?php endforeach; ?>
-    <div style="clear:both"></div>
+    <div class="participant-card-tags-list-div">
+        <?php foreach($row->tags_array as $tag): ?>
+        <div class='participant-tag<?=($tag==$selected_tag?' selected_tag':'');?>' ><a href='<?=url("project/$path/manage/persons/filter/$tag");?>'><?=$tag; ?></a></div>
+        <?php endforeach; ?>
+        <div style="clear:both"></div>
+    </div>
 </div>
 <div class="participant-card-notes-div">
     <div class="title-div">Notes</div>

@@ -7,7 +7,7 @@
  * $project, the project object
  */
 ?>
-<div class="project-introduction-div"><?=$project->homepage->body;?></div>
+<div class="project-introduction-div"><?=add_translation_widget($project->homepage->body);?></div>
 
 <!-- start part of Research tools -->
 <div id="research-tools-div">
@@ -16,12 +16,14 @@
     <?php foreach($project->tools_list as $tool): ?>
     <div class="research-tool-block">
         <div class="research-tool-log-div">
-            <a class="tab-window-link" href=""><img class="research-tool-logo" src="<?=$tool->logo?>" alt="<?=$tool->name?>"/></a>
+            <img class="research-tool-logo" src="<?=$tool->logo?>" alt="<?=$tool->name?>"/>
         </div>
-        <p class="research-tool-name-p"><a class="tab-window-link" href="<?=url("research/tools/view/{$tool->id}")?>"><?=$tool->name?></a></p>
+        <p class="research-tool-name-p"><a class="tab-window-link" href="<?=url("research/tools/view/{$tool->id}")?>" target='_blank'><?=$tool->name?></a></p>
         <ul>
-            <li><a class="tab-window-link" href="<?=url("research/tools/view/{$tool->id}")?>">Read more</a></li>
-            <li><a class="tab-window-link" href="http://pilot.zokem.com:81/soberit/" target="_blank">View data</a></li>
+            <li><a class="tab-window-link list_link" href="<?=url("research/tools/view/{$tool->id}")?>" target='_blank'>Read more</a></li>
+            <?php foreach($tool->links as $link): ?>
+                <li><a class="tab-window-link list_link" href="<?=$link->url;?>" target='_blank'><?=$link->title;?></a></li>
+            <?php endforeach; ?>
         </ul>
     </div>
     <?php endforeach; ?>

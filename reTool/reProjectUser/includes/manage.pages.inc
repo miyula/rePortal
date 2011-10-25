@@ -39,7 +39,7 @@ function project_manage_persons_list_callback($path){
     $content.= '<p>&nbsp;</p>';    
     //get normal user
     $content.= '<h2>Participants list</h2>';
-        
+    $content.= '<p><a href="'.url("project/$path/manage/persons/tags/manage").'" class="view_link">View all tags</a></p>';    
     $rows = array();
     $header = array(
         array('data'=>'Name'),
@@ -51,7 +51,7 @@ function project_manage_persons_list_callback($path){
     
     $rows[] = array(
         array(
-            'data'  =>   '<div id="new_participant_info_card_form_div">'.drupal_get_form('new_participant_info_card_form', $project).'</div>',
+            'data' => '<div id="new_participant_info_card_form_div">'.drupal_get_form('new_participant_info_card_form', $project).'</div>',
             'colspan' => 5,
         ),
     );
@@ -68,11 +68,11 @@ function project_manage_persons_list_callback($path){
                 'colspan' => 3,
             ),
             '<p class="operation-p"><a class="delete_link" href="'.url("project/$path/manage/persons/participant/remove/{$row->id}").'">Remove</a></p>'
-                .'<p class="operation-p"><a class="edit_link" href="'.url("project/$path/manage/persons/participant/edit/{$row->id}").'">Edit</a></p>'
-                .'<p class="operation-p"><a class="tags_link window_tab" href="javascript:onclick_edit_tags('.$row->id.');" target="_blank">Tags</a></p>',
+            .'<p class="operation-p"><a class="edit_link" href="'.url("project/$path/manage/persons/participant/edit/{$row->id}").'">Edit</a></p>'
+            .'<p class="operation-p"><a class="tags_link window_tab" href="javascript:void(0);" onclick="onclick_edit_tags('."'".$row->id."'".');" >Tags</a></p>',
         );
     }
-    $content.= theme('participants_tags_div');
+    $content.= theme('participants_tags_div',$project);
     $content.= '<div class="project-manage-page-table-div">'.theme_table($header, $rows).'</div>';
     $content.= theme('pager');
     $project->right_part = $content;    
@@ -149,10 +149,10 @@ function project_manage_persons_filter_callback($path, $tag){
             ),
             '<p class="operation-p"><a class="delete_link" href="'.url("project/$path/manage/persons/participant/remove/{$row->id}").'">Remove</a></p>'
                 .'<p class="operation-p"><a class="edit_link" href="'.url("project/$path/manage/persons/participant/edit/{$row->id}").'">Edit</a></p>'
-                .'<p class="operation-p"><a class="tags_link window_tab" href="javascript:onclick_edit_tags('.$row->id.');" target="_blank">Tags</a></p>',
+                .'<p class="operation-p"><a class="tags_link window_tab" href="javascript:void(0);" onclick="onclick_edit_tags('."'".$row->id."'".');">Tags</a></p>',
         );
     }
-    $content.= theme('participants_tags_div');
+    $content.= theme('participants_tags_div',$project);
     $content.= '<div class="project-manage-page-table-div">'.theme_table($header, $rows).'</div>';
     $project->right_part = $content;    
     return theme('project_manage_page',$project);

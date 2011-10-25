@@ -4,7 +4,6 @@
  * Template to display edit tags div
  *
  * Fields available:
- * $tags
  * $project
  */
 ?>
@@ -26,4 +25,5 @@
         <div style='clear:both;'></div>
     </div>
     <div id='all-tags-loading-div' class='loading-div' style='display:none;'></div>
+    <p><a href="<?=url("project/{$project->path}/manage/persons/tags/manage"); ?>" class="edit_link">Manage tags</a></p>
 </div>
