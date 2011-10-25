@@ -70,6 +70,18 @@ function reProjectUser_update_6012(){
         db_create_table($ret, $new_table, $schema[$new_table]);
     }
     
+    //add new column email
+    db_add_field($ret, 'research_projects_onetime_invite_code', 'email',
+                 array('type'=> 'varchar',  'length'    => 128, 'not null'  => TRUE,));  
+   
+   //add new column phone 
+    db_add_field($ret, 'research_projects_onetime_invite_code', 'phone',
+                 array('type'=> 'varchar',  'length'    => 20, 'not null'  => TRUE,));
+    
+    //change column code varchar 20 => 32
+     db_change_field($ret, 'research_projects_onetime_invite_code', 'code', 'code',
+                array('type' => 'varchar', 'length' => 32, 'not null' => TRUE));
+    
     return $ret;
 }
 
@@ -90,9 +102,19 @@ function research_projects_onetime_invite_code_schema(){
                 'unsigned'  => TRUE,
                 'not null'  => TRUE,
                 ),
-            'code' => array(
+            'email' => array(
+                'type'      => 'varchar',
+                'length'    => 128,
+                'not null'  => TRUE,
+                ),
+            'phone' => array(
                 'type'      => 'varchar',
                 'length'    => 20,
+                'not null'  => TRUE,
+            ),
+            'code' => array(
+                'type'      => 'varchar',
+                'length'    => 32,
                 'not null'  => TRUE,
                 ),
             'used' => array(
@@ -227,12 +249,12 @@ function research_project_invitation_templates_schema(){
                 'unsigned'  => TRUE,
                 'not null'  => TRUE,
                 ),
-            'templates'    => array(
+            'template'    => array(
                 'type'      => 'int',
                 'unsigned'  => TRUE,
                 'not null'  => TRUE,
                 ),
-            'for'    => array(
+            'for_role'    => array(
                 'type'      => 'varchar',
                 'length'    => 20,
                 'not null'  => TRUE,

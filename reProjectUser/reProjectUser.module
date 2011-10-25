@@ -142,6 +142,20 @@ function reProjectUser_menu(){
         'access arguments'  => array(1),
         'file'              => 'includes/manage.participant.tags.inc',
     );
+    
+    /** Settings **/
+    $menu['project/%/manage/settings/invitations'] = array(
+	'title arguments'   => array(1),
+	'title callback'    => 'project_title_callback',
+        'description'       => t('Set invitation templates'),
+        'page callback'     => 'manage_settings_invitations_callback',
+        'page arguments'    => array(1),
+	'access callback'   => 'manage_project_access',
+        'access arguments'  => array(1),
+        'file'              => 'includes/manage.settings.inc',
+    );
+    
+    
     return $menu;
 }
 
@@ -182,6 +196,12 @@ function reProjectUser_project_manage_navigation($project){
         'title' => 'Persons',
         'url'   => generate_project_url($project->path).'/manage/persons',
 	'class' => 'person_link',
+        'weight'=> 0,
+    );
+    $navigation['settings']['sub_items']['persons'] = array(
+        'title' => 'Invitations',
+        'url'   => generate_project_url($project->path).'/manage/settings/invitations',
+	'class' => '',
         'weight'=> 0,
     );
     return $navigation;
@@ -453,4 +473,44 @@ function get_project_all_participants($pid){
 	$participants[] = $row;
     }
     return $participants;
+}
+
+/**
+ * Get invite template
+ * @param
+ *    $pid, the id of the project
+ * @param
+ *    $for, string e.g 'researcher', 'participant'
+ *
+ * @return
+ *    Object|FALSE
+ */
+function get_invite_template($pid, $for){
+    $sql = 'SELECT t.id AS id,  m.id AS template, m.title AS title, m.content AS content, m.type AS type, m.created, m.changed '
+             .'FROM {research_project_invitation_templates} AS t, {project_message_templates} AS m '
+	     .'WHERE t.project=%d AND t.for_role="%s" AND m.id=t.template ORDER BY created DESC';
+    return db_fetch_object(db_query($sql, $pid, $for));
+}
+
+/**
+ * Set invite template for project
+ * @param
+ *   $pid, the id of the project
+ * @param
+ *   $tid, the id of the template
+ * @param
+ *   $for, string e.g 'researcher', 'participant'
+ */
+function set_invite_template_for($pid, $tid, $for){
+    $sql = 'SELECT id FROM {research_project_invitation_templates} WHERE project=%d AND for_role="%s"';
+    $id = db_result(db_query($sql, $pid, $for));
+    if($id && $id >0){
+	//update
+	$update = 'UPDATE {research_project_invitation_templates} SET template=%d WHERE id=%d';
+	db_query($update, $tid, $id);
+    }else{
+	//insert
+	$insert = 'INSERT INTO {research_project_invitation_templates}(project, template, for_role, created, changed) VALUES(%d, %d, "%s", NOW(), NOW()) ';
+	db_query($insert, $pid, $tid, $for);
+    }
 }
