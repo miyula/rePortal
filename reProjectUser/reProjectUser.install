@@ -72,11 +72,15 @@ function reProjectUser_update_6012(){
     
     //add new column email
     db_add_field($ret, 'research_projects_onetime_invite_code', 'email',
-                 array('type'=> 'varchar',  'length'    => 128, 'not null'  => TRUE,));  
+                 array('type'=> 'varchar',  'length'    => 128, 'not null'  => FALSE,));  
    
    //add new column phone 
     db_add_field($ret, 'research_projects_onetime_invite_code', 'phone',
-                 array('type'=> 'varchar',  'length'    => 20, 'not null'  => TRUE,));
+                 array('type'=> 'varchar',  'length'    => 20, 'not null'  => FALSE,));
+    
+    //add new column person
+    db_add_field($ret, 'research_projects_onetime_invite_code', 'person',
+                 array('type'=> 'int',  'unsigned'  => TRUE, 'not null'  => TRUE,));
     
     //change column code varchar 20 => 32
      db_change_field($ret, 'research_projects_onetime_invite_code', 'code', 'code',
@@ -105,11 +109,16 @@ function research_projects_onetime_invite_code_schema(){
             'email' => array(
                 'type'      => 'varchar',
                 'length'    => 128,
-                'not null'  => TRUE,
+                'not null'  => FALSE,
                 ),
             'phone' => array(
                 'type'      => 'varchar',
                 'length'    => 20,
+                'not null'  => FALSE,
+            ),
+            'person' => array(
+                'type'      => 'int',
+                'unsigned'  => TRUE,
                 'not null'  => TRUE,
             ),
             'code' => array(
@@ -124,6 +133,10 @@ function research_projects_onetime_invite_code_schema(){
                 'default'   => 0,  
             ),
             'created' => array(
+                'type'      => 'datetime',
+                'not null'  => TRUE,
+            ),
+            'changed' => array(
                 'type'      => 'datetime',
                 'not null'  => TRUE,
             ),

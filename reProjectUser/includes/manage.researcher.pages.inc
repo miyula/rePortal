@@ -69,22 +69,16 @@ function project_invite_research_form_submit($form, &$form_state){
                .'<p>Best Regards,</p>'
                .'<p>Yours,</p>'
                ."<p>{$project->name}</p>";
-    
-    
-    //find user
-    $find = "SELECT uid, name FROM {users} WHERE mail='%s'";
-    $invited_user = db_fetch_object(db_query($find, $email));
 
-    if($invited_user){
-        
+   
         //send invite mail
         message_send_http_mail($email,$subject,$body);
         
         //add_user_to_project($pid, $user->uid, PROJECT_RESEARCHER);
         //drupal_set_message("Added {$user->name} as researcher",'status');
-    }else{
+   
         //drupal_set_message('Can not find the user in system. Please check the email address.','error');
-    }
+
     drupal_goto(get_project_url($pid).'/manage/persons');
     
 }

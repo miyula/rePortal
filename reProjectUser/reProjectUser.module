@@ -217,15 +217,17 @@ function reProjectUser_create_project($project){
 /**
  * add user to the project
  */
-function add_user_to_project($pid, $uid, $role=PROJECT_NORMAL_USER){
+function add_user_to_project($pid, $uid, $role=PROJECT_NORMAL_USER, $active=1){
     //check if user already in project
-    $check = 'SELECT COUNT(*) FROM {research_projects_persons_list} WHERE project=%d AND user=%d AND role="%s"';
-    if(!db_result(db_query($check, $pid, $uid, $role))){
+    $check = 'SELECT id FROM {research_projects_persons_list} WHERE project=%d AND user=%d AND role="%s"';
+    $id = db_result(db_query($check, $pid, $uid, $role));
+    if(!$id){
         //insert new
-        $insert = 'INSERT INTO {research_projects_persons_list}(project, user, role, created, changed) VALUES(%d, %d, "%s", NOW(), NOW())';
-        return db_query($insert, $pid, $uid, $role);
+        $insert = 'INSERT INTO {research_projects_persons_list}(project, user, role, active, created, changed) VALUES(%d, %d, "%s", %d, NOW(), NOW())';
+	db_query($insert, $pid, $uid, $role, $active);
+	$id = mysql_insert_id(); 
     }
-    return FALSE;
+    return $id;
 }
 
 /**
@@ -506,11 +508,42 @@ function set_invite_template_for($pid, $tid, $for){
     $id = db_result(db_query($sql, $pid, $for));
     if($id && $id >0){
 	//update
-	$update = 'UPDATE {research_project_invitation_templates} SET template=%d WHERE id=%d';
+	$update = 'UPDATE {research_project_invitation_templates} SET template=%d, changed=NOW() WHERE id=%d';
 	db_query($update, $tid, $id);
     }else{
 	//insert
 	$insert = 'INSERT INTO {research_project_invitation_templates}(project, template, for_role, created, changed) VALUES(%d, %d, "%s", NOW(), NOW()) ';
 	db_query($insert, $pid, $tid, $for);
     }
+}
+
+/**
+ * Generate invite code
+ * @param
+ *    $pid, the id of the project
+ * @param
+ *   $type, string e.g 'researcher', 'participant'
+ * @param
+ *   $email, string email address
+ * @param
+ *   $phone, the phone number
+ */
+function generate_invite_link($pid, $type, $email='', $phone=''){
+    $code = md5($pid.$type.$email.$phone.time());
+    
+    //find user
+    $find = "SELECT uid, name FROM {users} WHERE mail='%s'";
+    $invited_user = db_fetch_object(db_query($find, $email));
+    if($invited_user){
+	$person = add_user_to_project($pid, $invited_user->uid, $type,0);
+    }else{
+	$person = add_user_to_project($pid, null, $type,0);
+    }
+    
+    //record code
+    $insert = 'INSERT INTO {research_projects_onetime_invite_code}(project, email, phone, person, code, created, changed) '
+                  .'VALUES(%d, "%s", "%s", %d, "%s", NOW(), NOW())';
+    db_query($insert, $pid, $email, $phone, $person, $code);
+    
+    return base_path().url('invite/'.$code);
 }

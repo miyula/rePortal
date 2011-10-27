@@ -7,6 +7,7 @@ dependencies[]  = reProjectContent
 dependencies[]  = MessageSend
 dependencies[]  = jquery_ui
 dependencies[]  = reProjectUserProfile
+dependencies[] = ProjectMessageTemplate
 version         = "6.x-1.1"
 project         = "reProjectUser"
 core            = "6.x"
