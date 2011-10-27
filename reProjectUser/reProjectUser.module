@@ -155,7 +155,15 @@ function reProjectUser_menu(){
         'file'              => 'includes/manage.settings.inc',
     );
     
-    
+    /** invite user part **/
+    $menu['invite/%'] = array(
+	'title' => t('Welcome to rePortal'),
+	'description' => t('Redirect to project term of use page.'),
+	'page callback' => 'invite_redirect_to_project_callback',
+	'page arguments' => array(1),
+	'access arguments' => array('access content'),
+	'file'              => 'includes/invite.pages.inc',
+    );
     return $menu;
 }
 
@@ -182,6 +190,13 @@ function reProjectUser_theme(){
                 'row'  => NULL,
 		'path' => NULL,
 		'selected_tag' => NULL,
+            )
+	),
+	'invite_join_project_page' => array(
+	    'template' => 'templates/invite_join_project.page',
+	    'arguments' => array(
+                'person' => NULL,
+		'invite_message' => '',
             )
 	),
     );
@@ -211,7 +226,9 @@ function reProjectUser_project_manage_navigation($project){
  * Implements hook_create_project().
  */
 function reProjectUser_create_project($project){
-
+    //add role to person list
+    global $user;
+    add_user_to_project($project->id, $user->uid, 'creator', 1);
 }
 
 /**
@@ -545,5 +562,17 @@ function generate_invite_link($pid, $type, $email='', $phone=''){
                   .'VALUES(%d, "%s", "%s", %d, "%s", NOW(), NOW())';
     db_query($insert, $pid, $email, $phone, $person, $code);
     
-    return base_path().url('invite/'.$code);
+    return 'http://'.$_SERVER['HTTP_HOST'].url('invite/'.$code);
+}
+
+/**
+ * Valid if the invitation code has been used or not
+ * @param
+ *    $code, string
+ * @return
+ *    TRUE|FALSE
+ */
+function invitation_code_is_not_used($code){
+    $check = 'SELECT COUNT(*) FROM {research_projects_onetime_invite_code} WHERE code="%s" AND used=0';
+    return db_result(db_query($check, $code));
 }

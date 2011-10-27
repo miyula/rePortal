@@ -193,7 +193,7 @@ function manage_project_access($path){
                 return TRUE;
             }
             //find user in person list
-            $sql = "SELECT COUNT(*) FROM {research_projects_persons_list} WHERE project=%d AND user=%d AND role='researcher'";
+            $sql = "SELECT COUNT(*) FROM {research_projects_persons_list} WHERE project=%d AND user=%d AND role='researcher' AND active=1 ";
             if(db_result(db_query($sql, $project->id, $user->uid))>0){
                 return TRUE;
             }
