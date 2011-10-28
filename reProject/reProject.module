@@ -158,6 +158,13 @@ function reProject_project_manage_navigation($project){
             'url'   => generate_project_url($project->path).'/manage/settings',
 	    'class' => 'setting_link',
             'weight'=> 10,
+	    'sub_items' => array(
+		'basic' => array(
+		    'title' => 'Basic information',
+		    'url'   => generate_project_url($project->path).'/manage/settings',
+		    'weight' => -20,
+		),
+	    ),
         ),
 	'project_page' => array(
 	    'title' => 'Project page',
