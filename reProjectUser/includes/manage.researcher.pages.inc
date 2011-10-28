@@ -54,33 +54,22 @@ function project_invite_research_form_submit($form, &$form_state){
     //generate invite link
     $invite_link = generate_invite_link($pid, 'researcher', $email);
     
-    print $invite_link;
-    exit;
     //prepare invite letter
-    /*$project = load_project($pid);
+    $template = get_invite_template($pid, 'researcher');
     global $user;
-    $subject = "{$project->name} invite you to join their researcher group";
-    $body = '<p>Hi,</p>'
-               . "<p>{$user->name} invites you to join research project {$project->name}. </p>"
-               .'<p>Click the link to accept the term of use:</p>'
-               ."<p>$invite_link</p>"
-               .'<p>If clicking the link doesn\'t work, please copy and paste it into your browser.</p>'
-               .'<p>Click the link to visit project home page: </p>'
-                .'<p>'.get_project_url($pid).'</p>'
-               .'<p>Please don\'t reply this mail.</p>'
-               .'<p>Best Regards,</p>'
-               .'<p>Yours,</p>'
-               ."<p>{$project->name}</p>";
-
+    $project = load_project($pid, 'id');
+    $pair_value = array(
+        '@project_name' => $project->name,
+        '!project_link' => $project->url,
+        '!invite_link'=> $invite_link,
+        '%name' => $user->name, 
+    );
+    $subject = t($template->title, $pair_value);
+    $body = t($template->content, $pair_value);
    
-        //send invite mail
-        message_send_http_mail($email,$subject,$body);
-        
-        //add_user_to_project($pid, $user->uid, PROJECT_RESEARCHER);
-        //drupal_set_message("Added {$user->name} as researcher",'status');
-   
-        //drupal_set_message('Can not find the user in system. Please check the email address.','error');
+    //send invite mail
+    message_send_http_mail($email,$subject,$body);
 
-        drupal_goto(get_project_url($pid).'/manage/persons');*/
+    $form_state['redirect']  = get_project_url($pid).'/manage/persons';
     
 }

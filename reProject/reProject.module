@@ -215,10 +215,18 @@ function load_project($index,$type='path'){
     switch($type){
         case 'id':
             $sql = 'SELECT id, creator, name, founder, url, path, introduction, created, changed FROM {research_projects} WHERE id=%d';
-            return db_fetch_object(db_query($sql, $index));
+            $project = db_fetch_object(db_query($sql, $index));
+	    if($project){
+		$project->url = 'http://'.$_SERVER['HTTP_HOST'].url(generate_project_url($project->path));
+	    }	    
+	    return $project;
         case 'path':
             $sql = "SELECT id, creator, name, founder, url, path, introduction, created, changed FROM {research_projects} WHERE path='%s'";
-            return db_fetch_object(db_query($sql, $index));
+            $project = db_fetch_object(db_query($sql, $index));
+	    if($project){
+		$project->url = 'http://'.$_SERVER['HTTP_HOST'].url(generate_project_url($project->path));
+	    }	 
+	    return $project;
         default:
             return FALSE;
     }

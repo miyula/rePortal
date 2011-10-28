@@ -24,11 +24,21 @@ function set_invitation_templates_form($form_state, $pid){
         '#collapsed' => FALSE,  
     );    
     $r_t = get_invite_template($pid, 'researcher');
-    $form['invite-researcher']['researcher-template'] = array(
-        '#type' => 'select',
-        '#title' => t('templates'),
-        '#options' => get_message_templates_options_by_type($pid, 'email'),
-        '#default_value' => isset($r_t->template)?$r_t->template:0,
+    $form['invite-researcher']['researcher-template-id'] = array(
+        '#type' => 'hidden',
+        '#value' => $r_t->template,
+    );
+    $form['invite-researcher']['researcher-template-title'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Subject'),
+        '#default_value' => $r_t->title,
+        '#required' => TRUE,
+    );
+    $form['invite-researcher']['researcher-template-content'] = array(
+        '#type' => 'textarea',
+        '#rows' => 15,
+        '#title' => t('Content'),
+        '#default_value' => $r_t->content,
         '#required' => TRUE,
     );
     
@@ -39,13 +49,24 @@ function set_invitation_templates_form($form_state, $pid){
         '#collapsed' => FALSE,  
     );
     $p_t = get_invite_template($pid, 'participant');
-    $form['invite-participant']['participant-template'] = array(
-        '#type' => 'select',
-        '#title' => t('templates'),
-        '#options' => get_message_templates_options_by_type($pid, 'email'),
-        '#default_value' => isset($p_t->template)?$p_t->template:0,
+    $form['invite-participant']['participant-template-id'] = array(
+        '#type' => 'hidden',
+        '#value' => $r_t->template,
+    );
+    $form['invite-participant']['participant-template-title'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Subject'),
+        '#default_value' => $r_t->title,
         '#required' => TRUE,
     );
+    $form['invite-participant']['participant-template-content'] = array(
+        '#type' => 'textarea',
+        '#rows' => 15,
+        '#title' => t('Content'),
+        '#default_value' => $r_t->content,
+        '#required' => TRUE,
+    );
+    
     $form['submit'] = array(
         '#type' => 'submit',
         '#value' => t('Save'),
@@ -60,24 +81,35 @@ function set_invitation_templates_form_validate($form, &$form_state){
     }
     
     $check = 'SELECT COUNT(*) FROM {project_message_templates} WHERE project=%d AND id=%d';
-    $researcher_template = $form_state['values']['researcher-template'];
+    $researcher_template = $form_state['values']['researcher-template-id'];
     if(db_result(db_query($check, $pid, $researcher_template))<=0){
-         form_set_error('researcher-template', t('Please select a template.'));
+         form_set_error('researcher-template-id', t('Invalid template id.'));
     }
     
-    $participant_template = $form_state['values']['participant-template'];
+    $participant_template = $form_state['values']['participant-template-id'];
     if(db_result(db_query($check, $pid, $participant_template))<=0){
-         form_set_error('participant-template', t('Please select a template.'));
+         form_set_error('participant-template', t('Invalid template id.'));
     }
 }
 
 function set_invitation_templates_form_submit($form, &$form_state){
     $pid = (int)$form_state['values']['project'];
-    $researcher_template = $form_state['values']['researcher-template'];
-    $participant_template = $form_state['values']['participant-template'];
+    $r_id = $form_state['values']['researcher-template-id'];
+    $p_id = $form_state['values']['participant-template-id'];
     
-    set_invite_template_for($pid, $researcher_template, 'researcher');
-    set_invite_template_for($pid, $participant_template, 'participant');
+    $r_template = get_message_template_by_id($r_id);
+    $r_title = $form_state['values']['researcher-template-title'];
+    $r_content = $form_state['values']['researcher-template-content'];
+    $r_template->title = $r_title;
+    $r_template->content = $r_content;
+    save_message_template($r_template);
+    
+    $p_template = get_message_template_by_id($p_id);
+    $p_title = $form_state['values']['participant-template-title'];
+    $p_content = $form_state['values']['participant-template-content'];
+    $p_template->title = $p_title;
+    $p_template->content = $p_content;
+    save_message_template($p_template);
     
     drupal_set_message(t('Invitation templates settings have been updated.'),'status');
 }

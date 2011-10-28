@@ -275,7 +275,7 @@ function get_message_templates_options_by_type($pid, $type){
 /**
  * Save template
  */
-function save_message_template($template){
+function save_message_template(&$template){
     if(isset($template->id) && $template->id > 0){
         //update
         $update = "UPDATE {project_message_templates} SET project=%d, type='%s', title='%s', content='%s', changed=NOW() WHERE id=%d";

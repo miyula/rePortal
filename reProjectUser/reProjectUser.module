@@ -508,7 +508,54 @@ function get_invite_template($pid, $for){
     $sql = 'SELECT t.id AS id,  m.id AS template, m.title AS title, m.content AS content, m.type AS type, m.created, m.changed '
              .'FROM {research_project_invitation_templates} AS t, {project_message_templates} AS m '
 	     .'WHERE t.project=%d AND t.for_role="%s" AND m.id=t.template ORDER BY created DESC';
-    return db_fetch_object(db_query($sql, $pid, $for));
+    $template = db_fetch_object(db_query($sql, $pid, $for));
+    if(!$template){
+	switch($for){
+	    case 'researcher':
+		$title = '@project_name invite you to join their research group';
+		$body = '<p>Hi,</p>'
+			    . "<p>%name invites you to join research project @project_name !project_link. </p>"
+			    .'<p>Click the link to accept the invitation:</p>'
+			    ."<p>!invite_link</p>"
+			    .'<p>If clicking the link doesn\'t work, please copy and paste it into your browser.</p>'
+			    .'<p>You may wish to visit the project home page: </p>'
+			    ."<p>!project_link</p>"
+			    .'<p>Please don\'t reply this mail.</p>'
+			    .'<p>Best Regards,</p>'
+			    .'<p>Yours,</p>'
+			    ."<p>@project_name</p>";
+		$template = new stdClass;
+		$template->project = $pid;
+		$template->type = 'email';
+		$template->title = $title;
+		$template->content = $body;
+		save_message_template($template);
+		set_invite_template_for($pid, $template->id, $for);
+		break;
+	    case 'participant':
+		$title = '@project_name invite you to participant their project';
+		$body = '<p>Hi,</p>'
+			    . "<p>%name invites you to participant their project @project_name !project_link. </p>"
+			    .'<p>Click the link to accept the term of use:</p>'
+			    ."<p>!invite_link</p>"
+			    .'<p>If clicking the link doesn\'t work, please copy and paste it into your browser.</p>'
+			    .'<p>You may wish to visit the project home page: </p>'
+			    ."<p>!project_link</p>"
+			    .'<p>Please don\'t reply this mail.</p>'
+			    .'<p>Best Regards,</p>'
+			    .'<p>Yours,</p>'
+			    ."<p>@project_name</p>";
+		$template = new stdClass;
+		$template->project = $pid;
+		$template->type = 'email';
+		$template->title = $title;
+		$template->content = $body;
+		save_message_template($template);
+		set_invite_template_for($pid, $template->id, $for);
+		break;
+	}
+    }
+    return $template;
 }
 
 /**

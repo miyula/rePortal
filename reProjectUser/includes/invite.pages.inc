@@ -100,24 +100,14 @@ function exiting_user_join_project_form_submit($form, &$form_state){
 
 /** Login to join project form **/
 function login_to_join_project_from($form_state, $code){
-    $form['name'] = array(
-        '#type' => 'textfield',
-        '#title' => t('Username'),
-        '#size' => 20,
-    );
-    $form['pass'] = array(
-        '#type' => 'password',
-        '#title' => t('Password'),
-        '#size' => 20,
-    );
+    $form = user_login($form_state);
+    $form['name'] ['#size'] = 20;
+    $form['pass'] ['#size'] = 20;
     $form['code'] = array(
         '#type' => 'hidden',
         '#value' => $code,
     );
-    $form['submit'] = array(
-        '#type' => 'submit',
-        '#value' => t('Login and accept'),
-    );
+    $form['submit']['#value'] = t('Login and accept');
     return $form;
 }
 
@@ -143,8 +133,8 @@ function login_to_join_project_from_submit($form, &$form_state){
     
         //active researcher
         $p = db_fetch_object(db_query('SELECT project, person FROM {research_projects_onetime_invite_code} WHERE code="%s"', $code));
-        $active = 'UPDATE {research_projects_persons_list} SET active=1, user=%d, changed=NOW() WHERE id=%d';
-        db_query($active, $user->uid, $p->person);
+        $active = 'UPDATE {research_projects_persons_list} SET active=1, changed=NOW() WHERE id=%d';
+        db_query($active, $p->person);
     
         drupal_set_message(t('You have successfully joined the project.'), status);
         drupal_goto(get_project_url($p->project));
@@ -157,19 +147,40 @@ function login_to_join_project_from_submit($form, &$form_state){
 /** register to join project form **/
 function register_to_join_project_from($form_state, $code){
     $form = user_register();
+    $form['name'] ['#size'] = 20;
+    $form['name'] ['#description'] = '';
+    $form['pass'] ['#size'] = 20;
+    $form['mail'] ['#size'] = 20;
+    $form['mail'] ['#description'] = '';
     $form['code'] = array(
         '#type' => 'hidden',
         '#value' => $code,
     );
+    $form['submit']['#value'] = t('Register and accept');
     return $form;
 }
 
 /** register to join project form **/
 function register_to_join_project_from_validate($form, &$form_state){
-    
+    user_module_invoke('validate', $form_state['values'], $form_state['values'], 'account');
 }
 
 /** register to join project form **/
 function register_to_join_project_from_submit($form, &$form_state){
+    user_register_submit($form, $form_state);
     
+    $code = $form_state['values']['code'];
+    global $user;
+    if($user->uid){
+        $set_code_used = 'UPDATE  {research_projects_onetime_invite_code} SET used=1, changed=NOW() WHERE code="%s"';
+        db_query($set_code_used, $code);
+    
+        //active researcher
+        $p = db_fetch_object(db_query('SELECT project, person FROM {research_projects_onetime_invite_code} WHERE code="%s"', $code));
+        $active = 'UPDATE {research_projects_persons_list} SET active=1, user=%d, changed=NOW() WHERE id=%d';
+        db_query($active, $user->uid, $p->person);
+    
+        drupal_set_message(t('You have successfully joined the project.'), status);
+    }
+    $form_state['redirect'] = 'project/mylife';
 }
