@@ -89,6 +89,21 @@ function reProjectUser_update_6012(){
     return $ret;
 }
 
+function reProjectUser_update_6013(){
+    $ret = array();
+
+    //add new column changed
+    //check if column exist
+    $table = 'research_projects_onetime_invite_code';
+    $column = 'changed';
+    if(!db_column_exists($table, $column)){
+        db_add_field($ret, 'research_projects_onetime_invite_code', 'changed',
+        array('type'  => 'datetime',   'not null'  => TRUE,));
+    }
+    
+    return $ret;
+}
+
 
 /**
  * Implementation of hook_schema().
