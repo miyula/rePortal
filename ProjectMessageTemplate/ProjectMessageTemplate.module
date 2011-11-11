@@ -217,7 +217,6 @@ function project_message_template_form_submit($form, &$form_state){
     //remove html, php tags
     if($type=='sms'){
         $content = strip_tags($content);
-<<<<<<< HEAD
     }
     
     if($id>0){
@@ -228,8 +227,6 @@ function project_message_template_form_submit($form, &$form_state){
         //insert
         $insert = "INSERT INTO {project_message_templates} (project, type, title, content, created, changed) VALUES(%d, '%s', '%s', '%s', NOW(), NOW())";
         db_query($insert, $project, $type, $title, $content);
-=======
->>>>>>> t3rc/master
     }
     
     $template = new stdClass;
@@ -283,8 +280,6 @@ function get_message_templates_options_by_type($pid, $type){
         $options[$row->id] = $row->title;   
     }
     return $options; 
-<<<<<<< HEAD
-=======
 }
 
 /**
@@ -302,5 +297,4 @@ function save_message_template(&$template){
         $template->id = mysql_insert_id(); 
     }
     return $template;
->>>>>>> t3rc/master
 }

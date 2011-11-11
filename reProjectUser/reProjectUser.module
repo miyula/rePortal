@@ -42,11 +42,7 @@ function reProjectUser_menu(){
         'access arguments'  => array(1),
         'file'              => 'includes/manage.pages.inc',  
     );
-<<<<<<< HEAD
     
-=======
-
->>>>>>> t3rc/master
     /** researcher manage **/
     $menu['project/%/manage/persons/researcher/add'] = array(
 	'title arguments'   => array(1),
@@ -146,8 +142,6 @@ function reProjectUser_menu(){
         'access arguments'  => array(1),
         'file'              => 'includes/manage.participant.tags.inc',
     );
-<<<<<<< HEAD
-=======
     
     /** Settings **/
     $menu['project/%/manage/settings/invitations'] = array(
@@ -170,7 +164,7 @@ function reProjectUser_menu(){
 	'access arguments' => array('access content'),
 	'file'              => 'includes/invite.pages.inc',
     );
->>>>>>> t3rc/master
+
     return $menu;
 }
 
@@ -197,8 +191,6 @@ function reProjectUser_theme(){
                 'row'  => NULL,
 		'path' => NULL,
 		'selected_tag' => NULL,
-<<<<<<< HEAD
-=======
             )
 	),
 	'invite_join_project_page' => array(
@@ -206,7 +198,6 @@ function reProjectUser_theme(){
 	    'arguments' => array(
                 'person' => NULL,
 		'invite_message' => '',
->>>>>>> t3rc/master
             )
 	),
     );
@@ -217,11 +208,6 @@ function reProjectUser_theme(){
  */
 function reProjectUser_project_manage_navigation($project){
     //return manage navigation menus
-<<<<<<< HEAD
-    $navigation[] = array(
-        'title' => 'Manage persons',
-        'url'   => 'project/'.$project->path.'/manage/persons',
-=======
     $navigation['manage']['sub_items']['persons'] = array(
         'title' => 'Persons',
         'url'   => generate_project_url($project->path).'/manage/persons',
@@ -232,7 +218,6 @@ function reProjectUser_project_manage_navigation($project){
         'title' => 'Invitations',
         'url'   => generate_project_url($project->path).'/manage/settings/invitations',
 	'class' => '',
->>>>>>> t3rc/master
         'weight'=> 0,
     );
     return $navigation;
@@ -509,8 +494,7 @@ function get_project_all_participants($pid){
     }
     return $participants;
 }
-<<<<<<< HEAD
-=======
+
 
 /**
  * Get invite template
@@ -641,4 +625,4 @@ function invitation_code_is_not_used($code){
     $check = 'SELECT COUNT(*) FROM {research_projects_onetime_invite_code} WHERE code="%s" AND used=0';
     return db_result(db_query($check, $code));
 }
->>>>>>> t3rc/master
+
