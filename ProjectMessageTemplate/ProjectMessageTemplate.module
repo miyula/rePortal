@@ -217,6 +217,7 @@ function project_message_template_form_submit($form, &$form_state){
     //remove html, php tags
     if($type=='sms'){
         $content = strip_tags($content);
+<<<<<<< HEAD
     }
     
     if($id>0){
@@ -227,7 +228,17 @@ function project_message_template_form_submit($form, &$form_state){
         //insert
         $insert = "INSERT INTO {project_message_templates} (project, type, title, content, created, changed) VALUES(%d, '%s', '%s', '%s', NOW(), NOW())";
         db_query($insert, $project, $type, $title, $content);
+=======
+>>>>>>> t3rc/master
     }
+    
+    $template = new stdClass;
+    $template->id = $id;
+    $template->project = $project;
+    $template->type = $type;
+    $template->title = $title;
+    $template->content = $content;
+    save_message_template($template);
     
     drupal_goto(get_project_url($project).'/manage/message/templates');
     
@@ -272,4 +283,24 @@ function get_message_templates_options_by_type($pid, $type){
         $options[$row->id] = $row->title;   
     }
     return $options; 
+<<<<<<< HEAD
+=======
+}
+
+/**
+ * Save template
+ */
+function save_message_template(&$template){
+    if(isset($template->id) && $template->id > 0){
+        //update
+        $update = "UPDATE {project_message_templates} SET project=%d, type='%s', title='%s', content='%s', changed=NOW() WHERE id=%d";
+        db_query($update, $template->project, $template->type, $template->title, $template->content, $template->id);
+    }else{
+        //insert
+        $insert = "INSERT INTO {project_message_templates} (project, type, title, content, created, changed) VALUES(%d, '%s', '%s', '%s', NOW(), NOW())";
+        db_query($insert, $template->project, $template->type, $template->title, $template->content);
+        $template->id = mysql_insert_id(); 
+    }
+    return $template;
+>>>>>>> t3rc/master
 }

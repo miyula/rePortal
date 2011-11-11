@@ -147,16 +147,31 @@ function reProject_theme(){
  */
 function reProject_project_manage_navigation($project){
     return array(
-        array(
-            'title' => 'Home page',
-            'url'   => 'project/'.$project->path,
-            'weight'=> -20,
-        ),
-        array(
+	'manage' => array(
+	    'title' => 'Manage',
+	    'url' => generate_project_url($project->path).'/manage',
+	    'class' => 'manage_home_link',
+	    'weight' => -10,
+	),
+        'settings' => array(
             'title' => 'Settings',
-            'url'   => 'project/'.$project->path.'/manage/settings',
-            'weight'=> 20,
+            'url'   => generate_project_url($project->path).'/manage/settings',
+	    'class' => 'setting_link',
+            'weight'=> 10,
+	    'sub_items' => array(
+		'basic' => array(
+		    'title' => 'Basic information',
+		    'url'   => generate_project_url($project->path).'/manage/settings',
+		    'weight' => -20,
+		),
+	    ),
         ),
+	'project_page' => array(
+	    'title' => 'Project page',
+            'url'   => generate_project_url($project->path),
+	    'class' => 'home_link',
+            'weight'=> 10,
+	),
     );
 }
 
@@ -185,7 +200,7 @@ function manage_project_access($path){
                 return TRUE;
             }
             //find user in person list
-            $sql = "SELECT COUNT(*) FROM {research_projects_persons_list} WHERE project=%d AND user=%d AND role='researcher'";
+            $sql = "SELECT COUNT(*) FROM {research_projects_persons_list} WHERE project=%d AND user=%d AND role='researcher' AND active=1 ";
             if(db_result(db_query($sql, $project->id, $user->uid))>0){
                 return TRUE;
             }
@@ -207,10 +222,18 @@ function load_project($index,$type='path'){
     switch($type){
         case 'id':
             $sql = 'SELECT id, creator, name, founder, url, path, introduction, created, changed FROM {research_projects} WHERE id=%d';
-            return db_fetch_object(db_query($sql, $index));
+            $project = db_fetch_object(db_query($sql, $index));
+	    if($project){
+		$project->url = 'http://'.$_SERVER['HTTP_HOST'].url(generate_project_url($project->path));
+	    }	    
+	    return $project;
         case 'path':
             $sql = "SELECT id, creator, name, founder, url, path, introduction, created, changed FROM {research_projects} WHERE path='%s'";
-            return db_fetch_object(db_query($sql, $index));
+            $project = db_fetch_object(db_query($sql, $index));
+	    if($project){
+		$project->url = 'http://'.$_SERVER['HTTP_HOST'].url(generate_project_url($project->path));
+	    }	 
+	    return $project;
         default:
             return FALSE;
     }
@@ -222,6 +245,13 @@ function load_project($index,$type='path'){
 function get_project_url($pid){
     $sql = 'SELECT path from {research_projects} WHERE id=%d';
     $path = db_result(db_query($sql, $pid));
+    return("project/$path");
+}
+
+/**
+ * Generate project path
+ */
+function generate_project_url($path){
     return("project/$path");
 }
 

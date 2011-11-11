@@ -214,9 +214,16 @@ function reTool_theme(){
  */
 function reTool_project_manage_navigation($project){
     //return manage navigation menus
+<<<<<<< HEAD
     $navigation[] = array(
         'title' => 'Manage tools',
         'url'   => 'project/'.$project->path.'/manage/tools',
+=======
+    $navigation['manage']['sub_items']['tools'] = array(
+        'title' => 'Tools',
+        'url'   => generate_project_url($project->path).'/manage/tools',
+	'class' => 'tool_link',
+>>>>>>> t3rc/master
         'weight'=> 0,
     );
     return $navigation;

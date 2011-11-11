@@ -9,11 +9,18 @@
 ?>
 <div class="project-manage-div">
 <div class="left-navigation-div">
-    <ul>
-        <?php foreach($project->navigation as $n): ?>
-            <li><a href="<?=url($n['url'])?>"><?=$n['title']?></a></li>
+    <?php foreach($project->navigation as $n): ?>
+    <div class="manage-item-tag-div">
+        <div class=''><a href="<?=url($n['url'])?>" class='<?=$n['class']?> manage-item-a'><?=$n['title']?></a></div>
+        <?php if(isset($n['sub_items'] )): ?>
+        <ul class='manage-item-sub-ul'>
+        <?php foreach($n['sub_items'] as $sub_n): ?>
+            <li><a href="<?=url($sub_n['url'])?>" class='<?=$sub_n['class']?> manage-subitem-a'><?=$sub_n['title']?></a></li>
         <?php endforeach; ?>
-    </ul>
+        </ul>
+        <?php endif;?>
+    </div>
+    <?php endforeach; ?>
 </div>
 <div class="right-content-div">
     <div class="sub-title-div"><span class="sub-title-span"><?=$project->subtitle; ?></span><?=$project->title_tabs; ?></div>

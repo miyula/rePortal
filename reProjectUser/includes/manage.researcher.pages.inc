@@ -22,6 +22,16 @@ function project_invite_research_form(&$form_state, $pid){
         '#description' => t('The email account of the researcher in this protal.'),
         '#required' => TRUE,
     );
+    
+    $t = get_invite_template($pid, 'researcher');
+    if($t==FALSE || $t->template<=0){
+        drupal_set_message(t('The template for invitate researcher is missing, please '.l('set one',get_project_url($pid).'/manage/settings/invitations').'.'),'error');    
+    }
+    
+    $form['invite-template'] = array(
+        '#type' => 'hidden',
+        '#value' => (int)$t->template,
+    );
     $form['submit'] = array(
         '#type' => 'submit',
         '#value' => t('Add'),
@@ -30,27 +40,36 @@ function project_invite_research_form(&$form_state, $pid){
     return $form;
 }
 function project_invite_research_form_validate($form, &$form_state){
+    $pid = $form_state['values']['pid'];
     $email = $form_state['values']['email'];
-    $find = "SELECT uid FROM {users} WHERE mail='%s'";
-    $uid = db_result(db_query($find, $email));
-    if(!$uid){
-        form_set_error('Can not find the user in system. Please check the email address.','email');
+    if(!valid_email_address($email)){
+        form_set_error('email', 'The email address you input is invalid.');
     }
+    
 }
 function project_invite_research_form_submit($form, &$form_state){
     $pid = $form_state['values']['pid'];
     $email = $form_state['values']['email'];
+
+    //generate invite link
+    $invite_link = generate_invite_link($pid, 'researcher', $email);
     
-    //find user
-    $find = "SELECT uid, name FROM {users} WHERE mail='%s'";
-    $user = db_fetch_object(db_query($find, $email));
-    
-    if($user){
-        add_user_to_project($pid, $user->uid, PROJECT_RESEARCHER);
-        drupal_set_message("Added {$user->name} as researcher",'status');
-    }else{
-        drupal_set_message('Can not find the user in system. Please check the email address.','error');
-    }
-    drupal_goto(get_project_url($pid).'/manage/persons');
+    //prepare invite letter
+    $template = get_invite_template($pid, 'researcher');
+    global $user;
+    $project = load_project($pid, 'id');
+    $pair_value = array(
+        '@project_name' => $project->name,
+        '!project_link' => $project->url,
+        '!invite_link'=> $invite_link,
+        '%name' => $user->name, 
+    );
+    $subject = t($template->title, $pair_value);
+    $body = t($template->content, $pair_value);
+   
+    //send invite mail
+    message_send_http_mail($email,$subject,$body);
+
+    $form_state['redirect']  = get_project_url($pid).'/manage/persons';
     
 }

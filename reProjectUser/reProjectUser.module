@@ -22,15 +22,6 @@ function reProjectUser_menu(){
         'type'              => MENU_CALLBACK,
     );
     
-    $menu['project/%/manage/contents/termofuse'] = array(
-        'title'             => t('Edit term of use'),
-        'page callback'     => 'project_manage_content_termofuse_callback',
-        'page arguments'    => array(1),
-        'access arguments'  => array('access content'),
-        'file'              => 'includes/manage.contents.pages.inc',
-        'type'              => MENU_CALLBACK,
-    );
-    
     $menu['project/%/manage/persons'] = array(
 	'title arguments'   => array(1),
 	'title callback'    => 'project_title_callback',
@@ -51,7 +42,11 @@ function reProjectUser_menu(){
         'access arguments'  => array(1),
         'file'              => 'includes/manage.pages.inc',  
     );
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> t3rc/master
     /** researcher manage **/
     $menu['project/%/manage/persons/researcher/add'] = array(
 	'title arguments'   => array(1),
@@ -151,6 +146,31 @@ function reProjectUser_menu(){
         'access arguments'  => array(1),
         'file'              => 'includes/manage.participant.tags.inc',
     );
+<<<<<<< HEAD
+=======
+    
+    /** Settings **/
+    $menu['project/%/manage/settings/invitations'] = array(
+	'title arguments'   => array(1),
+	'title callback'    => 'project_title_callback',
+        'description'       => t('Set invitation templates'),
+        'page callback'     => 'manage_settings_invitations_callback',
+        'page arguments'    => array(1),
+	'access callback'   => 'manage_project_access',
+        'access arguments'  => array(1),
+        'file'              => 'includes/manage.settings.inc',
+    );
+    
+    /** invite user part **/
+    $menu['invite/%'] = array(
+	'title' => t('Welcome to rePortal'),
+	'description' => t('Redirect to project term of use page.'),
+	'page callback' => 'invite_redirect_to_project_callback',
+	'page arguments' => array(1),
+	'access arguments' => array('access content'),
+	'file'              => 'includes/invite.pages.inc',
+    );
+>>>>>>> t3rc/master
     return $menu;
 }
 
@@ -177,6 +197,16 @@ function reProjectUser_theme(){
                 'row'  => NULL,
 		'path' => NULL,
 		'selected_tag' => NULL,
+<<<<<<< HEAD
+=======
+            )
+	),
+	'invite_join_project_page' => array(
+	    'template' => 'templates/invite_join_project.page',
+	    'arguments' => array(
+                'person' => NULL,
+		'invite_message' => '',
+>>>>>>> t3rc/master
             )
 	),
     );
@@ -187,26 +217,50 @@ function reProjectUser_theme(){
  */
 function reProjectUser_project_manage_navigation($project){
     //return manage navigation menus
+<<<<<<< HEAD
     $navigation[] = array(
         'title' => 'Manage persons',
         'url'   => 'project/'.$project->path.'/manage/persons',
+=======
+    $navigation['manage']['sub_items']['persons'] = array(
+        'title' => 'Persons',
+        'url'   => generate_project_url($project->path).'/manage/persons',
+	'class' => 'person_link',
+        'weight'=> 0,
+    );
+    $navigation['settings']['sub_items']['persons'] = array(
+        'title' => 'Invitations',
+        'url'   => generate_project_url($project->path).'/manage/settings/invitations',
+	'class' => '',
+>>>>>>> t3rc/master
         'weight'=> 0,
     );
     return $navigation;
 }
 
 /**
+ * Implements hook_create_project().
+ */
+function reProjectUser_create_project($project){
+    //add role to person list
+    global $user;
+    add_user_to_project($project->id, $user->uid, 'creator', 1);
+}
+
+/**
  * add user to the project
  */
-function add_user_to_project($pid, $uid, $role=PROJECT_NORMAL_USER){
+function add_user_to_project($pid, $uid, $role=PROJECT_NORMAL_USER, $active=1){
     //check if user already in project
-    $check = 'SELECT COUNT(*) FROM {research_projects_persons_list} WHERE project=%d AND user=%d AND role="%s"';
-    if(!db_result(db_query($check, $pid, $uid, $role))){
+    $check = 'SELECT id FROM {research_projects_persons_list} WHERE project=%d AND user=%d AND role="%s"';
+    $id = db_result(db_query($check, $pid, $uid, $role));
+    if(!$id){
         //insert new
-        $insert = 'INSERT INTO {research_projects_persons_list}(project, user, role, created, changed) VALUES(%d, %d, "%s", NOW(), NOW())';
-        return db_query($insert, $pid, $uid, $role);
+        $insert = 'INSERT INTO {research_projects_persons_list}(project, user, role, active, created, changed) VALUES(%d, %d, "%s", %d, NOW(), NOW())';
+	db_query($insert, $pid, $uid, $role, $active);
+	$id = mysql_insert_id(); 
     }
-    return FALSE;
+    return $id;
 }
 
 /**
@@ -455,3 +509,136 @@ function get_project_all_participants($pid){
     }
     return $participants;
 }
+<<<<<<< HEAD
+=======
+
+/**
+ * Get invite template
+ * @param
+ *    $pid, the id of the project
+ * @param
+ *    $for, string e.g 'researcher', 'participant'
+ *
+ * @return
+ *    Object|FALSE
+ */
+function get_invite_template($pid, $for){
+    $sql = 'SELECT t.id AS id,  m.id AS template, m.title AS title, m.content AS content, m.type AS type, m.created, m.changed '
+             .'FROM {research_project_invitation_templates} AS t, {project_message_templates} AS m '
+	     .'WHERE t.project=%d AND t.for_role="%s" AND m.id=t.template ORDER BY created DESC';
+    $template = db_fetch_object(db_query($sql, $pid, $for));
+    if(!$template){
+	switch($for){
+	    case 'researcher':
+		$title = '@project_name invite you to join their research group';
+		$body = '<p>Hi,</p>'
+			    . "<p>%name invites you to join research project @project_name !project_link. </p>"
+			    .'<p>Click the link to accept the invitation:</p>'
+			    ."<p>!invite_link</p>"
+			    .'<p>If clicking the link doesn\'t work, please copy and paste it into your browser.</p>'
+			    .'<p>You may wish to visit the project home page: </p>'
+			    ."<p>!project_link</p>"
+			    .'<p>Please don\'t reply this mail.</p>'
+			    .'<p>Best Regards,</p>'
+			    .'<p>Yours,</p>'
+			    ."<p>@project_name</p>";
+		$template = new stdClass;
+		$template->project = $pid;
+		$template->type = 'email';
+		$template->title = $title;
+		$template->content = $body;
+		save_message_template($template);
+		set_invite_template_for($pid, $template->id, $for);
+		break;
+	    case 'participant':
+		$title = '@project_name invite you to participant their project';
+		$body = '<p>Hi,</p>'
+			    . "<p>%name invites you to participant their project @project_name !project_link. </p>"
+			    .'<p>Click the link to accept the term of use:</p>'
+			    ."<p>!invite_link</p>"
+			    .'<p>If clicking the link doesn\'t work, please copy and paste it into your browser.</p>'
+			    .'<p>You may wish to visit the project home page: </p>'
+			    ."<p>!project_link</p>"
+			    .'<p>Please don\'t reply this mail.</p>'
+			    .'<p>Best Regards,</p>'
+			    .'<p>Yours,</p>'
+			    ."<p>@project_name</p>";
+		$template = new stdClass;
+		$template->project = $pid;
+		$template->type = 'email';
+		$template->title = $title;
+		$template->content = $body;
+		save_message_template($template);
+		set_invite_template_for($pid, $template->id, $for);
+		break;
+	}
+    }
+    return $template;
+}
+
+/**
+ * Set invite template for project
+ * @param
+ *   $pid, the id of the project
+ * @param
+ *   $tid, the id of the template
+ * @param
+ *   $for, string e.g 'researcher', 'participant'
+ */
+function set_invite_template_for($pid, $tid, $for){
+    $sql = 'SELECT id FROM {research_project_invitation_templates} WHERE project=%d AND for_role="%s"';
+    $id = db_result(db_query($sql, $pid, $for));
+    if($id && $id >0){
+	//update
+	$update = 'UPDATE {research_project_invitation_templates} SET template=%d, changed=NOW() WHERE id=%d';
+	db_query($update, $tid, $id);
+    }else{
+	//insert
+	$insert = 'INSERT INTO {research_project_invitation_templates}(project, template, for_role, created, changed) VALUES(%d, %d, "%s", NOW(), NOW()) ';
+	db_query($insert, $pid, $tid, $for);
+    }
+}
+
+/**
+ * Generate invite code
+ * @param
+ *    $pid, the id of the project
+ * @param
+ *   $type, string e.g 'researcher', 'participant'
+ * @param
+ *   $email, string email address
+ * @param
+ *   $phone, the phone number
+ */
+function generate_invite_link($pid, $type, $email='', $phone=''){
+    $code = md5($pid.$type.$email.$phone.time());
+    
+    //find user
+    $find = "SELECT uid, name FROM {users} WHERE mail='%s'";
+    $invited_user = db_fetch_object(db_query($find, $email));
+    if($invited_user){
+	$person = add_user_to_project($pid, $invited_user->uid, $type,0);
+    }else{
+	$person = add_user_to_project($pid, null, $type,0);
+    }
+    
+    //record code
+    $insert = 'INSERT INTO {research_projects_onetime_invite_code}(project, email, phone, person, code, created, changed) '
+                  .'VALUES(%d, "%s", "%s", %d, "%s", NOW(), NOW())';
+    db_query($insert, $pid, $email, $phone, $person, $code);
+    
+    return 'http://'.$_SERVER['HTTP_HOST'].url('invite/'.$code);
+}
+
+/**
+ * Valid if the invitation code has been used or not
+ * @param
+ *    $code, string
+ * @return
+ *    TRUE|FALSE
+ */
+function invitation_code_is_not_used($code){
+    $check = 'SELECT COUNT(*) FROM {research_projects_onetime_invite_code} WHERE code="%s" AND used=0';
+    return db_result(db_query($check, $code));
+}
+>>>>>>> t3rc/master

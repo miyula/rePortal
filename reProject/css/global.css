@@ -67,6 +67,16 @@ a.list_link{
     font-size: 14px;
     padding-left: 20px;
     padding-right: 5px;
+<<<<<<< HEAD
+=======
+    cursor: pointer;
+}
+a.home_link{
+    background: url('../images/home-link.png') no-repeat left top;
+    font-size: 14px;
+    padding-left: 20px;
+    padding-right: 5px;
+>>>>>>> t3rc/master
     cursor: pointer;
 }
 

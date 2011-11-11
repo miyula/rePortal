@@ -31,6 +31,17 @@ function reProject_uninstall(){
 }
 
 /**
+ * Implementation of hook_update_N().
+ */
+function reProject_update_1(){
+      $ret = array();
+      //change column user not null TRUE => FALSE
+     db_change_field($ret, 'research_projects_persons_list', 'user', 'user',
+                array('type' => 'int', 'unsigned' => TRUE, 'not null' => FALSE,));
+      return $ret;
+}
+
+/**
  * Implementation of hook_schema().
  */
 function research_projects_schema(){
@@ -166,7 +177,7 @@ function research_projects_persons_list_schema(){
             'user' => array(
                 'type' => 'int',
                 'unsigned' => TRUE,
-                'not null' => TRUE,
+                'not null' => FALSE,
                 ),
             'role' => array(
                 'type' => 'varchar',
