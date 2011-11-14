@@ -82,6 +82,10 @@ function reProjectUserProfile_user($op, &$edit, &$account, $category = NULL){
                 ),
             ); 
         }
+    }elseif($op=='load'){
+        if(view_personl_info_access($account)){
+            $account->profile_info = load_user_personal_info($account->uid);
+        }
     }
 }
 /**
@@ -91,7 +95,7 @@ function edit_personal_info_access($u){
     global $user;
     if($user->status>0 && $user->uid==$u->uid){
         return TRUE;
-    }elseif(user_access('view any user project profile')){
+    }elseif(user_access('edit any user project profile')){
         return TRUE;
     }
     return FALSE;
@@ -104,7 +108,9 @@ function view_personl_info_access($u){
     global $user;
     if($user->status>0 && $user->uid==$u->uid){
         return TRUE;
-    }elseif(user_access('edit any user project profile')){
+    }elseif(user_access('view any user project profile')){
+        return TRUE;
+    }elseif(user_can_be_studied($u->uid)){
         return TRUE;
     }
     return FALSE;

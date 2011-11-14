@@ -472,11 +472,44 @@ function is_project_researcher($pid, $user){
 
 /**
  * Check if the user is the participant in the project
+ * @param
+ *   $pid, the id of the project
+ * @param
+ *   $uid, the id of the user
+ *
+ * @return
+ *   The roles of the user
  */
 function is_project_participant($pid, $uid){
+    $get = 'SELECT role FROM {research_projects_persons_list} WHERE project=%d AND user=%d AND active=1';
+    $res = db_query($get, $pid, $uid);
+    $roles = array();
+    while($role = db_result($res)){
+	$roles[] = $role;	
+    }
+    
+    if(!empty($roles)){
+	return $roles;
+    }else{
+	return FALSE;
+    }
     
 }
 
+/**
+ * Check if the current user has permission to study the selected user
+ * @param
+ *   $uid, the id of the user to be studied.
+ */
+function user_can_be_studied($uid){
+    global $user;
+    $check = 'SELECT COUNT(*) FROM {research_projects_persons_list} AS p1, {research_projects_persons_list} AS p2 '
+                      .'WHERE p1.user=%d AND p1.role="participant" AND p1.active=1 AND p2.project=p1.project AND p2.user=%d AND p2.role ="researcher" AND p2.activie=1';
+    if(db_result(db_query($check, $uid, $user->uid))>0){
+	return TRUE;	
+    }
+    return FALSE;
+}
 /**
  * Get project all participants
  * @param
