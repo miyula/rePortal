@@ -45,7 +45,8 @@ function edit_person_info_card_form($form_state, $person){
     $form['email'] = array(
         '#type'         => 'textfield',
         '#title'        => t('Email'),
-        '#default_value'        => $person->email,
+        '#value'        => $person->email,
+        '#disabled'   => TRUE,
     );
     $form['phone'] = array(
         '#type'         => 'textfield',

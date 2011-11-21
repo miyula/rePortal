@@ -5,7 +5,14 @@
  */
 function project_manage_callback($path){
     $project = prepare_project_manage_page($path);
-        
+    $project->path_category = 'manage';
+    
+    //set breadcrumb
+    $breadcrumb = drupal_get_breadcrumb();
+    $breadcrumb[] = l($project->name, generate_project_url($path));
+    $breadcrumb[] = l(t('Manage'), generate_project_url($path).'/manage');
+    drupal_set_breadcrumb($breadcrumb);
+    
     return theme('project_manage_page',$project);
 }
 
@@ -14,6 +21,9 @@ function project_manage_callback($path){
  */ 
 function project_manage_settings_callback($path){
     $project = prepare_project_manage_page($path);
+    $project->path_category = 'settings';
+    $project->path_category_subitem = 'basic'; 
+    
     $project->subtitle = 'Project settings';
     $project->right_part = drupal_get_form('edit_research_project_form', $project);    
     return theme('project_manage_page',$project);

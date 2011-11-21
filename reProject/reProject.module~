@@ -147,12 +147,12 @@ function reProject_theme(){
  */
 function reProject_project_manage_navigation($project){
     return array(
-        'manage' => array(
-            'title' => 'Manage',
-            'url' => generate_project_url($project->path).'/manage',
-            'class' => 'manage_link',
-            'weight' => -10,
-        ),
+	'manage' => array(
+	    'title' => 'Manage',
+	    'url' => generate_project_url($project->path).'/manage',
+	    'class' => 'manage_link',
+	    'weight' => -10,
+	),
         'settings' => array(
             'title' => 'Settings',
             'url'   => generate_project_url($project->path).'/manage/settings',
@@ -160,12 +160,18 @@ function reProject_project_manage_navigation($project){
             'weight'=> 10,
 	    'sub_items' => array(
 		'basic' => array(
-		    'title' => 'Project information',
+		    'title' => 'Basic information',
 		    'url'   => generate_project_url($project->path).'/manage/settings',
 		    'weight' => -20,
 		),
 	    ),
         ),
+	'project_page' => array(
+	    'title' => 'Project page',
+            'url'   => generate_project_url($project->path),
+	    'class' => 'home_link',
+            'weight'=> 10,
+	),
     );
 }
 
@@ -261,11 +267,7 @@ function prepare_project_manage_page($path){
 	drupal_add_js(drupal_get_path('module','reProject').'/js/manage.js');
         //get navigation list
         $navigation = module_invoke_all('project_manage_navigation', $project);
-        uasort($navigation, "weight_sort");
-        foreach($navigation as &$subN){
-            uasort($subN['sub_items'], "weight_sort");
-        }
-        
+        usort($navigation, "weight_sort");
         $project->navigation = $navigation;
         return $project;
     }

@@ -123,7 +123,7 @@ function reProjectContent_create_project($project){
     //first create termofuse
     load_project_content($project->id, 'termofuse');
     //first create firstguide
-    load_project_content($project->id, 'firstguide');
+    load_project_content($project->id, 'userguide');
 }
 
 /**
@@ -211,27 +211,44 @@ function load_project_content($pid, $type='default', $id=NULL){
         switch($type){
             case 'homepage':
                 $node->title = 'Home page';
-                $node->body  = '';
+		$project = load_project($pid, 'id');
+                $node->body  = $project->introduction;
                 node_save($node);
                 project_add_content($pid, $node->nid, 'PUBLIC', $type, 0);
+		
+		//log operation
+		log_operation($pid, 'information', 'A Home page is automatically created by system. ', '', 'reProjectContent');
+		
                 return $node;
             case 'helppage':
                 $node->title = 'Help page';
                 $node->body  = '';
                 node_save($node);
                 project_add_content($pid, $node->nid, 'PUBLIC', $type, 0);
+		
+		//log operation
+		log_operation($pid, 'information', 'A Help page is automatically created by system. ','', 'reProjectContent');
+		
                 return $node;
             case 'termofuse':
                 $node->title = 'Term of Use';
                 $node->body  = '';
                 node_save($node);
                 project_add_content($pid, $node->nid, 'PUBLIC', $type, 0);
-                return $node;
-            case 'firstguide':
-                $node->title = 'First Guide';
+		
+		//log operation
+		log_operation($pid, 'information', 'A Term of Use is automatically created by system. ', '', 'reProjectContent');
+                
+		return $node;
+            case 'userguide':
+                $node->title = 'User Guide';
                 $node->body  = '';
                 node_save($node);
                 project_add_content($pid, $node->nid, 'PARTICIPANT', $type, 0);
+		
+		//log operation
+		log_operation($pid, 'information', 'A User Guide is automatically created by system. ', '', 'reProjectContent');
+		
                 return $node;
             default:
                 return FALSE;

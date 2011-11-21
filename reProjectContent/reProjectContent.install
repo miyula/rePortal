@@ -102,9 +102,6 @@ function research_projects_contents_schema(){
                 ),
             ),
         'primary key' => array('id'),
-        'unique keys' => array(
-            'title_path' => array('title_path'),  
-        ),
     );
     return $schema;
 }

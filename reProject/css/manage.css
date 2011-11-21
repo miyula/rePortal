@@ -1,114 +1,57 @@
-a.manage_home_link{
-    background: url('../images/manage-home-link.png') no-repeat left top;
-    padding-left: 20px;
-    padding-right: 5px;
-    cursor: pointer;
-}
-a.setting_link{
-    background: url('../images/setting.png') no-repeat left top;
-    padding-left: 20px;
-    padding-right: 5px;
-    cursor: pointer;
-}
-a.message_link{
-    background: url('../images/message.png') no-repeat left top;
-    padding-left: 20px;
-    padding-right: 5px;
-    cursor: pointer;
-}
-div.project-manage-div{
-    min-width: 1024px;
+/** For title **/
+div#page h1.page-title{
+    border-bottom: 2px solid #358AA3;
+    padding: 5px 0px;
 }
 
-div.left-navigation-div{
-    float:left;
-    overflow:hidden;
+/** For left navigation **/
+div#project-manage-div div.left-navigation-div{
+    float: left;
     display: inline;
-    width:170px;
-    margin-top:10px;
-<<<<<<< HEAD
-    padding: 10px 20px 10px 10px;
-    border: 1px solid #777;
-    -moz-border-radius: 5px;
-    -khtml-border-radius: 5px;
-    -webkit-border-radius: 5px;
-    border-radius: 5px;
+    width: 200px;
+    border-right: 1px solid #358AA3;
 }
-div.left-navigation-div ul li{
-    font-size: 14px;
-    list-style-image: url('../images/setting.png');
-=======
-    padding: 5px;
-    border-left: 1px solid #D6DDB9;
-    border-top: 1px solid #D6DDB9;
-    border-bottom: 1px solid #D6DDB9;
-    -moz-border-radius: 5px 0px 0px 5px;
-    -khtml-border-radius: 5px 0px 0px 5px;
-    -webkit-border-radius: 5px 0px 0px 5px;
-    border-radius: 5px 0px 0px 5px;
+div.left-navigation-div a, div.left-navigation-div a:hover, div.left-navigation-div a:link, div.left-navigation-div a:visited{
+    border: none;
 }
-
 div.left-navigation-div div.manage-item-tag-div{
-    font-size: 16px;
-    padding: 5px;
-}
-div.left-navigation-div div.manage-item-tag-div a.manage-item-a{
-    font-size: 16px;
-}
-
-div.left-navigation-div ul.manage-item-sub-ul{
-    margin: 0px 5px 0px 30px;
-    font-size: 14px;
-}
-
-div.left-navigation-div ul.manage-item-sub-ul a{
-    font-size: 14px;
-}
-
-li.manage-item-li{
-    background-color: #64ABD1;
-    color: #fff;
->>>>>>> t3rc/master
-}
-
-div.right-content-div{
-    float:left;
-    overflow:auto;
-    display: inline;
-    border: 1px solid #D6DDB9;
-    margin-top: 10px;
-    min-height: 500px;
-    padding: 10px 10px 10px 10px;
-    width: 730px;
-}
-div.right-content-div table{
-    width:99%;
-    table-layout:fixed;
     margin: 10px 0px;
 }
 
-div.right-content-div table p.operation-p{
-    margin: 5px 0px;
+div.left-navigation-div div.manage-item-tag-div div.manage-category-div{
+    margin: 0px 0px 0px 10px;
+    padding: 5px 5px 5px 15px;
+    border-left: 1px solid #358AA3;
+    border-top: 1px solid #358AA3;
+    border-bottom: 1px solid #358AA3;
+    font-size: 18px;
+    background-color: #63AFD0;
 }
-
-div.right-content-div span.sub-title-span{
-    font-size: 24px;
-    font-weight: bold;
+div.left-navigation-div div.manage-item-tag-div div.manage-category-div:hover{
+    background-color: #63AFD0;
 }
-div.right-content-div div.sub-title-div{
-    margin-bottom: 10px;
+div.left-navigation-div div.manage-item-tag-div ul.manage-item-sub-ul{
+    margin: 0px 0px 0px 30px;
+    list-style: none;
+    padding: 0px;
 }
-
-/*** for personal page ***/
-div.participant-card-notes-div {
-    width: 450px;
-}
-div.participant-card-email-div{
-    width: 450px;
-}
-div.participant-card-name-div{
+div.left-navigation-div div.manage-item-tag-div ul.manage-item-sub-ul li{
     
+    border-left: 1px solid #358AA3;
+    border-bottom: 1px solid #358AA3;
+    font-size: 14px;
+    padding: 5px 5px 5px 20px;
 }
-div.participant-card-phone-div{
-    width: 450px;
+div.left-navigation-div div.manage-item-tag-div ul.manage-item-sub-ul li.selected{
+    font-weight: bold;
+    list-style: circle inside;
+    padding-left: 10px;
+}
+div.left-navigation-div div.manage-item-tag-div ul.manage-item-sub-ul li:hover{
+    background-color: #63AFD0;
+}
+/** For right content **/
+div#project-manage-div div.right-content-div{
+    float: left;
+    display: inline;
 }

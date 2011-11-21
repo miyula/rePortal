@@ -3,6 +3,8 @@
  * Menu callback for projects/new
  */
 function projects_new_callback(){
+    $module_path = drupal_get_path('module', 'reProject');
+    drupal_add_js($module_path.'/js/project.js');
     //get project form
     $content = drupal_get_form('create_new_project_form');
     return $content;
@@ -104,38 +106,42 @@ function project_help_callback($path){
  * Form for create new project
  */
 function create_new_project_form(){
-
+    
     $form['name'] = array(
         '#type'             => 'textfield',
         '#title'            => t('Project name'),
         '#description'      => t('The name of the project.'),
         '#required'         => TRUE,
-        '#default_value'    => isset($project->name)?$project->name:'',
+        //'#default_value'    => isset($project->name)?$project->name:'',
     );
     $form['founder'] = array(
         '#type'             => 'textfield',
         '#title'            => t('Founder'),
         '#description'      => t('The name of founders'),
         '#required'         => TRUE,
-        '#default_value'    => isset($project->founder)?$project->founder:'',
+        //'#default_value'    => isset($project->founder)?$project->founder:'',
     );
     $form['path'] = array(
         '#type'             => 'textfield',
-        '#title'            => t('Define a path'),
+        '#title'            => t('Define a project path'),
         '#description'      => t('Unique path to access the project. By a-z, A-Z, 0-9 and _'),
         '#required'         => TRUE,
-        '#default_value'    => isset($project->path)?$project->path:'',
+        //'#default_value'    => isset($project->path)?$project->path:'',
     );
+    $form['base-path-value'] = array(
+        '#type' => 'hidden',
+        '#value' => 'http://'.$_SERVER['HTTP_HOST'].base_path().'project/',
+    );   
     $form['introduction'] = array(
         '#type'             => 'textarea',
         '#title'            => t('Write a short introduction for your project'),
         '#description'      => t('A short description of the project'),
         '#required'         => TRUE,
-        '#default_value'    => isset($project->introduction)?$project->introduction:'',
+        //'#default_value'    => isset($project->introduction)?$project->introduction:'',
     );
-    $form['next_step'] = array(
+    $form['create'] = array(
         '#type'             => 'submit',
-        '#value'            => t('Next'),
+        '#value'            => t('Create'),
     );
     return $form;
 }
@@ -181,8 +187,10 @@ function create_new_project_form_submit($form, &$form_state){
     
     if(create_new_project($project)){
         //succeed to create new project
-        $_SESSION['new_project_id'] = $project->id;
-        drupal_goto("projects/new/editpages");
+        drupal_set_message($message = "Welcome to your new project.", $type='status' );
+        drupal_goto(generate_project_url($project->path));
+        //$_SESSION['new_project_id'] = $project->id;
+        //drupal_goto("projects/new/editpages");
     }else{
         drupal_set_message($message = 'Failed to create new project', $type = 'error');
         drupal_goto('user');
@@ -277,7 +285,7 @@ function create_new_project($project){
     if(_research_projects_save($project)){
         
         //log operation
-        log_operation($project->id, 'information', "Create new project", url('project/create'), REPROJECT_MODULE_NAME);
+        log_operation($project->id, 'information', "Create new project", 'http://'.$_SERVER['HTTP_HOST'].url('projects/new'), REPROJECT_MODULE_NAME);
         
         //update project activity
         update_project_activity($project->id, 1);
@@ -287,9 +295,7 @@ function create_new_project($project){
         
         return TRUE;
         
-        
     }else{
-        drupal_set_message($message = 'Failed to create new project', $type = 'error');
         return FALSE;
     }
     

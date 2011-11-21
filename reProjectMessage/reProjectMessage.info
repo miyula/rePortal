@@ -2,7 +2,6 @@
 name            = "Project Message Sending"
 description     = "Provide functions for sending messages for project"
 package         = reProject
-dependencies[]  = phpmailer
 dependencies[]  = reProject
 dependencies[]  = MessageSend
 dependencies[]  = reProjectContent
