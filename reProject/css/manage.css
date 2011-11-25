@@ -9,7 +9,7 @@ div#project-manage-div div.left-navigation-div{
     float: left;
     display: inline;
     width: 200px;
-    border-right: 1px solid #358AA3;
+    
 }
 div.left-navigation-div a, div.left-navigation-div a:hover, div.left-navigation-div a:link, div.left-navigation-div a:visited{
     border: none;
@@ -50,8 +50,15 @@ div.left-navigation-div div.manage-item-tag-div ul.manage-item-sub-ul li.selecte
 div.left-navigation-div div.manage-item-tag-div ul.manage-item-sub-ul li:hover{
     background-color: #63AFD0;
 }
+
 /** For right content **/
 div#project-manage-div div.right-content-div{
     float: left;
     display: inline;
+    border-left: 1px solid #358AA3;
+    min-height: 500px;
+    height: auto !important;
+    height: 500px;
+    width: 700px;
+    padding: 5px 10px 20px 10px;
 }

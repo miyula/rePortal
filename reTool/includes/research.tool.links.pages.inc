@@ -16,7 +16,8 @@ function research_tools_links_add_callback($tool_id){
 function research_tools_links_edit_callback($tool_id, $link_id){
     //get link info
     $get = "SELECT id, tool, title, url FROM {research_tool_links} WHERE id=%d AND tool=%d";
-    if($link = db_fetch_object(db_query($get, $link_id, $tool_id))){
+    $link = db_fetch_object(db_query($get, $link_id, $tool_id));
+    if($link){
         return drupal_get_form('research_tool_link_form', $link);
     }else{
         return 'Can not find link info. '.l('Go back to tool page', 'research/tools/view/'.$tool_id);

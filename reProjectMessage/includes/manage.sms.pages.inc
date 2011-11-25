@@ -6,6 +6,14 @@
 function project_manage_message_sms_callback($path){
     $project = prepare_project_manage_page($path);
     
+    $breadcrumb = drupal_get_breadcrumb();
+    $breadcrumb[] = l($project->name, generate_project_url($path));
+    $breadcrumb[] = l(t('Manage'), generate_project_url($path).'/manage');
+    drupal_set_breadcrumb($breadcrumb);
+    
+    $project->path_category = 'manage';
+    $project->path_category_subitem = 'messages'; 
+    
     //add css
     drupal_add_css(drupal_get_path('module','reProjectMessage').'/message.css');
     //add js

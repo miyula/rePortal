@@ -4,7 +4,15 @@
  * Menu callback for project/%/manage/persons
  */
 function project_manage_persons_list_callback($path){
-    $project = prepare_project_manage_page($path);    
+    $project = prepare_project_manage_page($path);
+    
+    $breadcrumb = drupal_get_breadcrumb();
+    $breadcrumb[] = l($project->name, generate_project_url($path));
+    $breadcrumb[] = l(t('Manage'), generate_project_url($path).'/manage');
+    drupal_set_breadcrumb($breadcrumb);
+    
+    $project->path_category = 'manage';
+    $project->path_category_subitem = 'persons'; 
     
     drupal_add_css(drupal_get_path('module','reProjectUser').'/css/user_manage.css');
     
@@ -44,21 +52,14 @@ function project_manage_persons_list_callback($path){
     $content.= '<p>&nbsp;</p>';    
     //get normal user
     $content.= '<h2>Participants list</h2>';
-    $content.= '<p><a href="'.url("project/$path/manage/persons/tags/manage").'" class="view_link">View all tags</a></p>';    
+    $content.= '<p><a href="'.url("project/$path/manage/persons/participant/new").'" class="add_link">Add new participant</a>';    
+    $content.= '<a href="'.url("project/$path/manage/persons/tags/manage").'" class="manage_link">Manage tags</a></p>';
+    
     $rows = array();
     $header = array(
         array('data'=>'Name'),
-        array('data'=>'Email'),
-        array('data'=>'Phone'),
-        array('data'=>'Notes'),
+        array('data'=>'Profile'),
         array('data'=>'Operations'),
-    );
-    
-    $rows[] = array(
-        array(
-            'data' => '<div id="new_participant_info_card_form_div">'.drupal_get_form('new_participant_info_card_form', $project).'</div>',
-            'colspan' => 5,
-        ),
     );
         
     $sql2 = "SELECT id, name, email, phone, tags, notes FROM {research_projects_participants_cards} WHERE project={$project->id} ORDER BY created DESC";
@@ -70,7 +71,6 @@ function project_manage_persons_list_callback($path){
             '<div class="participant-card-name-div">'.$row->name.'</div>',
             array(
                 'data'  => theme('participants_card_div', $row, $project->path),
-                'colspan' => 3,
             ),
             '<p class="operation-p"><a class="delete_link" href="'.url("project/$path/manage/persons/participant/remove/{$row->id}").'">Remove</a></p>'
             .'<p class="operation-p"><a class="edit_link" href="'.url("project/$path/manage/persons/participant/edit/{$row->id}").'">Edit</a></p>'
@@ -85,11 +85,20 @@ function project_manage_persons_list_callback($path){
 }
 
 
+
 /**
  * Menu callback for project/%/manage/persons/filter/%
  */
 function project_manage_persons_filter_callback($path, $tag){
-    $project = prepare_project_manage_page($path);    
+    $project = prepare_project_manage_page($path); 
+    
+    $breadcrumb = drupal_get_breadcrumb();
+    $breadcrumb[] = l($project->name, generate_project_url($path));
+    $breadcrumb[] = l(t('Manage'), generate_project_url($path).'/manage');
+    drupal_set_breadcrumb($breadcrumb);
+    
+    $project->path_category = 'manage';
+    $project->path_category_subitem = 'persons'; 
     
     drupal_add_css(drupal_get_path('module','reProjectUser').'/css/user_manage.css');
     
@@ -125,24 +134,16 @@ function project_manage_persons_filter_callback($path, $tag){
     //get normal user
     $content.= '<h2>Participants list</h2>';
 
-    $content.= '<p><a href="'.url("project/$path/manage/persons/tags/manage").'" class="view_link">View all tags</a></p>';    
-
-    $content.= '<p><a href="'.url("project/$path/manage/persons").'" class="reload_link">Reload all</a></p>';   
+    $content.= '<p><a href="'.url('project/'.$path.'/manage/persons/researcher/add').'" class="add_link">Add researcher</a>';
+    $content.= '<a href="'.url("project/$path/manage/persons/tags/manage").'" class="manage_link">Manage tags</a>';
+    $content.= '<a href="'.url("project/$path/manage/persons").'" class="reload_link">Reload all</a></p>';  
+     
 
     $rows = array();
     $header = array(
         array('data'=>'Name'),
-        array('data'=>'Email'),
-        array('data'=>'Phone'),
-        array('data'=>'Notes'),
+        array('data'=>'Profile'),
         array('data'=>'Operations'),
-    );
-    
-    $rows[] = array(
-        array(
-            'data' => '<div id="new_participant_info_card_form_div">'.drupal_get_form('new_participant_info_card_form', $project).'</div>',
-            'colspan' => 5,
-        ),
     );
         
     $sql2 = "SELECT id, name, email, phone, tags, notes FROM {research_projects_participants_cards} WHERE project=%d AND tags LIKE '%;$tag;%' ORDER BY created DESC";
@@ -154,7 +155,6 @@ function project_manage_persons_filter_callback($path, $tag){
             '<div class="participant-card-name-div">'.$row->name.'</div>',
             array(
                 'data'  => theme('participants_card_div', $row, $project->path, $tag),
-                'colspan' => 3,
             ),
             '<p class="operation-p"><a class="delete_link" href="'.url("project/$path/manage/persons/participant/remove/{$row->id}").'">Remove</a></p>'
                 .'<p class="operation-p"><a class="edit_link" href="'.url("project/$path/manage/persons/participant/edit/{$row->id}").'">Edit</a></p>'
@@ -167,64 +167,4 @@ function project_manage_persons_filter_callback($path, $tag){
     return theme('project_manage_page',$project);
 }
 
-/** New participant info card form **/
-function new_participant_info_card_form($form_state, $project){
-    $form['project'] = array(
-        '#type'         => 'hidden',
-        '#value'        => $project->id,
-    );
-    $form['name'] = array(
-        '#type'         => 'textfield',
-        '#size'         => 15,
-    );
-    $form['email'] = array(
-        '#type'         => 'textfield',
-        '#size'         => 15,
-    );
-    $form['phone'] = array(
-        '#type'         => 'textfield',
-        '#size'         => 15,
-    );
-    $form['notes'] = array(
-        '#type'         => 'textarea',
-        '#cols'         => 15,
-        '#rows'         => 3,
-    );
-    $form['submit'] = array(
-        '#type'         => 'submit',
-        '#value'        => t('Add'),
-    );
-    return $form;
-}
-function new_participant_info_card_form_validate($form, &$form_state){
-    $name = $form_state['values']['name'];
-    if(empty($name)){
-        form_set_error('name','The name is required.');
-    }
-    
-    $email = $form_state['values']['email'];
-    if(!empty($email) && !valid_email_address($email)){
-        form_set_error('email','Invalid email address.');
-    }
-    
-    $phone = $form_state['values']['phone'];
-    if(!empty($phone) && !valid_phone_number($phone)){
-        form_set_error('phone','Invalid phone number.');
-    }
-    
-    if(empty($email) && empty($phone)){
-        form_set_error('email', 'The email and phone should not all be empty!');
-        form_set_error('phone', 'The email and phone should not all be empty!');
-    }
-    
-}
-function new_participant_info_card_form_submit($form, &$form_state){
-    $project = $form_state['values']['project'];
-    $name = $form_state['values']['name'];
-    $email = $form_state['values']['email'];
-    $phone = $form_state['values']['phone'];
-    $notes = filter_filter('process', 0, -1, $form_state['values']['notes']);
-    $insert = 'INSERT INTO {research_projects_participants_cards}(project, name, email, phone, notes, created, changed) VALUES(%d, "%s","%s", "%s","%s", NOW(), NOW())';
-    db_query($insert, $project, $name, $email, $phone, $notes);
-    
-}
+

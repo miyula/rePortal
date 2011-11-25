@@ -4,6 +4,14 @@
  */
 function project_manage_contents_list_callback($path){
     $project = prepare_project_manage_page($path);
+    
+    $breadcrumb = drupal_get_breadcrumb();
+    $breadcrumb[] = l($project->name, generate_project_url($path));
+    $breadcrumb[] = l(t('Manage'), generate_project_url($path).'/manage');
+    drupal_set_breadcrumb($breadcrumb);
+    
+    $project->path_category = 'manage';
+    $project->path_category_subitem = 'content'; 
         
     //get right part info
     $content = '<a href="'.url("project/$path/manage/contents/new").'" class="add_link">Create new</a>';
@@ -42,6 +50,15 @@ function project_manage_contents_list_callback($path){
 function project_manage_content_edit_callback($path, $id){
     $project = prepare_project_manage_page($path);
     
+    $breadcrumb = drupal_get_breadcrumb();
+    $breadcrumb[] = l($project->name, generate_project_url($path));
+    $breadcrumb[] = l(t('Manage'), generate_project_url($path).'/manage');
+    $breadcrumb[] = l(t('Contents'), generate_project_url($path).'/manage/contents');
+    drupal_set_breadcrumb($breadcrumb);
+    
+    $project->path_category = 'manage';
+    $project->path_category_subitem = 'content'; 
+    
     //get content node
     $sql = 'SELECT id, node, type, permission, project FROM {research_projects_contents} WHERE id=%d AND project=%d LIMIT 1';
     $content = db_fetch_object(db_query($sql, $id, $project->id));
@@ -60,6 +77,16 @@ function project_manage_content_edit_callback($path, $id){
  */
 function project_manage_content_new_callback($path){
     $project = prepare_project_manage_page($path);
+    
+    $breadcrumb = drupal_get_breadcrumb();
+    $breadcrumb[] = l($project->name, generate_project_url($path));
+    $breadcrumb[] = l(t('Manage'), generate_project_url($path).'/manage');
+    $breadcrumb[] = l(t('Contents'), generate_project_url($path).'/manage/contents');
+    drupal_set_breadcrumb($breadcrumb);
+    
+    $project->path_category = 'manage';
+    $project->path_category_subitem = 'content'; 
+    
     $project->subtitle = 'Create a new content page';
     $content = new stdClass;
     $content->project = $project->id;

@@ -5,6 +5,16 @@
  */
 function project_manage_persons_researcher_add_callback($path){
     $project = prepare_project_manage_page($path);
+    
+    $breadcrumb = drupal_get_breadcrumb();
+    $breadcrumb[] = l($project->name, generate_project_url($path));
+    $breadcrumb[] = l(t('Manage'), generate_project_url($path).'/manage');
+    $breadcrumb[] = l(t('Persons'), generate_project_url($path).'/manage/persons');
+    drupal_set_breadcrumb($breadcrumb);
+    
+    $project->path_category = 'manage';
+    $project->path_category_subitem = 'persons'; 
+    
     $project->subtitle = 'Add new researcher';
     $project->right_part = drupal_get_form('project_invite_research_form', $project->id);
     return theme('project_manage_page',$project);

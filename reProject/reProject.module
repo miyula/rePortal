@@ -139,6 +139,12 @@ function reProject_theme(){
 		'project' => NULL,
 	    ),
 	),
+        'project_manage_home_page' => array(
+            'template' => 'templates/manage.home.page',
+            'arguments' => array(
+		'blocks' => NULL,
+	    ),
+        ),
     );
 }
 
@@ -156,7 +162,7 @@ function reProject_project_manage_navigation($project){
         'settings' => array(
             'title' => 'Settings',
             'url'   => generate_project_url($project->path).'/manage/settings',
-	    'class' => 'setting_link',
+	    'class' => 'manage_link',
             'weight'=> 10,
 	    'sub_items' => array(
 		'basic' => array(

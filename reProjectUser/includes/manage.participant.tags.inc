@@ -23,6 +23,15 @@ function ajax_get_participant_tags_callback($path, $participant){
 function ajax_add_participant_tag_callback($path, $participant, $tag){
     drupal_set_header('Content-Type: text/plain; charset: utf-8');
     
+    $breadcrumb = drupal_get_breadcrumb();
+    $breadcrumb[] = l($project->name, generate_project_url($path));
+    $breadcrumb[] = l(t('Manage'), generate_project_url($path).'/manage');
+    $breadcrumb[] = l(t('Persons'), generate_project_url($path).'/manage/persons');
+    drupal_set_breadcrumb($breadcrumb);
+    
+    $project->path_category = 'manage';
+    $project->path_category_subitem = 'persons'; 
+    
     $project = load_project($path);
     add_tag_to_participant($project->id, $participant, $tag);
     
@@ -57,6 +66,16 @@ function ajax_remove_participant_tag_callback($path, $participant, $tag){
  */
 function manage_participant_tags_callback($path){
     $project = prepare_project_manage_page($path);
+    
+    $breadcrumb = drupal_get_breadcrumb();
+    $breadcrumb[] = l($project->name, generate_project_url($path));
+    $breadcrumb[] = l(t('Manage'), generate_project_url($path).'/manage');
+    $breadcrumb[] = l(t('Persons'), generate_project_url($path).'/manage/persons');
+    drupal_set_breadcrumb($breadcrumb);
+    
+    $project->path_category = 'manage';
+    $project->path_category_subitem = 'persons'; 
+    
     $project->subtitle = 'Manage tags';
     
     $rows = array();

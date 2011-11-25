@@ -156,6 +156,16 @@ function reTool_menu(){
         'access arguments'  => array(1),
         'file'              => 'includes/manage.pages.inc',
     );
+    $menu['project/%/manage/tools/newlink/%'] = array(
+        'title arguments'   => array(1),
+	'title callback'    => 'project_title_callback',
+        'description'       => t('Edit links for tool'),
+        'page callback'     => 'project_manage_tools_newlink_callback',
+        'page arguments'    => array(1, 5),
+	'access callback'   => 'manage_project_access',
+        'access arguments'  => array(1),
+        'file'              => 'includes/manage.pages.inc',
+    );
     $menu['project/%/manage/tools/removelink/%/%'] = array(
         'title arguments'   => array(1),
 	'title callback'    => 'project_title_callback',
@@ -222,6 +232,22 @@ function reTool_project_manage_navigation($project){
         'weight'=> 0,
     );
     return $navigation;
+}
+
+/**
+ * Implements hook_project_manage_category().
+ */
+function reTool_project_manage_category($project){
+    $image_path = base_path().drupal_get_path('module','reProjectContent').'/web-page.png';
+    $count_sql = 'SELECT COUNT(*) FROM {research_project_tools_list} WHERE project=%d';
+    $count = db_result(db_query($count_sql, $project->id));
+    $categories[] = array(
+        'image' => $image_path,
+        'name'  => 'Tools',
+        'count' => $count,
+        'link'  => generate_project_url($project->path).'/manage/tools',
+    );
+    return $categories;
 }
 
 /**
@@ -304,4 +330,15 @@ function load_project_tool_links($pid, $tid){
 function get_project_link($lid){
     $get = 'SELECT id, project, tool, title, url, permission, weight FROM {research_project_tool_links} WHERE id=%d';
     return db_fetch_object(db_query($get, $lid));    
+}
+
+/**
+ * Get tool name
+ * @param
+ *   $tid, the id of the tool
+ */
+function get_research_tool_name($tid){
+    $sql = "SELECT name FROM {research_tools} WHERE id=%d";
+    $title = db_result(db_query($sql, $tid));
+    return $title;
 }

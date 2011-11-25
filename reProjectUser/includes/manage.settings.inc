@@ -5,6 +5,15 @@
  */
 function manage_settings_invitations_callback($path){
     $project = prepare_project_manage_page($path);
+    
+    $breadcrumb = drupal_get_breadcrumb();
+    $breadcrumb[] = l($project->name, generate_project_url($path));
+    $breadcrumb[] = l(t('Manage'), generate_project_url($path).'/manage');
+    $breadcrumb[] = l(t('Settings'), generate_project_url($path).'/manage/settings');
+    drupal_set_breadcrumb($breadcrumb);
+    
+    $project->path_category = 'settings';
+    $project->path_category_subitem = 'persons'; 
     $project->subtitle = 'Set invitation templates';
     $project->right_part = drupal_get_form('set_invitation_templates_form', $project->id);    
     return theme('project_manage_page',$project);

@@ -4,6 +4,7 @@
  * Menu callback for project/%/manage
  */
 function project_manage_callback($path){
+    
     $project = prepare_project_manage_page($path);
     $project->path_category = 'manage';
     
@@ -13,6 +14,24 @@ function project_manage_callback($path){
     $breadcrumb[] = l(t('Manage'), generate_project_url($path).'/manage');
     drupal_set_breadcrumb($breadcrumb);
     
+    //set right part
+    //$project->subtitle = 'Management Category';
+    
+    //get management categories
+    $blocks['categoris'] = module_invoke_all('project_manage_category', $project);
+    //requir reference, module invoke can not use
+    foreach (module_list() as $module) {
+        $function = $module . '_project_content_block';
+        if (function_exists($function)) {
+            $function($project, 'manage_home', $blocks['others']);
+        }
+    }
+
+    $project->right_part = theme('project_manage_home_page', $blocks);
+    
+    //add manage.home.css
+    drupal_add_css(drupal_get_path('module','reProject').'/css/manage.home.css');
+    
     return theme('project_manage_page',$project);
 }
 
@@ -21,6 +40,13 @@ function project_manage_callback($path){
  */ 
 function project_manage_settings_callback($path){
     $project = prepare_project_manage_page($path);
+    
+    $breadcrumb = drupal_get_breadcrumb();
+    $breadcrumb[] = l($project->name, generate_project_url($path));
+    $breadcrumb[] = l(t('Manage'), generate_project_url($path).'/manage');
+    $breadcrumb[] = l(t('Settings'), generate_project_url($path).'/manage/settings');
+    drupal_set_breadcrumb($breadcrumb);
+    
     $project->path_category = 'settings';
     $project->path_category_subitem = 'basic'; 
     

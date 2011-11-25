@@ -1,8 +1,9 @@
+
 a.add_link{
     background: url('../images/add-link.png') no-repeat left top;
     font-size: 14px;
     padding-left: 20px;
-    padding-right: 5px;
+    padding-right: 10px;
     cursor: pointer;
 }
 
@@ -10,74 +11,78 @@ a.edit_link{
     background: url('../images/edit-link.png') no-repeat left top;
     font-size: 14px;
     padding-left: 20px;
-    padding-right: 5px;
+    padding-right: 10px;
     cursor: pointer;
 }
 a.outer_link{
     background: url('../images/outer-link.png') no-repeat left top;
     font-size: 14px;
     padding-left: 20px;
-    padding-right: 5px;
+    padding-right: 10px;
     cursor: pointer;
 }
 a.delete_link{
     background: url('../images/delete-link.png') no-repeat left top;
     font-size: 14px;
     padding-left: 20px;
-    padding-right: 5px;
+    padding-right: 10px;
     cursor: pointer;
 }
 a.back_link{
     background: url('../images/back-link.png') no-repeat left top;
     font-size: 14px;
     padding-left: 20px;
-    padding-right: 5px;
+    padding-right: 10px;
     cursor: pointer;
 }
 a.tags_link{
     background: url('../images/tags-link.png') no-repeat left top;
     font-size: 14px;
     padding-left: 20px;
-    padding-right: 5px;
+    padding-right: 10px;
     cursor: pointer;
 }
 a.reload_link{
     background: url('../images/reload-link.png') no-repeat left top;
     font-size: 14px;
     padding-left: 20px;
-    padding-right: 5px;
+    padding-right: 10px;
     cursor: pointer;
 }
 a.view_link{
     background: url('../images/view-link.png') no-repeat left top;
     font-size: 14px;
     padding-left: 20px;
-    padding-right: 5px;
+    padding-right: 10px;
     cursor: pointer;
 }
 a.links_link{
     background: url('../images/links-link.png') no-repeat left top;
     font-size: 14px;
     padding-left: 20px;
-    padding-right: 5px;
+    padding-right: 10px;
     cursor: pointer;
 }
 a.list_link{
     background: url('../images/list-link.png') no-repeat left top;
     font-size: 14px;
     padding-left: 20px;
-    padding-right: 5px;
-<<<<<<< HEAD
-=======
+    padding-right: 10px;
     cursor: pointer;
 }
 a.home_link{
     background: url('../images/home-link.png') no-repeat left top;
     font-size: 14px;
     padding-left: 20px;
-    padding-right: 5px;
->>>>>>> t3rc/master
+    padding-right: 10px;
     cursor: pointer;
+}
+a.manage_link{
+   background: url('../images/setting.png') no-repeat left top;
+   font-size: 14px;
+   padding-left: 20px;
+   padding-right: 10px;
+   cursor: pointer; 
 }
 
 img.tool_logo_image{

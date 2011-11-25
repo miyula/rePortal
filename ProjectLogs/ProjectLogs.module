@@ -42,11 +42,69 @@ function ProjectLogs_project_manage_navigation($project){
 }
 
 /**
+ * Implements hook_project_manage_category().
+ */
+function ProjectLogs_project_manage_category($project){
+    $image_path = base_path().drupal_get_path('module','reProjectContent').'/web-page.png';
+    $count_sql = 'SELECT COUNT(*) FROM {research_projects_operation_logs} WHERE project=%d';
+    $count = db_result(db_query($count_sql, $project->id));
+    $categories[] = array(
+        'image' => $image_path,
+        'name'  => 'Action Logs',
+        'count' => $count,
+        'link'  => generate_project_url($project->path).'/manage/logs',
+    );
+    return $categories;
+}
+
+/**
+ * Implementation of hook_project_content_block().
+ */
+function ProjectLogs_project_content_block($project, $op, &$blocks){
+    
+    switch($op){
+        case 'manage_home':
+            $b['title'] = t('Recent Action Logs');
+            
+            $header = array(
+                'Type','Operator', 'Message', 'Log Time',    
+            );
+            //get content
+            
+            $sql = 'SELECT id, type, uid, name, content, time FROM {research_projects_operation_logs}, {users} '.
+              'WHERE project='.$project->id.' AND uid=operator ORDER by time DESC LIMIT 5';
+            $res = db_query($sql);
+            $rows = array();
+            while($r = db_fetch_object($res)){
+                $rows[] = array(
+                    $r->type,
+                    l($r->name,'user/'.$r->uid),
+                    $r->content. ' ('.l('More',generate_project_url($project->path).'/manage/logs/'.$r->id).')',
+                    format_interval(time()-strtotime($r->time)).' ago',
+                );
+            }
+            $b['content'] = theme_table($header, $rows);
+            $b['more'] = url("project/{$project->path}/manage/logs");
+            $b['weight'] = 0;
+            $blocks['actionlogs'] = $b;
+            break;
+    }
+    return $blocks;
+}
+/**
  * Menu callback for project/%/manage/logs
  */
 function project_manage_logs_callback($path){
     $project = prepare_project_manage_page($path);
-    $project->subtitle = 'Operating Track';
+    
+    $breadcrumb = drupal_get_breadcrumb();
+    $breadcrumb[] = l($project->name, generate_project_url($path));
+    $breadcrumb[] = l(t('Manage'), generate_project_url($path).'/manage');
+    drupal_set_breadcrumb($breadcrumb);
+    
+    $project->path_category = 'manage';
+    $project->path_category_subitem = 'logs_page'; 
+    $project->subtitle = 'Action Logs';
     
     $header = array(
         'Type','Operator', 'Message', 'Log Time',    
@@ -55,7 +113,7 @@ function project_manage_logs_callback($path){
     
     $sql = 'SELECT id, type, uid, name, content, time FROM {research_projects_operation_logs}, {users} '.
               'WHERE project='.$project->id.' AND uid=operator ORDER by time DESC';
-    $res = pager_query($sql, 3);
+    $res = pager_query($sql, 20);
     while($r = db_fetch_object($res)){
         $rows[] = array(
             $r->type,
@@ -76,12 +134,22 @@ function project_manage_logs_callback($path){
  */
 function project_manage_log_display_callback($path, $lid){
     $project = prepare_project_manage_page($path);
-    $project->subtitle = 'Operating Track';
+    
+    $breadcrumb = drupal_get_breadcrumb();
+    $breadcrumb[] = l($project->name, generate_project_url($path));
+    $breadcrumb[] = l(t('Manage'), generate_project_url($path).'/manage');
+    $breadcrumb[] = l(t('Action logs'), generate_project_url($path).'/manage/logs');
+    drupal_set_breadcrumb($breadcrumb);
+    
+    $project->path_category = 'manage';
+    $project->path_category_subitem = 'logs_page'; 
+    $project->subtitle = 'Action Logs';
     
     $sql = 'SELECT id, type, uid, name, content, ip, link, time FROM {research_projects_operation_logs}, {users} '.
               'WHERE id=%d AND project=%d AND uid=operator';
     $res = db_query($sql, $lid, $project->id);
-    if($r = db_fetch_object($res)){
+    $r = db_fetch_object($res);
+    if($r){
         $content.= '<dl>'
                         ."<dt>Type</dt><dd>{$r->type}</dd>"
                         ."<dt>Operator</dt><dd>".l($r->name, 'user/'.$r->uid)."</dd>";

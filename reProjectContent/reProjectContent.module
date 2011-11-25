@@ -142,6 +142,22 @@ function reProjectContent_project_manage_navigation($project){
 }
 
 /**
+ * Implements hook_project_manage_category().
+ */
+function reProjectContent_project_manage_category($project){
+    $image_path = base_path().drupal_get_path('module','reProjectContent').'/web-page.png';
+    $count_sql = 'SELECT COUNT(*) FROM {research_projects_contents} WHERE project=%d';
+    $count = db_result(db_query($count_sql, $project->id));
+    $categories[] = array(
+        'image' => $image_path,
+        'name'  => 'Content Pages',
+        'count' => $count,
+        'link'  => generate_project_url($project->path).'/manage/contents',
+    );
+    return $categories;
+}
+
+/**
  * Title callback for project/%/content/%
  */
 function project_content_title_callback($path, $title_path){
