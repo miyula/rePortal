@@ -88,6 +88,29 @@ function reProjectUserProfile_user($op, &$edit, &$account, $category = NULL){
         }
     }
 }
+
+/**
+ * Implementation of hook_project_participant_card_info().
+ */
+function reProjectUserProfile_project_participant_card_info($pid, $uid){
+    if($uid>0){
+        $info = load_user_personal_info($uid);
+        
+        $card['gender'] = array(
+            'name' => t('Gender'),
+            'value'=> ($info->gender=='f')?t('Female'):(($info->gender=='m')?'Male':'Secret'),
+            'weight' => 0,
+        );
+        $card['age'] = array(
+            'name' => t('Age'),
+            'value'=> empty($info->age)?t('Unknow'):$info->age,
+            'weight' => 0,
+        );
+    }
+    return $card;
+    
+}
+
 /**
  * Access callback for checking if current user has the permission to edit the profile
  */

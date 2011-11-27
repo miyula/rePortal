@@ -7,31 +7,51 @@ function invite_redirect_to_project_callback($code){
     if(!invitation_code_is_not_used($code)){
         $invite_message = '<font color="RED">Sorry, the invitation code does not exist or it has already been used!</font>';
     }else{
-        $check = 'SELECT code, c.project AS project, c.email AS email, c.phone AS phone, c.person AS person, used, p.user AS user, p.role AS role, p.active AS active  '
-                .'FROM {research_projects_onetime_invite_code} AS c,  {research_projects_persons_list} AS p '
+        $check = 'SELECT code, c.project AS project, c.email AS email, c.phone AS phone, c.person AS person, used, p.user AS user, p.role AS role, p.active AS active, u.name as username '
+                .'FROM {research_projects_onetime_invite_code} AS c,  {research_projects_persons_list} AS p LEFT JOIN {users} AS u ON u.uid=p.user '
                 .'WHERE c.code="%s" AND c.person=p.id';
         $result = db_fetch_object(db_query($check, $code));
         
-        $project = load_project($result->project,'id');
-        $invite_message = 'You are to join project <strong>'.l($project->name, generate_project_url($project->path), array('attributes'=>array('target'=>'_blank')))."</strong> as a {$result->role}.";
+        if($result){
+            $project = load_project($result->project,'id');
+            $invite_message = 'Do you accept to join project <strong>'.l($project->name, generate_project_url($project->path), array('attributes'=>array('target'=>'_blank')))."</strong> as a {$result->role}?";
     
-        global $user;
-        if($user->uid && $user->status){
-            
-            if($result->active==1){
-                //change code to used
-                $set_code_used = 'UPDATE  {research_projects_onetime_invite_code} SET used=1, changed=NOW() WHERE code="%s"';
-                db_query($set_code_used, $code);
-                drupal_goto(get_project_url($result->project));
-                exit;
+            global $user;
+        
+            if($user->uid && $result->email!=$user->mail){
+                watchdog('user', 'Session closed for %name.', array('%name' => $user->name));
+
+                // Destroy the current session:
+                session_destroy();
+                // Only variables can be passed by reference workaround.
+                $null = NULL;
+                user_module_invoke('logout', $null, $user);
+
+                // Load the anonymous user
+                $user = drupal_anonymous_user();
             }
+        
+            if($user->uid && $user->status){
             
-            $person->exiting_user_join_form = drupal_get_form('exiting_user_join_project_form', $result);
-            $person->username = $user->name;
+                if($result->active==1){
+                    //change code to used
+                    $set_code_used = 'UPDATE  {research_projects_onetime_invite_code} SET used=1, changed=NOW() WHERE code="%s"';
+                    db_query($set_code_used, $code);
+                    drupal_goto(get_project_url($result->project));
+                    exit;
+                }
+            
+                $person->exiting_user_join_form = drupal_get_form('exiting_user_join_project_form', $result);
+                $person->username = $user->name;
+            }elseif($result->user > 0){
+                $person->login_to_join_form = drupal_get_form('login_to_join_project_from', $result);
+            }else{
+                $person->register_to_join_form = drupal_get_form('register_to_join_project_from', $result);
+            }
         }else{
-            $person->login_to_join_form = drupal_get_form('login_to_join_project_from', $code);
-            $person->register_to_join_form = drupal_get_form('register_to_join_project_from', $code);
+            $invite_message = '<font color="RED">Sorry, invalid invitation code.</font>';
         }
+        
         
     }
     
@@ -55,8 +75,8 @@ function exiting_user_join_project_form($form_state, $person){
     );
     $form['accept'] = array(
         '#type' => 'submit',
-        '#value' =>t(' Yes, I accept '),
-        '#suffix' => '<font size=3>'.l('No, change an account', 'logout').'</font>',  
+        '#value' =>t(' Yes, I accept. '),
+        '#suffix' => '<font size=3><a href="javascript:self.close();">No, thanks.</a></font>',  
     );
     return $form;
 }
@@ -93,19 +113,33 @@ function exiting_user_join_project_form_submit($form, &$form_state){
     $active = 'UPDATE {research_projects_persons_list} SET active=1, user=%d, changed=NOW() WHERE id=%d';
     db_query($active, $user->uid, $person);
     
+    //update info card
+    $check = 'SELECT infor_card FROM {research_projects_onetime_invite_code} WHERE code="%s"';
+    $info_card = db_result(db_query($check, $code));
+    if($info_card && $info_card>0){
+        $add_user = 'UPDATE {research_projects_participants_cards} SET user=%d, changed=NOW() WHERE id=%d';
+        db_query($add_user, $user->uid, $info_card);
+    }
+    
+    module_invoke_all('project_join_new_participant', $project, $user->uid);
+    
     drupal_set_message(t('You have successfully joined the project.'), status);
-    drupal_goto(get_project_url($project));
+    $form_state['redirect'] = get_project_url($project);
 }
 
 
 /** Login to join project form **/
-function login_to_join_project_from($form_state, $code){
+function login_to_join_project_from($form_state, $person){
     $form = user_login($form_state);
     $form['name'] ['#size'] = 20;
+    $form['name'] ['#value'] = $person->username;
+    $form['name'] ['#disabled'] = TRUE;
+    $form['name'] ['#description'] = '';
     $form['pass'] ['#size'] = 20;
+    $form['pass'] ['#description'] = '';
     $form['code'] = array(
         '#type' => 'hidden',
-        '#value' => $code,
+        '#value' => $person->code,
     );
     $form['submit']['#value'] = t('Login and accept');
     return $form;
@@ -135,9 +169,19 @@ function login_to_join_project_from_submit($form, &$form_state){
         $p = db_fetch_object(db_query('SELECT project, person FROM {research_projects_onetime_invite_code} WHERE code="%s"', $code));
         $active = 'UPDATE {research_projects_persons_list} SET active=1, changed=NOW() WHERE id=%d';
         db_query($active, $p->person);
+        
+        //update info card
+        $check = 'SELECT infor_card FROM {research_projects_onetime_invite_code} WHERE code="%s"';
+        $info_card = db_result(db_query($check, $code));
+        if($info_card && $info_card>0){
+            $add_user = 'UPDATE {research_projects_participants_cards} SET user=%d, changed=NOW() WHERE id=%d';
+            db_query($add_user, $user->uid, $info_card);
+        }
+        
+        module_invoke_all('project_join_new_participant', $project, $user->uid);
     
         drupal_set_message(t('You have successfully joined the project.'), status);
-        drupal_goto(get_project_url($p->project));
+        $form_state['redirect'] = get_project_url($p->project);
     }else{
         drupal_goto('user');    
     }
@@ -145,16 +189,19 @@ function login_to_join_project_from_submit($form, &$form_state){
 }
 
 /** register to join project form **/
-function register_to_join_project_from($form_state, $code){
+function register_to_join_project_from($form_state, $person){
     $form = user_register();
     $form['name'] ['#size'] = 20;
     $form['name'] ['#description'] = '';
     $form['pass'] ['#size'] = 20;
+    $form['pass'] ['#description'] = '';
     $form['mail'] ['#size'] = 20;
     $form['mail'] ['#description'] = '';
+    $form['mail'] ['#value'] = $person->email;
+    $form['mail'] ['#disabled'] = TRUE;
     $form['code'] = array(
         '#type' => 'hidden',
-        '#value' => $code,
+        '#value' => $person->code,
     );
     $form['submit']['#value'] = t('Register and accept');
     return $form;
@@ -179,8 +226,18 @@ function register_to_join_project_from_submit($form, &$form_state){
         $p = db_fetch_object(db_query('SELECT project, person FROM {research_projects_onetime_invite_code} WHERE code="%s"', $code));
         $active = 'UPDATE {research_projects_persons_list} SET active=1, user=%d, changed=NOW() WHERE id=%d';
         db_query($active, $user->uid, $p->person);
-    
+        
+        //update info card
+        $check = 'SELECT infor_card FROM {research_projects_onetime_invite_code} WHERE code="%s"';
+        $info_card = db_result(db_query($check, $code));
+        if($info_card && $info_card>0){
+            $add_user = 'UPDATE {research_projects_participants_cards} SET user=%d, changed=NOW() WHERE id=%d';
+            db_query($add_user, $user->uid, $info_card);
+        }
+        
+        module_invoke_all('project_join_new_participant', $project, $user->uid);
+        
         drupal_set_message(t('You have successfully joined the project.'), status);
+        $form_state['redirect'] = get_project_url($p->project);
     }
-    $form_state['redirect'] = 'project/mylife';
 }

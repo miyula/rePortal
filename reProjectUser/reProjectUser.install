@@ -104,6 +104,24 @@ function reProjectUser_update_6013(){
     return $ret;
 }
 
+function reProject_update_6014(){
+    $ret = array();
+
+    //add new column changed
+    //check if column exist
+    $table = 'research_projects_onetime_invite_code';
+    $column = 'infor_card';
+    if(!db_column_exists($table, $column)){
+        db_add_field($ret, 'research_projects_onetime_invite_code', 'infor_card',
+        array('type'      => 'int',
+                'unsigned'  => TRUE,
+                'not null'  => TRUE,
+                'default'   => 0,
+            ));
+    }
+    
+    return $ret;
+}
 
 /**
  * Implementation of hook_schema().
@@ -146,6 +164,12 @@ function research_projects_onetime_invite_code_schema(){
                 'size'      => 'tiny',
                 'not null'  => TRUE,
                 'default'   => 0,  
+            ),
+            'infor_card' => array(
+                'type'      => 'int',
+                'unsigned'  => TRUE,
+                'not null'  => TRUE,
+                'default'   => 0,
             ),
             'created' => array(
                 'type'      => 'datetime',

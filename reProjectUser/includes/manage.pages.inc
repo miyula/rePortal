@@ -62,15 +62,49 @@ function project_manage_persons_list_callback($path){
         array('data'=>'Operations'),
     );
         
-    $sql2 = "SELECT id, name, email, phone, tags, notes FROM {research_projects_participants_cards} WHERE project={$project->id} ORDER BY created DESC";
+    $sql2 = "SELECT id, user, name, email, phone, tags, notes FROM {research_projects_participants_cards} WHERE project={$project->id} ORDER BY created DESC";
     $res = pager_query($sql2, 30);
     while($row=db_fetch_object($res)){
         $tags = get_tags_as_array($row->tags);
         $row->tags_array = $tags;
+        
+        $name_div = '<div class="participant-card-name-div">'.$row->name.'<br/><strong>(Unregistered)</strong></div>';
+        if($row->user!=null && $row->user >0 ){
+            //check if user is active in the project
+            $check = 'SELECT active FROM {research_projects_persons_list} WHERE project=%d AND user=%d AND role="participant"';
+            if(db_result(db_query($check, $project->id, $row->user))==1){
+                $name_div = '<div class="participant-card-name-div">'.l($row->name, 'user/'.$row->user).'</div>';
+            }
+        }
+        
+        $p_card = module_invoke_all('project_participant_card_info', $project->id, $row->user);
+        $p_card['email'] = array(
+            'name' => t('Email'),
+            'value'=> $row->email,
+            'weight'=> 0,
+        );
+        $p_card['phone'] = array(
+            'name' => t('Phone'),
+            'value'=> $row->phone,
+            'weight'=> 0,
+        );
+        
+        $p_card['tags'] = array(
+            'name' => t('Tags'),
+            'value'=> $row->tags_array,
+            'weight'=> 9,
+        );
+        $p_card['notes'] = array(
+            'name' => t('Notes'),
+            'value'=> $row->notes,
+            'weight'=> 10,
+        );
+        
+        
         $rows[] = array(
-            '<div class="participant-card-name-div">'.$row->name.'</div>',
+            $name_div,
             array(
-                'data'  => theme('participants_card_div', $row, $project->path),
+                'data'  => theme('participants_card_div', $p_card, $project->path),
             ),
             '<p class="operation-p"><a class="delete_link" href="'.url("project/$path/manage/persons/participant/remove/{$row->id}").'">Remove</a></p>'
             .'<p class="operation-p"><a class="edit_link" href="'.url("project/$path/manage/persons/participant/edit/{$row->id}").'">Edit</a></p>'
@@ -167,4 +201,10 @@ function project_manage_persons_filter_callback($path, $tag){
     return theme('project_manage_page',$project);
 }
 
+/**
+ * Menu callback for project/%/manage/persons/info/%
+ */
+function project_manage_persons_info_callback($path, $info_card){
+    //TODO: add person info page for manage
+}
 

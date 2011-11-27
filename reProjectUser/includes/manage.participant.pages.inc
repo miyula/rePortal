@@ -5,6 +5,16 @@
  */
 function project_manage_persons_participant_remove_callback($path, $id){
     $project = prepare_project_manage_page($path);
+    
+    //check if there is user id
+    $check = 'SELECT user FROM {research_projects_participants_cards} WHERE id=%d AND project=%d';
+    $uid = db_result(db_query($check, $id, $project->id));
+    if($uid){
+        //remove person from person list
+        $remove = "DELETE FROM {research_projects_persons_list} WHERE user=%d AND project=%d AND role='participant' ";
+        db_query($remove, $uid, $project->id);
+    }
+    
     $remove = "DELETE FROM {research_projects_participants_cards} WHERE id=%d AND project=%d";
     db_query($remove, $id, $project->id);
     drupal_goto("project/$path/manage/persons");
@@ -71,11 +81,19 @@ function new_participant_info_card_form($form_state, $project){
         '#title'        => t('Participant name'),
         '#type'         => 'textfield',
         '#size'         => 20,
+        '#required'     => TRUE,
     );
     $form['email'] = array(
         '#title'        => t('Email'),
         '#type'         => 'textfield',
         '#size'         => 20,
+        '#required'     => TRUE,
+    );
+    $form['send-invitation'] = array(
+        '#title'        => t('Send invitation email. '.l('[Edit the invitation]', get_project_url($project).'/manage/settings/invitations')),
+        '#type'         => 'checkbox',
+        '#description'  => t('You can not view any more information from this person unless you invite the person to accept participating your project.'),
+        '#default_value'=> TRUE,
     );
     $form['phone'] = array(
         '#title'        => t('Phone'),
@@ -85,7 +103,7 @@ function new_participant_info_card_form($form_state, $project){
     $form['notes'] = array(
         '#title'        => t('Notes'),
         '#type'         => 'textarea',
-        '#cols'         => 15,
+        '#cols'         => 5,
         '#rows'         => 3,
         '#description'  => t('Additional infomation of this participant.'),
     );
@@ -102,29 +120,47 @@ function new_participant_info_card_form_validate($form, &$form_state){
     }
     
     $email = $form_state['values']['email'];
-    if(!empty($email) && !valid_email_address($email)){
+    if(!valid_email_address($email)){
         form_set_error('email','Invalid email address.');
     }
+    
+    $project = $form_state['values']['project'];
+    $check_person_sql = 'SELECT id, user, name, email, phone, tags, notes FROM {research_projects_participants_cards} '
+                       .'WHERE project=%d AND email="%s" ';
+    $res = db_fetch_object(db_query($check_person_sql, $project, $email));
+    if($res){
+        //TODO: add link to visit personal info
+        form_set_error('email','The email already in your participant list. ');//.l('View the participant.', get_project_url($project).'/manage/persons/info/'.$res->id));
+    }
+    
     
     $phone = $form_state['values']['phone'];
     if(!empty($phone) && !valid_phone_number($phone)){
         form_set_error('phone','Invalid phone number.');
-    }
-    
-    if(empty($email) && empty($phone)){
-        form_set_error('email', 'The email and phone should not all be empty!');
-        form_set_error('phone', 'The email and phone should not all be empty!');
-    }
+    }            
     
 }
 function new_participant_info_card_form_submit($form, &$form_state){
+    
     $project = $form_state['values']['project'];
     $name = $form_state['values']['name'];
     $email = $form_state['values']['email'];
     $phone = $form_state['values']['phone'];
     $notes = filter_filter('process', 0, -1, $form_state['values']['notes']);
-    $insert = 'INSERT INTO {research_projects_participants_cards}(project, name, email, phone, notes, created, changed) VALUES(%d, "%s","%s", "%s","%s", NOW(), NOW())';
+    
+    $insert = 'INSERT INTO {research_projects_participants_cards} '
+             .'(project, name, email, phone, notes, created, changed) '
+             .'VALUES(%d, "%s", "%s", "%s", "%s", NOW(), NOW())';
     db_query($insert, $project, $name, $email, $phone, $notes);
+    $info_card = mysql_insert_id();
+    
+    //check if send invitation letter
+    $send = $form_state['values']['send-invitation'];    
+    //if yes, send invitation letter, add participant card
+    if($send){
+        send_invitation_email($project, 'participant', $email, $info_card);
+        $form_state['redirect'] = get_project_url($project).'/manage/persons';
+    }
     
 }
 

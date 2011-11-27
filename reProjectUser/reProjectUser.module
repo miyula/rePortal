@@ -32,6 +32,16 @@ function reProjectUser_menu(){
         'access arguments'  => array(1),
         'file'              => 'includes/manage.pages.inc',  
     );
+    $menu['project/%/manage/persons/info/%'] = array(
+	'title arguments'   => array(1),
+	'title callback'    => 'project_title_callback',
+        'description'       => t('Show the information of a person in the project'),
+        'page callback'     => 'project_manage_persons_info_callback',
+        'page arguments'    => array(1, 5),
+	'access callback'   => 'manage_project_access',
+        'access arguments'  => array(1),
+        'file'              => 'includes/manage.pages.inc',  
+    );
     $menu['project/%/manage/persons/filter/%'] = array(
 	'title arguments'   => array(1),
 	'title callback'    => 'project_title_callback',
@@ -250,7 +260,7 @@ function reProjectUser_project_manage_category($project){
     $categories[] = array(
         'image' => $image_path,
         'name'  => 'Participants',
-        'count' => $count1,
+        'count' => $count2,
         'link'  => generate_project_url($project->path).'/manage/persons',
     );
     return $categories;
@@ -537,7 +547,7 @@ function is_project_participant($pid, $uid){
 function user_can_be_studied($uid){
     global $user;
     $check = 'SELECT COUNT(*) FROM {research_projects_persons_list} AS p1, {research_projects_persons_list} AS p2 '
-                      .'WHERE p1.user=%d AND p1.role="participant" AND p1.active=1 AND p2.project=p1.project AND p2.user=%d AND p2.role ="researcher" AND p2.activie=1';
+                      .'WHERE p1.user=%d AND p1.role="participant" AND p1.active=1 AND p2.project=p1.project AND p2.user=%d AND p2.role ="researcher" AND p2.active=1';
     if(db_result(db_query($check, $uid, $user->uid))>0){
 	return TRUE;	
     }
@@ -659,8 +669,10 @@ function set_invite_template_for($pid, $tid, $for){
  *   $email, string email address
  * @param
  *   $phone, the phone number
+ * @param
+ *   $info_card, the id of participant card
  */
-function generate_invite_link($pid, $type, $email='', $phone=''){
+function generate_invite_link($pid, $type, $email='', $phone='', $info_card=0){
     $code = md5($pid.$type.$email.$phone.time());
     
     //find user
@@ -673,9 +685,9 @@ function generate_invite_link($pid, $type, $email='', $phone=''){
     }
     
     //record code
-    $insert = 'INSERT INTO {research_projects_onetime_invite_code}(project, email, phone, person, code, created, changed) '
-                  .'VALUES(%d, "%s", "%s", %d, "%s", NOW(), NOW())';
-    db_query($insert, $pid, $email, $phone, $person, $code);
+    $insert = 'INSERT INTO {research_projects_onetime_invite_code}(project, email, phone, person, code, infor_card, created, changed) '
+                  .'VALUES(%d, "%s", "%s", %d, "%s", %d, NOW(), NOW())';
+    db_query($insert, $pid, $email, $phone, $person, $code, $info_card);
     
     return 'http://'.$_SERVER['HTTP_HOST'].url('invite/'.$code);
 }
@@ -692,3 +704,35 @@ function invitation_code_is_not_used($code){
     return db_result(db_query($check, $code));
 }
 
+/**
+ * send inviation letter
+ * @param
+ *   $pid, the id of project
+ * @param
+ *   $role, string, the role of the invite person e.g. 'researcher', 'participant'
+ * @param
+ *   $email, string, the email address
+ * @param
+ *   $info_card, the id of participant card
+ * 
+ */
+function send_invitation_email($pid, $role, $email, $info_card=0){
+    
+    $invite_link = generate_invite_link($pid, $role, $email, '', $info_card);
+    
+    //prepare invite letter
+    $template = get_invite_template($pid, $role);
+    global $user;
+    $project = load_project($pid, 'id');
+    $pair_value = array(
+        '@project_name' => $project->name,
+        '!project_link' => $project->url,
+        '!invite_link'=> $invite_link,
+        '%name' => $user->name, 
+    );
+    $subject = t($template->title, $pair_value);
+    $body = t($template->content, $pair_value);
+   
+    //send invite mail
+    message_send_http_mail($email,$subject,$body);
+}

@@ -29,18 +29,8 @@ function project_invite_research_form(&$form_state, $pid){
     $form['email'] = array(
         '#type' => 'textfield',
         '#title' => t('Email address'),
-        '#description' => t('The email account of the researcher in this protal.'),
         '#required' => TRUE,
-    );
-    
-    $t = get_invite_template($pid, 'researcher');
-    if($t==FALSE || $t->template<=0){
-        drupal_set_message(t('The template for invitate researcher is missing, please '.l('set one',get_project_url($pid).'/manage/settings/invitations').'.'),'error');    
-    }
-    
-    $form['invite-template'] = array(
-        '#type' => 'hidden',
-        '#value' => (int)$t->template,
+        '#description' => t('The email of the researcher to be invited. '.l('Edit the invitation letter.', get_project_url($pid).'/manage/settings/invitations')),
     );
     $form['submit'] = array(
         '#type' => 'submit',
@@ -60,26 +50,15 @@ function project_invite_research_form_validate($form, &$form_state){
 function project_invite_research_form_submit($form, &$form_state){
     $pid = $form_state['values']['pid'];
     $email = $form_state['values']['email'];
-
-    //generate invite link
-    $invite_link = generate_invite_link($pid, 'researcher', $email);
     
-    //prepare invite letter
-    $template = get_invite_template($pid, 'researcher');
-    global $user;
-    $project = load_project($pid, 'id');
-    $pair_value = array(
-        '@project_name' => $project->name,
-        '!project_link' => $project->url,
-        '!invite_link'=> $invite_link,
-        '%name' => $user->name, 
-    );
-    $subject = t($template->title, $pair_value);
-    $body = t($template->content, $pair_value);
-   
-    //send invite mail
-    message_send_http_mail($email,$subject,$body);
-
-    $form_state['redirect']  = get_project_url($pid).'/manage/persons';
+    //check if the email user already in project
+    $check = 'SELECT name, active FROM {users} AS u, {research_projects_persons_list} AS p WHERE u.mail="%s" AND p.user=u.uid AND p.project=%d AND p.role="researcher"';
+    $r = db_fetch_object(db_query($check, $email, $pid));
+    if($r){
+        //TODO: if the user already in researcher list
+    }  else {
+        send_invitation_email($pid, 'researcher', $email);
+        $form_state['redirect']  = get_project_url($pid).'/manage/persons';
+    }
     
 }
