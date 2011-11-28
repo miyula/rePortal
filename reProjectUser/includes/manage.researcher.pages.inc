@@ -46,19 +46,28 @@ function project_invite_research_form_validate($form, &$form_state){
         form_set_error('email', 'The email address you input is invalid.');
     }
     
+    //check if the email user already in project
+    $check = 'SELECT name, active FROM {users} AS u, {research_projects_persons_list} AS p WHERE u.mail="%s" AND p.user=u.uid AND p.project=%d AND p.role="researcher"';
+    $r = db_fetch_object(db_query($check, $email, $pid));
+    
+    if($r){
+        //if the user already in researcher list
+        form_set_error('email', 'The researcher has already in your project.');
+    }
+    
 }
 function project_invite_research_form_submit($form, &$form_state){
     $pid = $form_state['values']['pid'];
     $email = $form_state['values']['email'];
     
-    //check if the email user already in project
-    $check = 'SELECT name, active FROM {users} AS u, {research_projects_persons_list} AS p WHERE u.mail="%s" AND p.user=u.uid AND p.project=%d AND p.role="researcher"';
-    $r = db_fetch_object(db_query($check, $email, $pid));
-    if($r){
-        //TODO: if the user already in researcher list
-    }  else {
-        send_invitation_email($pid, 'researcher', $email);
-        $form_state['redirect']  = get_project_url($pid).'/manage/persons';
-    }
+    send_invitation_email($pid, 'researcher', $email);
+    
+    //log the operation
+    global $user;
+    $content = "{$user->name} invited $email to join project researcher group.";
+    log_operation($id, 'persons', $content, get_project_url($pid).'/manage/persons/researcher/add', 'reProjectUser');
+    
+    $form_state['redirect']  = get_project_url($pid).'/manage/persons';
+    
     
 }
