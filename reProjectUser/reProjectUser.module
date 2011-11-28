@@ -547,8 +547,9 @@ function is_project_participant($pid, $uid){
  */
 function user_can_be_studied($uid){
     global $user;
-    $check = 'SELECT COUNT(*) FROM {research_projects_persons_list} AS p1, {research_projects_persons_list} AS p2 '
-                      .'WHERE p1.user=%d AND p1.role="participant" AND p1.active=1 AND p2.project=p1.project AND p2.user=%d AND p2.role ="researcher" AND p2.active=1';
+    $check = 'SELECT COUNT(*) FROM {research_projects_persons_list} AS p1, '
+            .'{research_projects_persons_list} AS p2 '
+            .'WHERE p1.user=%d AND p1.role="participant" AND p1.active=1 AND p2.project=p1.project AND p2.user=%d AND p2.role IN ("researcher", "creator") AND p2.active=1';
     if(db_result(db_query($check, $uid, $user->uid))>0){
 	return TRUE;	
     }
