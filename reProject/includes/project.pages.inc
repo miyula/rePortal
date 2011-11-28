@@ -39,7 +39,7 @@ function projects_list_callback(){
     //get project list
     $sql = "SELECT id, creator, p.name name, u.name username, uid, url, path, founder, introduction, p.created created, p.changed changed FROM {research_projects} AS p LEFT JOIN {users} AS u ON uid=creator ORDER BY p.created DESC";
     
-    $res = pager_query($sql,30);
+    $res = pager_query($sql,10);
     while($row = db_fetch_object($res)){
         $rows[] = array(
             l($row->name,'project/'.$row->path),
