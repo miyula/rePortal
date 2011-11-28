@@ -68,7 +68,7 @@ function project_manage_persons_list_callback($path){
         $tags = get_tags_as_array($row->tags);
         $row->tags_array = $tags;
         
-        $name_div = '<div class="participant-card-name-div">'.$row->name.'<br/><strong>(Unregistered)</strong></div>';
+        $name_div = '<div class="participant-card-name-div">'.$row->name.'<br/><strong>(Unauthorized)</strong></div>';
         if($row->user!=null && $row->user >0 ){
             //check if user is active in the project
             $check = 'SELECT active FROM {research_projects_persons_list} WHERE project=%d AND user=%d AND role="participant"';

@@ -29,7 +29,7 @@ function reTool_menu(){
         'page callback'     => 'research_tools_list_callback',
         'access arguments'  => array('view research tools'),
         'file'              => 'includes/research.tool.pages.inc',
-        'type'              => MENU_NORMAL_ITEM,
+        'type'              => MENU_CALLBACK,
     );
     $menu['research/tools/add'] = array(
         'title'             => t('Add new tool'),
@@ -37,7 +37,7 @@ function reTool_menu(){
         'page callback'     => 'research_tools_add_callback',
         'access arguments'  => array('create research tool'),
         'file'              => 'includes/research.tool.pages.inc',
-        'type'              => MENU_NORMAL_ITEM,
+        'type'              => MENU_CALLBACK,
     );
     $menu['research/tools/list'] = array(
         'title'             => t('Research tools'),
@@ -45,7 +45,7 @@ function reTool_menu(){
         'page callback'     => 'research_tools_list_callback',
         'access arguments'  => array('view research tools'),
         'file'              => 'includes/research.tool.pages.inc',
-        'type'              => MENU_NORMAL_ITEM,
+        'type'              => MENU_CALLBACK,
     );
     $menu['research/tools/view/%'] = array(
         'title callback'    => 'research_tools_title_callback',
@@ -55,7 +55,7 @@ function reTool_menu(){
         'page arguments'    => array(3),
         'access arguments'  => array('view research tools'),
         'file'              => 'includes/research.tool.pages.inc',
-        'type'              => MENU_NORMAL_ITEM,
+        'type'              => MENU_CALLBACK,
     );
     $menu['research/tools/view/%/edit'] = array(
         'title'             => t('Edit research tool'),

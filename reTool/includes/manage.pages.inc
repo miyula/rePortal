@@ -59,7 +59,9 @@ function project_manage_tools_selete_list_callback($path){
     $project->path_category_subitem = 'tools'; 
         
     //get right part info
-    $content = "<p><a class='back_link' href='project/$path/manage/tools'>Back</a></p>";
+    if(user_access('create research tool')){
+        $content = "<p><a class='add_link' href='".url('research/tools/add')."'>Create new</a></p>";
+    }
     $rows = array();
     $header = array(
         array('data'=>'Tool'),
