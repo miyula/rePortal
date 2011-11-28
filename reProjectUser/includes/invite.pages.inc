@@ -73,6 +73,10 @@ function exiting_user_join_project_form($form_state, $person){
         '#type' => 'hidden',
         '#value' => $person->code,
     );
+    $form['role'] = array(
+        '#type' => 'hidden',
+        '#value'=> $person->role,
+    );
     $form['accept'] = array(
         '#type' => 'submit',
         '#value' =>t(' Yes, I accept. '),
@@ -103,6 +107,7 @@ function exiting_user_join_project_form_submit($form, &$form_state){
     $project = $form_state['values']['project'];
     $person = $form_state['values']['person'];
     $code = $form_state['values']['code'];
+    $role = $form_state['values']['role'];
     global $user;
     
     //change code to used
@@ -123,6 +128,10 @@ function exiting_user_join_project_form_submit($form, &$form_state){
     
     module_invoke_all('project_join_new_participant', $project, $user->uid);
     
+    $log_content = "{$user->name} accept to join project as a $role.";
+    log_operation($project, 'persons', $log_content, '', 'reProjectUser');
+    
+    
     drupal_set_message(t('You have successfully joined the project.'), status);
     $form_state['redirect'] = get_project_url($project);
 }
@@ -141,6 +150,10 @@ function login_to_join_project_from($form_state, $person){
         '#type' => 'hidden',
         '#value' => $person->code,
     );
+    $form['role'] = array(
+        '#type' => 'hidden',
+        '#value'=> $person->role,
+    );
     $form['submit']['#value'] = t('Login and accept');
     return $form;
 }
@@ -157,6 +170,7 @@ function login_to_join_project_from_validate($form, &$form_state){
 
 function login_to_join_project_from_submit($form, &$form_state){
     $code = $form_state['values']['code'];
+    $role = $form_state['values']['role'];
     
     global $user;
     
@@ -180,6 +194,9 @@ function login_to_join_project_from_submit($form, &$form_state){
         
         module_invoke_all('project_join_new_participant', $project, $user->uid);
     
+        $log_content = "{$user->name} accept to join project as a $role.";
+        log_operation($p->project, 'persons', $log_content, '', 'reProjectUser');
+        
         drupal_set_message(t('You have successfully joined the project.'), status);
         $form_state['redirect'] = get_project_url($p->project);
     }else{
@@ -203,6 +220,10 @@ function register_to_join_project_from($form_state, $person){
         '#type' => 'hidden',
         '#value' => $person->code,
     );
+    $form['role'] = array(
+        '#type' => 'hidden',
+        '#value'=> $person->role,
+    );
     $form['submit']['#value'] = t('Register and accept');
     return $form;
 }
@@ -217,6 +238,8 @@ function register_to_join_project_from_submit($form, &$form_state){
     user_register_submit($form, $form_state);
     
     $code = $form_state['values']['code'];
+    $role = $form_state['values']['role'];
+    
     global $user;
     if($user->uid){
         $set_code_used = 'UPDATE  {research_projects_onetime_invite_code} SET used=1, changed=NOW() WHERE code="%s"';
@@ -236,6 +259,9 @@ function register_to_join_project_from_submit($form, &$form_state){
         }
         
         module_invoke_all('project_join_new_participant', $project, $user->uid);
+        
+        $log_content = "{$user->name} accept to join project as a $role.";
+        log_operation($p->project, 'persons', $log_content, '', 'reProjectUser');
         
         drupal_set_message(t('You have successfully joined the project.'), status);
         $form_state['redirect'] = get_project_url($p->project);

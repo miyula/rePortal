@@ -64,8 +64,8 @@ function project_invite_research_form_submit($form, &$form_state){
     
     //log the operation
     global $user;
-    $content = "{$user->name} invited $email to join project researcher group.";
-    log_operation($id, 'persons', $content, get_project_url($pid).'/manage/persons/researcher/add', 'reProjectUser');
+    $content = "Send mail to invite $email to join project as a researcher.";
+    log_operation($pid, 'persons', $content, get_project_url($pid).'/manage/persons/researcher/add', 'reProjectUser');
     
     $form_state['redirect']  = get_project_url($pid).'/manage/persons';
     

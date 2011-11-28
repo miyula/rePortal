@@ -120,5 +120,8 @@ function set_invitation_templates_form_submit($form, &$form_state){
     $p_template->content = $p_content;
     save_message_template($p_template);
     
+    $log_content = "Changed invitation templates.";
+    log_operation($pid, 'message', $log_content, get_project_url($pid).'/manage/settings/invitations', 'reProjectUser');
+    
     drupal_set_message(t('Invitation templates settings have been updated.'),'status');
 }
