@@ -32,19 +32,19 @@ function projects_list_callback(){
     $rows = array();
     $header = array(
         array('data'=>'Project name'),
-        array('data'=>'Last update'),
-        array('data'=>'Founder'),
+        array('data'=>'Created at'),
+        array('data'=>'Creator'),
     );
     
     //get project list
-    $sql = "SELECT id, creator, name, url, path, founder, introduction, created, changed FROM {research_projects} LEFT JOIN {research_projects_activity} ON project=id ORDER BY activity DESC";
+    $sql = "SELECT id, creator, p.name name, u.name username, uid, url, path, founder, introduction, p.created created, p.changed changed FROM {research_projects} AS p LEFT JOIN {users} AS u ON uid=creator ORDER BY p.created DESC";
     
     $res = pager_query($sql,30);
     while($row = db_fetch_object($res)){
         $rows[] = array(
             l($row->name,'project/'.$row->path),
-            format_interval(time()-strtotime($row->changed)).' ago',
-            $row->founder,
+            format_interval(time()-strtotime($row->created)).' ago',
+            l($row->username, 'user/'.$row->uid),
         );
     }
     
