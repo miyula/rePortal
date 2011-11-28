@@ -37,7 +37,7 @@ function reProjectUserProfile_perm(){
  */
 function reProjectUserProfile_user($op, &$edit, &$account, $category = NULL){
     if($op=='view'){
-        if(edit_personal_info_access($account)){
+        if(view_personl_info_access($account)){
             //get profile info
             $info = load_user_personal_info($account->uid);
             $account->content['personal_info'] = array(
