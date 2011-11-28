@@ -84,7 +84,13 @@ a.manage_link{
    padding-right: 10px;
    cursor: pointer; 
 }
-
+a.help_link{
+    background: url('../images/help-link.png') no-repeat left top;
+    font-size: 14px;
+    padding-left: 20px;
+    padding-right: 10px;
+    cursor: pointer; 
+}
 img.tool_logo_image{
     width: 120px;
     height: 120px;

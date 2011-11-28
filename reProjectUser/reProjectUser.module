@@ -435,6 +435,7 @@ function add_tag_to_participant($pid, $id, $tag){
     }
     //update table
     $update = '{UPDATE {research_projects_participants_cards} SET tags="%s" WHERE id=%d AND project=%d';
+    
     return db_query($update, $tags, $id, $pid);
 }
 
@@ -504,7 +505,7 @@ function is_project_researcher($pid, $user){
                 return TRUE;
             }
             //find user in person list
-            $sql = "SELECT COUNT(*) FROM {research_projects_persons_list} WHERE project=%d AND user=%d AND role='researcher'";
+            $sql = "SELECT COUNT(*) FROM {research_projects_persons_list} WHERE project=%d AND user=%d AND role IN ('researcher', 'creator')";
             if(db_result(db_query($sql, $project->id, $user->uid))>0){
                 return TRUE;
             }

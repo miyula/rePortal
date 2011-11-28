@@ -6,6 +6,7 @@
  * Fields available:
  * $project, the project object
  */
+global $user;
 ?>
 <div class="project-introduction-div"><?=add_translation_widget($project->homepage->body);?></div>
 
@@ -33,5 +34,8 @@
 
 <!-- footer navigation -->
 <div class="footer-navigation">
-    <p><a href="<?=url('project/'.$project->path.'/manage'); ?>">Manage</a> | <a href="<?=url('project/'.$project->path.'/content/Help_page'); ?>">Help</a></p>
+    <p>
+        <?=(is_project_researcher($project->id, $user))?l('Manage', 'project/'.$project->path.'/manage', array('attributes'=>array('class'=>'manage_link'))):''?>
+        <?=(is_project_participant($project->id, $user->uid))?l('Help', 'project/'.$project->path.'/content/Help_page', array('attributes'=>array('class'=>'help_link'))):''?>
+    </p>
 </div>
