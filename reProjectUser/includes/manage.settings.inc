@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Menu callback for project/%/manage/settings/invitations
+ * Menu callback for project/%/manage/settings/templates
  */
-function manage_settings_invitations_callback($path){
+function manage_settings_templates_callback($path){
     $project = prepare_project_manage_page($path);
     
     $breadcrumb = drupal_get_breadcrumb();
@@ -14,25 +14,29 @@ function manage_settings_invitations_callback($path){
     
     $project->path_category = 'settings';
     $project->path_category_subitem = 'persons'; 
-    $project->subtitle = 'Set invitation templates';
-    $project->right_part = drupal_get_form('set_invitation_templates_form', $project->id);    
+    $project->subtitle = 'Set templates';
+    $project->right_part = drupal_get_form('set_invitation_templates_form', $project);    
     return theme('project_manage_page',$project);
 }
 
 /** Form for invitation templates **/
-function set_invitation_templates_form($form_state, $pid){
+function set_invitation_templates_form($form_state, $project){
+    
+    $form = module_invoke_all('project_message_templates_setting', $project);
+    
     $form['project'] = array(
         '#type' => 'hidden',
-        '#value' => $pid,
+        '#value' => $project->id,
     );
     
     $form['invite-researcher'] = array(
         '#type' => 'fieldset',
         '#title' => t('Invite researcher'),
         '#collapsible' => TRUE,
-        '#collapsed' => FALSE,  
+        '#collapsed' => FALSE,
+        '#weight' => 0,
     );    
-    $r_t = get_invite_template($pid, 'researcher');
+    $r_t = get_invite_template($project->id, 'researcher');
     $form['invite-researcher']['researcher-template-id'] = array(
         '#type' => 'hidden',
         '#value' => $r_t->template,
@@ -55,30 +59,33 @@ function set_invitation_templates_form($form_state, $pid){
         '#type' => 'fieldset',
         '#title' => t('Invite participant'),
         '#collapsible' => TRUE,
-        '#collapsed' => FALSE,  
+        '#collapsed' => FALSE,
+        '#weight' => 0,
     );
-    $p_t = get_invite_template($pid, 'participant');
+    $p_t = get_invite_template($project->id, 'participant');
     $form['invite-participant']['participant-template-id'] = array(
         '#type' => 'hidden',
-        '#value' => $r_t->template,
+        '#value' => $p_t->template,
     );
     $form['invite-participant']['participant-template-title'] = array(
         '#type' => 'textfield',
         '#title' => t('Subject'),
-        '#default_value' => $r_t->title,
+        '#default_value' => $p_t->title,
         '#required' => TRUE,
     );
     $form['invite-participant']['participant-template-content'] = array(
         '#type' => 'textarea',
         '#rows' => 15,
         '#title' => t('Content'),
-        '#default_value' => $r_t->content,
+        '#default_value' => $p_t->content,
         '#required' => TRUE,
     );
     
     $form['submit'] = array(
         '#type' => 'submit',
         '#value' => t('Save'),
+        '#weight' => 20,
+        
     );
     return $form;
 }
@@ -99,6 +106,8 @@ function set_invitation_templates_form_validate($form, &$form_state){
     if(db_result(db_query($check, $pid, $participant_template))<=0){
          form_set_error('participant-template', t('Invalid template id.'));
     }
+    
+    module_invoke_all('project_message_templates_setting_validate', $project, $form, $form_state);
 }
 
 function set_invitation_templates_form_submit($form, &$form_state){
@@ -120,7 +129,9 @@ function set_invitation_templates_form_submit($form, &$form_state){
     $p_template->content = $p_content;
     save_message_template($p_template);
     
-    $log_content = "Changed invitation templates.";
+    module_invoke_all('project_message_templates_setting_submit', $project, $form, $form_state);
+    
+    $log_content = "Changed default templates.";
     log_operation($pid, 'message', $log_content, get_project_url($pid).'/manage/settings/invitations', 'reProjectUser');
     
     drupal_set_message(t('Invitation templates settings have been updated.'),'status');

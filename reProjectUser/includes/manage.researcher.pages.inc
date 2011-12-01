@@ -47,7 +47,7 @@ function project_invite_research_form_validate($form, &$form_state){
     }
     
     //check if the email user already in project
-    $check = 'SELECT name, active FROM {users} AS u, {research_projects_persons_list} AS p WHERE u.mail="%s" AND p.user=u.uid AND p.project=%d AND p.role IN ("researcher", "creator") ';
+    $check = 'SELECT name, active FROM {users} AS u, {research_projects_persons_list} AS p WHERE u.mail="%s" AND p.user=u.uid AND p.project=%d AND p.role IN ("researcher", "creator") AND active=1 ';
     $r = db_fetch_object(db_query($check, $email, $pid));
     
     if($r){

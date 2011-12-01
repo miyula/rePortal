@@ -288,10 +288,13 @@ function load_project_content($pid, $type='default', $id=NULL){
  *   $title, the unqiue title path for the content in project
  */
 function load_project_content_by_title($pid, $title){
-    $get = 'SELECT node FROM {research_projects_contents} WHERE project=%d AND title_path="%s"';
-    $nid = db_result(db_query($get, $pid, $title));
-    if($nid>0){
-	return node_load($nid);
+    $get = 'SELECT node, type FROM {research_projects_contents} WHERE project=%d AND title_path="%s"';
+    $content = db_fetch_object(db_query($get, $pid, $title));
+    if($content){
+	$node = node_load($content->node);
+        
+        $node->content_type = $content->type;
+        return $node;
     }
     return FALSE;
 }
@@ -338,3 +341,4 @@ function project_remove_content($pid, $nid){
     //remove node from database
     node_delete($nid);
 }
+

@@ -164,11 +164,11 @@ function reProjectUser_menu(){
     );
     
     /** Settings **/
-    $menu['project/%/manage/settings/invitations'] = array(
+    $menu['project/%/manage/settings/templates'] = array(
 	'title arguments'   => array(1),
 	'title callback'    => 'project_title_callback',
-        'description'       => t('Set invitation templates'),
-        'page callback'     => 'manage_settings_invitations_callback',
+        'description'       => t('Set email templates'),
+        'page callback'     => 'manage_settings_templates_callback',
         'page arguments'    => array(1),
 	'access callback'   => 'manage_project_access',
         'access arguments'  => array(1),
@@ -235,8 +235,8 @@ function reProjectUser_project_manage_navigation($project){
         'weight'=> 0,
     );
     $navigation['settings']['sub_items']['persons'] = array(
-        'title' => 'Invitations',
-        'url'   => generate_project_url($project->path).'/manage/settings/invitations',
+        'title' => 'Templates',
+        'url'   => generate_project_url($project->path).'/manage/settings/templates',
 	'class' => '',
         'weight'=> 0,
     );
@@ -273,6 +273,21 @@ function reProjectUser_create_project($project){
     //add role to person list
     global $user;
     add_user_to_project($project->id, $user->uid, 'creator', 1);
+}
+
+/**
+ * participant access callback
+ */
+function project_participant_access($path){
+    global $user;
+    
+    $project = load_project($path);
+    
+    if(is_project_participant($project->id, $user->uid)){
+        return TRUE;
+    }
+    
+    return FALSE;
 }
 
 /**
@@ -592,44 +607,20 @@ function get_invite_template($pid, $for){
     if(!$template){
 	switch($for){
 	    case 'researcher':
-		$title = '@project_name invite you to join their research group';
-		$body = '<p>Hi,</p>'
-			    . "<p>%name invites you to join research project @project_name !project_link. </p>"
-			    .'<p>Click the link to accept the invitation:</p>'
-			    ."<p>!invite_link</p>"
-			    .'<p>If clicking the link doesn\'t work, please copy and paste it into your browser.</p>'
-			    .'<p>You may wish to visit the project home page: </p>'
-			    ."<p>!project_link</p>"
-			    .'<p>Please don\'t reply this mail.</p>'
-			    .'<p>Best Regards,</p>'
-			    .'<p>Yours,</p>'
-			    ."<p>@project_name</p>";
 		$template = new stdClass;
 		$template->project = $pid;
 		$template->type = 'email';
-		$template->title = $title;
-		$template->content = $body;
+		$template->title = variable_get('default_template_invite_researcher_subject','');
+		$template->content = variable_get('default_template_invite_researcher_body','');
 		save_message_template($template);
 		set_invite_template_for($pid, $template->id, $for);
 		break;
 	    case 'participant':
-		$title = '@project_name invite you to participant their project';
-		$body = '<p>Hi,</p>'
-			    . "<p>%name invites you to participant their project @project_name !project_link. </p>"
-			    .'<p>Click the link to accept the term of use:</p>'
-			    ."<p>!invite_link</p>"
-			    .'<p>If clicking the link doesn\'t work, please copy and paste it into your browser.</p>'
-			    .'<p>You may wish to visit the project home page: </p>'
-			    ."<p>!project_link</p>"
-			    .'<p>Please don\'t reply this mail.</p>'
-			    .'<p>Best Regards,</p>'
-			    .'<p>Yours,</p>'
-			    ."<p>@project_name</p>";
 		$template = new stdClass;
 		$template->project = $pid;
 		$template->type = 'email';
-		$template->title = $title;
-		$template->content = $body;
+		$template->title = variable_get('default_template_invite_participant_subject','');
+		$template->content = variable_get('default_template_invite_participant_body','');
 		save_message_template($template);
 		set_invite_template_for($pid, $template->id, $for);
 		break;
@@ -724,17 +715,60 @@ function send_invitation_email($pid, $role, $email, $info_card=0){
     
     //prepare invite letter
     $template = get_invite_template($pid, $role);
-    global $user;
     $project = load_project($pid, 'id');
-    $pair_value = array(
-        '@project_name' => $project->name,
-        '!project_link' => $project->url,
-        '!invite_link'=> $invite_link,
-        '%name' => $user->name, 
-    );
+    
+    $pair_value = prepare_arguments_for_default_template($project);
+    $pair_value['!invite_link'] = $invite_link;     
+    
     $subject = t($template->title, $pair_value);
-    $body = t($template->content, $pair_value);
+    $body = t(nl2br($template->content), $pair_value);
    
     //send invite mail
     message_send_http_mail($email,$subject,$body);
+}
+
+/**
+ * Prepare arguments for template
+ */
+function prepare_arguments_for_default_template($project, $to_user=null){
+    $arg = module_invoke_all('project_template_prepare_arguments', $project, $to_user);
+    $arg['@project_name'] = $project->name;
+    $arg['!project_link'] = 'http://'.$_SERVER['HTTP_HOST'].url(generate_project_url($project->path));
+   
+    if($to_user){
+        $arg['@username'] = $to_user->name;
+    }
+    return $arg;  
+}
+
+/**
+ * reset global invite templates to the defalut one
+ */
+function reset_global_invite_tempates(){
+    $r_template_subject = '@project_name invite you to join their research group';
+    variable_set('default_template_invite_researcher_subject',$r_template_subject);
+    $r_template_body = "Hi,\n\n"
+                      ."You are invited to join research project @project_name.\n\n"
+                      ."Click the link to accept the invitation:"
+                      ."!invite_link\n\n"
+                      ."If clicking the link doesn\'t work, please copy and paste it into your browser.\n\n"
+                      ."You may wish to visit the project home page: \n"
+                      ."!project_link\n\n"
+                      ."Please don\'t reply this mail.\n\n"
+                      ."Best Regards,\nYours,\n@project_name";
+    variable_set('default_template_invite_researcher_body',$r_template_body);
+    
+    $p_template_subject = '@project_name invite you to participant their project';
+    variable_set('default_template_invite_participant_subject',$p_template_subject);
+    $p_template_body = "Hi,\n\n"
+                      ."You are invited to participant project @project_name.\n\n"
+                      ."Click the link to accept the invitation:"
+                      ."!invite_link\n\n"
+                      ."If clicking the link doesn\'t work, please copy and paste it into your browser.\n\n"
+                      ."You may wish to visit the project home page: \n"
+                      ."!project_link\n\n"
+                      ."Please don\'t reply this mail.\n\n"
+                      ."Best Regards,\nYours,\n@project_name";
+    variable_set('default_template_invite_participant_body',$p_template_body);
+
 }

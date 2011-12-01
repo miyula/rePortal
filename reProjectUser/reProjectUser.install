@@ -9,6 +9,10 @@ function reProjectUser_install(){
     drupal_install_schema('research_projects_participants_cards');
     drupal_install_schema('research_projects_participants_tags');
     drupal_install_schema('research_project_invitation_templates');
+    
+    //set default templates
+    reset_global_invite_tempates();
+    
 }
 
 /**
