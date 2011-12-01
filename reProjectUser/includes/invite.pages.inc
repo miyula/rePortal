@@ -133,7 +133,7 @@ function exiting_user_join_project_form_submit($form, &$form_state){
     
     
     drupal_set_message(t('You have successfully joined the project.'), status);
-    $form_state['redirect'] = get_project_url($project);
+    $form_state['redirect'] = get_project_url($project).'/welcome';
 }
 
 
@@ -198,7 +198,8 @@ function login_to_join_project_from_submit($form, &$form_state){
         log_operation($p->project, 'persons', $log_content, '', 'reProjectUser');
         
         drupal_set_message(t('You have successfully joined the project.'), status);
-        $form_state['redirect'] = get_project_url($p->project);
+        
+        $form_state['redirect'] = get_project_url($p->project).'/welcome';
     }else{
         drupal_goto('user');    
     }
@@ -264,6 +265,6 @@ function register_to_join_project_from_submit($form, &$form_state){
         log_operation($p->project, 'persons', $log_content, '', 'reProjectUser');
         
         drupal_set_message(t('You have successfully joined the project.'), status);
-        $form_state['redirect'] = get_project_url($p->project);
+        $form_state['redirect'] = get_project_url($p->project).'/welcome';
     }
 }

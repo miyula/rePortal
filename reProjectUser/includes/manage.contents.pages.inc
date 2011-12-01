@@ -6,7 +6,7 @@
 function project_manage_content_termofuse_callback($path){
     //get project
     $project = load_project($path);
-    if($project){
+    if($project){        
         $termofuse = load_term_of_use_node($project);
         $project->termofuse = $termofuse;
         $termofuse->project = $project->id;

@@ -63,10 +63,11 @@ function reProject_menu(){
         'page callback'     => 'project_display_callback',
         'page arguments'    => array(1),
         'access arguments'  => array('access content'),
-        'file'              => 'includes/project.pages.inc',  
+        'file'              => 'includes/project.pages.inc',
+        'type'              => MENU_CALLBACK, 
     );
     
-    $menu['project/%/help'] = array(
+    /*$menu['project/%/help'] = array(
         'title arguments'   => array(1),
 	'title callback'    => 'project_title_callback',
         'description'       => t('Display project help page'),
@@ -83,7 +84,7 @@ function reProject_menu(){
         'page arguments'    => array(1),
         'access arguments'  => array('access content'),
         'file'              => 'includes/project.pages.inc',  
-    );
+    );*/
     
     
     $menu['project/%/manage'] = array(
@@ -94,7 +95,8 @@ function reProject_menu(){
         'page arguments'    => array(1),
 	'access callback'   => 'manage_project_access',
         'access arguments'  => array(1),
-        'file'              => 'includes/manage.pages.inc',  
+        'file'              => 'includes/manage.pages.inc',
+        'type'              => MENU_CALLBACK, 
     );
     
     $menu['project/%/manage/settings'] = array(
@@ -105,7 +107,8 @@ function reProject_menu(){
         'page arguments'    => array(1),
 	'access callback'   => 'manage_project_access',
         'access arguments'  => array(1),
-        'file'              => 'includes/manage.pages.inc',  
+        'file'              => 'includes/manage.pages.inc', 
+        'type'              => MENU_CALLBACK, 
     );
     
     return $menu;

@@ -121,9 +121,9 @@ function reProjectContent_create_project($project){
     //first create helppage
     load_project_content($project->id, 'helppage');
     //first create termofuse
-    load_project_content($project->id, 'termofuse');
+    //load_project_content($project->id, 'termofuse');
     //first create firstguide
-    load_project_content($project->id, 'userguide');
+    //load_project_content($project->id, 'userguide');
 }
 
 /**
@@ -248,7 +248,7 @@ function load_project_content($pid, $type='default', $id=NULL){
                 return $node;
             case 'termofuse':
                 $node->title = 'Term of Use';
-                $node->body  = '';
+                $node->body  = 'To be edited later...';
                 node_save($node);
                 project_add_content($pid, $node->nid, 'PUBLIC', $type, 0);
 		
