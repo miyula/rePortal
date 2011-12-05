@@ -8,7 +8,7 @@
  */
 global $user;
 ?>
-<div class="project-introduction-div"><?=variable_get('open_g_translation_widget', 'disable')?add_translation_widget($project->homepage->body):$project->homepage->body;?></div>
+<div class="project-introduction-div"><?=variable_get('open_g_translation_widget', 'disable')=='enable'?add_translation_widget($project->homepage->body):$project->homepage->body;?></div>
 
 <!-- start part of Research tools -->
 <div id="research-tools-div">

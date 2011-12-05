@@ -23,7 +23,7 @@ function project_content_display_callback($path, $title){
             exit;
         }
         
-        if(variable_get('open_g_translation_widget', 'disable')){
+        if(variable_get('open_g_translation_widget', 'disable')=='enable'){
             return add_translation_widget($node->body);
         }else{
             return $node->body;
