@@ -126,7 +126,9 @@ function exiting_user_join_project_form_submit($form, &$form_state){
         db_query($add_user, $user->uid, $info_card);
     }
     
-    module_invoke_all('project_join_new_participant', $project, $user->uid);
+    if($role=='participant'){
+        module_invoke_all('project_join_new_participant', $project, $user->uid);
+    }
     
     $log_content = "{$user->name} accept to join project as a $role.";
     log_operation($project, 'persons', $log_content, '', 'reProjectUser');
@@ -192,8 +194,10 @@ function login_to_join_project_from_submit($form, &$form_state){
             db_query($add_user, $user->uid, $info_card);
         }
         
-        module_invoke_all('project_join_new_participant', $project, $user->uid);
-    
+        if($role=='participant'){
+            module_invoke_all('project_join_new_participant', $project, $user->uid);
+        }
+        
         $log_content = "{$user->name} accept to join project as a $role.";
         log_operation($p->project, 'persons', $log_content, '', 'reProjectUser');
         
@@ -259,7 +263,9 @@ function register_to_join_project_from_submit($form, &$form_state){
             db_query($add_user, $user->uid, $info_card);
         }
         
-        module_invoke_all('project_join_new_participant', $project, $user->uid);
+        if($role=='participant'){
+            module_invoke_all('project_join_new_participant', $project, $user->uid);
+        }
         
         $log_content = "{$user->name} accept to join project as a $role.";
         log_operation($p->project, 'persons', $log_content, '', 'reProjectUser');
