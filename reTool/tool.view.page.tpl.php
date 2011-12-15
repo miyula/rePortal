@@ -13,11 +13,13 @@
 <div class="tool-introduction-div"><?=$tool->introduction; ?></div>
 
 <h1>Links</h1>
-<p><a class="add_link" href="<?=url('research/tools/view/'.$tool->id.'/links/add'); ?>">Add links</a></p>
+<p>
+    <a class="edit_link" href="<?=url('research/tools/view/'.$tool->id.'/links/edit'); ?>">Edit</a>
+</p>
 <div class="tool-links-div">
     <?php foreach($tool->links as $link): ?>
     <dl>
-        <dt><?=$link->title;?></dt><dd><a href="<?=$link->url;?>" class="outer_link" target="_blank"><?=$link->url;?></a></dd>
+        <dt><?=$link->title;?></dt><dd><a href="<?=$link->url;?>" class="outer_link" target="_blank"><?=$link->url;?></a> </dd>
     </dl>
     <?php endforeach; ?>
 </div>

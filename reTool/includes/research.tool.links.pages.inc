@@ -11,36 +11,35 @@ function research_tools_links_add_callback($tool_id){
 }
 
 /**
- * Menu callback for research/tools/view/%/links/edit/%
+ * Menu callback for research/tools/view/%/links/edit
  */
-function research_tools_links_edit_callback($tool_id, $link_id){
-    //get link info
-    $get = "SELECT id, tool, title, url FROM {research_tool_links} WHERE id=%d AND tool=%d";
-    $link = db_fetch_object(db_query($get, $link_id, $tool_id));
-    if($link){
-        return drupal_get_form('research_tool_link_form', $link);
-    }else{
-        return 'Can not find link info. '.l('Go back to tool page', 'research/tools/view/'.$tool_id);
+function research_tools_links_edit_callback($tool_id){
+    //get tool name
+    $get_name = 'SELECT name FROM {research_tools} WHERE id=%d';
+    $name = db_result(db_query($get_name, $tool_id));
+    if($name){
+        $breadcrumb = drupal_get_breadcrumb();
+        $breadcrumb[] = l('Tools', 'research/tools/');
+        $breadcrumb[] = l($name, 'research/tools/view/'.$tool_id);
+        drupal_set_breadcrumb($breadcrumb);
+        
+        //get tool links
+        $get = "SELECT id, title, url FROM {research_tool_links} WHERE tool=%d ORDER BY created";
+        $res = db_query($get, $tool_id);
+        $links = array();
+        while($row = db_fetch_object($res)){
+            $links[] = $row;
+        }
+        return drupal_get_form('research_tool_links_edit_form',$links, $tool_id);
     }
+    
+    drupal_not_found();
 }
 
-/**
- * Menu callback for research/tools/view/%/links/delete/%
- */
-function research_tools_links_delete_callback($tool_id, $link_id){
-    //get link info
-    $get = "SELECT l.id id, tool, title, url, t.name name FROM {research_tool_links} AS l, {research_tools} AS t "
-          ."WHERE l.id=%d AND l.tool=%d AND l.tool=t.id";
-    if($link = db_fetch_object(db_query($get, $link_id, $tool_id))){
-        $content = 'You are deleting '.link($link->url).' from reserach tool <strong>'.$link->name.'</strong>';
-        $content.= drupal_get_form('research_tool_link_delete_form');
-    }else{
-        return 'Can not find link info. '.l('Go back to tool page', 'research/tools/view/'.$tool_id);
-    }
-}
 
 /** tool link form **/
 function research_tool_link_form(&$form_state, $link){
+    
     
     $form['id'] = array(
         '#type'     => 'hidden',
@@ -61,6 +60,7 @@ function research_tool_link_form(&$form_state, $link){
         '#title'    => t('URL'),
         '#required' => TRUE,
         '#default_value'    => isset($link->url)?$link->url:'',
+        '#description' => t("The URL should be a full URL address. e.g. Starts with 'http://', 'https://' or 'ftp://'"),
     );
     $form['submit'] = array(
         '#type'     => 'submit',
@@ -90,28 +90,106 @@ function research_tool_link_form_submit($form, &$form_state){
     drupal_goto('research/tools/view/'.$tool);
 }
 
-/** research tool link delete form **/
-function research_tool_link_delete_form(&$form_state, $link){
-    $cancel_link = "research/tools/view/{$link->tool}";
-    $form['id'] = array(
-        '#type' => 'hidden',
-        '#value' => $link->id,
+/************ research tool links form ****************/
+function research_tool_links_edit_form(&$form_state, $links, $tool){
+    $form['description'] = array(
+        '#value' => '<div class="description">'.t('To delete the link, make the title and url empty').'</div>',
     );
+    foreach ($links as $l) {
+        $form['link-'.$l->id]['id-'.$l->id] = array(
+            '#type' => 'hidden',
+            '#value'=> $l->id,
+        );   
+        $form['link-'.$l->id]['title'.$l->id] = array(
+            '#type'     => 'textfield',
+            '#title'    => t('Link title'),
+            '#default_value' => $l->title,
+        );
+        $form['link-'.$l->id]['url'.$l->id] = array(
+            '#type'     => 'textfield',
+            '#title'    => t('URL'),
+            '#description' => t("The URL should be a full URL address. e.g. Starts with 'http://', 'https://' or 'ftp://'"),
+            '#default_value' => $l->url,
+        );
+    }
     $form['tool'] = array(
         '#type' => 'hidden',
-        '#value' => $link->tool,
+        '#value'=> $tool,
+    );
+
+    $form['link-new']['title'] = array(
+        '#type'     => 'textfield',
+        '#title'    => t('New Link title'),
+    );
+    $form['link-new']['url'] = array(
+        '#type'     => 'textfield',
+        '#title'    => t('New URL'),
+        '#description' => t("The URL should be a full URL address. e.g. Starts with 'http://', 'https://' or 'ftp://'"),
     );
     $form['submit'] = array(
-        '#type' => 'submit',
-        '#value' => t('Delete'),
-        '#suffix' => l(t("Or cancel?"),$cancel_link),
+        '#type'     => 'submit',
+        '#value'    => t('Save'),
     );
+    
     return $form;
 }
-function research_tool_link_delete_form_submit($form, &$form_state){
-    $id = (int)$form_state['values']['id'];
+function research_tool_links_edit_form_validate($form, &$form_state){
+    foreach($form_state['values'] as $key => $value){
+        if(strstr($key, 'id-')){
+            $update_title = $form_state['values']['title'.$value];
+            $update_url = $form_state['values']['url'.$value];
+            
+            if(empty($update_title)&&!empty($update_url)){
+                form_set_error('title'.$value, 'The title is required.');
+            }
+            if(!empty($update_title)&&empty($update_url)){
+                form_set_error('url'.$value, 'The url is required.');
+            }
+        }
+    }
+    
+    $new_title = $form_state['values']['title'];
+    $new_url = $form_state['values']['url'];
+    
+    if(empty($new_title)&&!empty($new_url)){
+        form_set_error('title', 'Please input a title form the new link.');
+    }
+    if(!empty($new_title)&&empty($new_url)){
+        form_set_error('url', 'Please input a url form the new link.');
+    }
+}
+function research_tool_links_edit_form_submit($form, &$form_state){
     $tool = $form_state['values']['tool'];
-    $delete = "DELETE FROM {research_tool_links} WHERE id=%d";
-    db_query($delete, $id);
-    drupal_goto("research/tools/view/$tool");
+    
+    //get links
+    foreach($form_state['values'] as $key => $value){
+        if(strstr($key, 'id-')){
+            $update_title = $form_state['values']['title'.$value];
+            $update_url = $form_state['values']['url'.$value];
+            
+            if(empty($update_title)&&empty($update_url)){
+                //remove the link
+                $delete = 'DELETE FROM {research_tool_links} WHERE id=%d AND tool=%d';
+                db_query($delete, $value, $tool);
+            }else{
+                //update record
+                $update = "UPDATE {research_tool_links} SET title='%s', url='%s', changed=NOW() WHERE id=%d AND tool=%d";
+                db_query($update, $update_title, $update_url, $value, $tool);
+            }  
+        }
+    }
+    
+    //insert new key if there is
+    $new_title = $form_state['values']['title'];
+    $new_url = $form_state['values']['url'];
+    
+    if(!empty($new_title)&&!empty($new_url)){
+        //insert new
+        $insert = "INSERT INTO {research_tool_links} (tool, title, url, created, changed) VALUES(%d, '%s', '%s',NOW(), NOW())";
+        db_query($insert, $tool, $new_title, $new_url);
+    }
+    
+    drupal_set_message('Change has been saved');
+    $form_state['redirect'] = 'research/tools/view/'.$tool;
+    
 }

@@ -56,6 +56,11 @@ function research_tools_view_callback($tool_id){
     $tool = db_fetch_object(db_query($get_tool, $tool_id));
     
     if($tool){
+        
+        $breadcrumb = drupal_get_breadcrumb();
+        $breadcrumb[] = l('Tools', 'research/tools/');
+        drupal_set_breadcrumb($breadcrumb);
+        
         //get projects count
         $count = "SELECT COUNT(*) FROM {research_project_tools_list} WHERE tool=%d";
         $count_res = db_result(db_query($count, $tool_id));
@@ -70,20 +75,28 @@ function research_tools_view_callback($tool_id){
         }
         $tool->links = $links;
         
-        return add_translation_widget(theme('research_tool_view_page', $tool));
+        return theme('research_tool_view_page', $tool);
     }else{
         drupal_not_found();
     }
 }
 
+
 /**
  * Menu callback for research/tools/view/%/edit
  */
 function research_tools_edit_callback($tool_id){
+    
     //get tool info
     $get_tool = "SELECT id, name, logo, introduction FROM {research_tools} WHERE id=%d";
     $tool = db_fetch_object(db_query($get_tool, $tool_id));
     if($tool){
+        
+        $breadcrumb = drupal_get_breadcrumb();
+        $breadcrumb[] = l('Tools', 'research/tools/');
+        $breadcrumb[] = l($tool->name, 'research/tools/view/'.$tool_id);
+        drupal_set_breadcrumb($breadcrumb);
+        
         return drupal_get_form('research_tool_form',$tool);
     }else{
         drupal_not_found();
@@ -190,3 +203,4 @@ function research_tool_form_submit($form, &$form_state){
     
     drupal_goto('research/tools/view/'.$id);
 }
+

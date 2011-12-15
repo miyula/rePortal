@@ -86,7 +86,16 @@ function reTool_menu(){
         'file'              => 'includes/research.tool.links.pages.inc',
         'type'              => MENU_CALLBACK,
     );
-    $menu['research/tools/view/%/links/edit/%'] = array(
+    $menu['research/tools/view/%/links/edit'] = array(
+        'title'             => t('Edit research tool links'),
+        'description'       => t('The page to edit links for a research tool'),
+        'page callback'     => 'research_tools_links_edit_callback',
+        'page arguments'    => array(3),
+        'access arguments'  => array('add research tool links'),
+        'file'              => 'includes/research.tool.links.pages.inc',
+        'type'              => MENU_CALLBACK,
+    );
+    /*$menu['research/tools/view/%/links/edit/%'] = array(
         'title'             => t('Edit research tool link'),
         'description'       => t('The page to edit link of a research tool'),
         'page callback'     => 'research_tools_links_edit_callback',
@@ -103,7 +112,7 @@ function reTool_menu(){
         'access arguments'  => array('add research tool links'),
         'file'              => 'includes/research.tool.links.pages.inc',
         'type'              => MENU_CALLBACK,
-    );
+    );*/
     
     /** project manage part **/
     $menu['project/%/manage/tools'] = array(
