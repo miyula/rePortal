@@ -111,7 +111,7 @@ function project_manage_persons_list_callback($path){
             .'<p class="operation-p"><a class="tags_link window_tab" href="javascript:void(0);" onclick="onclick_edit_tags('."'".$row->id."'".');" >Tags</a></p>',
         );
     }
-    //$content.= theme('participants_tags_div',$project);
+    $content.= theme('participants_tags_div',$project);
     $content.= '<div class="project-manage-page-table-div">'.theme_table($header, $rows).'</div>';
     $content.= theme('pager');
     $project->right_part = $content;    
@@ -234,7 +234,7 @@ function project_manage_persons_filter_callback($path, $tag){
             .'<p class="operation-p"><a class="tags_link window_tab" href="javascript:void(0);" onclick="onclick_edit_tags('."'".$row->id."'".');" >Tags</a></p>',
         );
     }
-    //$content.= theme('participants_tags_div',$project);
+    $content.= theme('participants_tags_div',$project);
     $content.= '<div class="project-manage-page-table-div">'.theme_table($header, $rows).'</div>';
     $project->right_part = $content;    
     return theme('project_manage_page',$project);
