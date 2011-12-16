@@ -8,6 +8,16 @@
  */
 global $user;
 ?>
+<p style="text-align: right">Founder: xxxxxx</p>
+<?php if(is_project_participant($project->id, $user->uid)): ?>
+<ul class="project-navigation-menu">
+    <li><a href="<?=url('project/'.$project->path); ?>">Home</a></li>
+    <li><a href="">Pages</a></li>
+    <?=(is_project_researcher($project->id, $user))?'<li>'.l('Manage', 'project/'.$project->path.'/manage').'</li>':''?>
+    <li><a href="<?=url('project/'.$project->path.'/content/Help_page');?>" >Help</a></li>
+</ul>
+<?php endif; ?>
+
 <div class="project-introduction-div"><?=variable_get('open_g_translation_widget', 'disable')=='enable'?add_translation_widget($project->homepage->body):$project->homepage->body;?></div>
 
 <!-- start part of Research tools -->
