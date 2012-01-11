@@ -10,7 +10,7 @@
  */
 function reProjectUserProfile_menu(){
     $menu['user/%user/edit/personal_info'] = array(
-        'title' => t('personal information'),
+        'title' => t('Personal information'),
         'description'       => t('Display edit personal information form. '),
         'page callback'     => 'user_edit_personal_info_callback',
         'page arguments'    => array(1, 'user'),

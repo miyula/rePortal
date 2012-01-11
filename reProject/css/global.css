@@ -107,3 +107,39 @@ div.loading-div{
 }
 
 input,select{vertical-align:middle;}
+
+h1.page-title{
+    text-align: center;
+    width: 100%;
+}
+
+/** project navigation menu **/
+ul.project-navigation-menu{
+    background-color: #4CA5BE;
+    margin: 0px 15px;
+}
+ul.project-navigation-menu:after{
+    content: '';
+    height: 0;
+    display: block;
+    clear: both;
+}
+ul.project-navigation-menu li.live{
+    padding: 5px 0px;
+    background-color: #FFF;
+    width: 1px;
+    height: 20px;
+}
+ul.project-navigation-menu li{
+    float:left;
+    overflow: hidden;
+    display: inline;
+    font-size: 14px;
+    padding: 5px 35px;
+}
+ul.project-navigation-menu li:hover{
+    background-color: #73B6CA;
+}
+ul.project-navigation-menu li a{
+    border: none;
+}

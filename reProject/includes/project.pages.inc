@@ -61,7 +61,10 @@ function projects_list_callback(){
 function project_display_callback($path){
     $project = load_project($path);
     
-    if($project){
+    if($project){drupal_set_breadcrumb($breadcrumb);
+        
+        drupal_set_breadcrumb(array());
+        
         drupal_add_css(drupal_get_path('module','reProject').'/css/retools.css');
         
         $homepage = load_homepage_node($project);

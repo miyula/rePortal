@@ -108,11 +108,7 @@ function exiting_user_join_project_form_submit($form, &$form_state){
     $person = $form_state['values']['person'];
     $code = $form_state['values']['code'];
     $role = $form_state['values']['role'];
-    global $user;
-    
-    //change code to used
-    $set_code_used = 'UPDATE  {research_projects_onetime_invite_code} SET used=1, changed=NOW() WHERE code="%s"';
-    db_query($set_code_used, $code);
+    global $user;    
     
     //active researcher
     $active = 'UPDATE {research_projects_persons_list} SET active=1, user=%d, changed=NOW() WHERE id=%d';
@@ -133,6 +129,9 @@ function exiting_user_join_project_form_submit($form, &$form_state){
     $log_content = "{$user->name} accept to join project as a $role.";
     log_operation($project, 'persons', $log_content, '', 'reProjectUser');
     
+    //change code to used
+    $set_code_used = 'UPDATE  {research_projects_onetime_invite_code} SET used=1, changed=NOW() WHERE code="%s"';
+    db_query($set_code_used, $code);
     
     drupal_set_message(t('You have successfully joined the project.'), status);
     $form_state['redirect'] = get_project_url($project).'/welcome';
@@ -177,11 +176,8 @@ function login_to_join_project_from_submit($form, &$form_state){
     global $user;
     
     if($user->uid){
-        //change code to used
-        $set_code_used = 'UPDATE  {research_projects_onetime_invite_code} SET used=1, changed=NOW() WHERE code="%s"';
-        db_query($set_code_used, $code);
     
-        //active researcher
+        //active person
         $p = db_fetch_object(db_query('SELECT project, person FROM {research_projects_onetime_invite_code} WHERE code="%s"', $code));
         $active = 'UPDATE {research_projects_persons_list} SET active=1, changed=NOW() WHERE id=%d';
         db_query($active, $p->person);
@@ -195,8 +191,12 @@ function login_to_join_project_from_submit($form, &$form_state){
         }
         
         if($role=='participant'){
-            module_invoke_all('project_join_new_participant', $project, $user->uid);
+            module_invoke_all('project_join_new_participant', $p->project, $user->uid);
         }
+        
+        //change code to used
+        $set_code_used = 'UPDATE  {research_projects_onetime_invite_code} SET used=1, changed=NOW() WHERE code="%s"';
+        db_query($set_code_used, $code);
         
         $log_content = "{$user->name} accept to join project as a $role.";
         log_operation($p->project, 'persons', $log_content, '', 'reProjectUser');
@@ -247,10 +247,8 @@ function register_to_join_project_from_submit($form, &$form_state){
     
     global $user;
     if($user->uid){
-        $set_code_used = 'UPDATE  {research_projects_onetime_invite_code} SET used=1, changed=NOW() WHERE code="%s"';
-        db_query($set_code_used, $code);
     
-        //active researcher
+        //active participant
         $p = db_fetch_object(db_query('SELECT project, person FROM {research_projects_onetime_invite_code} WHERE code="%s"', $code));
         $active = 'UPDATE {research_projects_persons_list} SET active=1, user=%d, changed=NOW() WHERE id=%d';
         db_query($active, $user->uid, $p->person);
@@ -264,11 +262,14 @@ function register_to_join_project_from_submit($form, &$form_state){
         }
         
         if($role=='participant'){
-            module_invoke_all('project_join_new_participant', $project, $user->uid);
+            module_invoke_all('project_join_new_participant', $p->project, $user->uid);
         }
         
         $log_content = "{$user->name} accept to join project as a $role.";
         log_operation($p->project, 'persons', $log_content, '', 'reProjectUser');
+        
+        $set_code_used = 'UPDATE  {research_projects_onetime_invite_code} SET used=1, changed=NOW() WHERE code="%s"';
+        db_query($set_code_used, $code);
         
         drupal_set_message(t('You have successfully joined the project.'), status);
         $form_state['redirect'] = get_project_url($p->project).'/welcome';

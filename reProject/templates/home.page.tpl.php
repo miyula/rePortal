@@ -8,12 +8,14 @@
  */
 global $user;
 ?>
-<p style="text-align: right">Founder: xxxxxx</p>
+<p style="text-align: center">Founder: <?=$project->founder;?></p>
 <?php if(is_project_participant($project->id, $user->uid)): ?>
 <ul class="project-navigation-menu">
     <li><a href="<?=url('project/'.$project->path); ?>">Home</a></li>
+    <li class='live'></li>
     <li><a href="">Pages</a></li>
-    <?=(is_project_researcher($project->id, $user))?'<li>'.l('Manage', 'project/'.$project->path.'/manage').'</li>':''?>
+    <li class='live'></li>
+    <?=(is_project_researcher($project->id, $user))?'<li>'.l('Manage', 'project/'.$project->path.'/manage').'</li><li class="live"></li>':''?>
     <li><a href="<?=url('project/'.$project->path.'/content/Help_page');?>" >Help</a></li>
 </ul>
 <?php endif; ?>
@@ -45,7 +47,7 @@ global $user;
 <!-- footer navigation -->
 <div class="footer-navigation">
     <p>
-        <?=(is_project_researcher($project->id, $user))?l('Manage', 'project/'.$project->path.'/manage', array('attributes'=>array('class'=>'manage_link'))):''?>
-        <?=(is_project_participant($project->id, $user->uid))?l('Help', 'project/'.$project->path.'/content/Help_page', array('attributes'=>array('class'=>'help_link'))):''?>
+        <?//=(is_project_researcher($project->id, $user))?l('Manage', 'project/'.$project->path.'/manage', array('attributes'=>array('class'=>'manage_link'))):''?>
+        <?//=(is_project_participant($project->id, $user->uid))?l('Help', 'project/'.$project->path.'/content/Help_page', array('attributes'=>array('class'=>'help_link'))):''?>
     </p>
 </div>
