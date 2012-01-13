@@ -56,7 +56,7 @@ function project_contents_list_callback($path){
         }else{
             //fetch public contents
             $get = 'SELECT SUBSTRING(title, 1, 1) AS first_letter, title_path, title FROM {research_projects_contents} AS c, {node} AS n '
-                  .'WHERE c.project=%d AND c.permission="PUBLIC"  n.nid = c.node ORDER BY title';
+                  .'WHERE c.project=%d AND c.permission="PUBLIC" AND  n.nid = c.node ORDER BY title';
         }
         
         $res = db_query($get, $project->id);
