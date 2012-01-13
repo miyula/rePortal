@@ -14,11 +14,22 @@ function reProjectContent_menu(){
     $menu['project/%/content/%'] = array(
 	'title arguments'   => array(1,3),
 	'title callback'    => 'project_content_title_callback',
-	'description'       => t('Display content page'),
+	'description'       => t('Display content page.'),
 	'page callback'     => 'project_content_display_callback',
 	'page arguments'    => array(1,3),
 	'access callback'   => 'view_project_content_access',
 	'access arguments'  => array(1,3),
+	'file'              => 'content.pages.inc',  
+    );
+    
+    /** list project related contents **/
+    $menu['project/%/contents'] = array(
+        'title'   => t('Pages'),
+	'description'       => t('List project related contents.'),
+	'page callback'     => 'project_contents_list_callback',
+	'page arguments'    => array(1),
+	'access callback'   => 'project_participant_access',
+	'access arguments'  => array(1),
 	'file'              => 'content.pages.inc',  
     );
     

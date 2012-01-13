@@ -3,7 +3,6 @@ name            = Project User
 description     = "Provide functions for manage project user"
 package         = reProject
 dependencies[]  = reProject
-dependencies[]  = reProjectContent
 dependencies[]  = MessageSend
 dependencies[]  = jquery_ui
 dependencies[] = ProjectMessageTemplate
