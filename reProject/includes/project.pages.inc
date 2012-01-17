@@ -129,6 +129,7 @@ function create_new_project_form(){
         '#title'            => t('Define a project path'),
         '#description'      => t('Unique path to access the project. By a-z, A-Z, 0-9 and _'),
         '#required'         => TRUE,
+        '#size'             => 15,             
         //'#default_value'    => isset($project->path)?$project->path:'',
     );
     $form['base-path-value'] = array(
