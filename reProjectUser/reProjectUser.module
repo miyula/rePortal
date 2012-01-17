@@ -718,7 +718,7 @@ function send_invitation_email($pid, $role, $email, $info_card=0){
     $project = load_project($pid, 'id');
     
     $pair_value = prepare_arguments_for_default_template($project);
-    $pair_value['!invite_link'] = $invite_link;     
+    $pair_value['!invite_link'] = "<a href='$invite_link'>$invite_link</a>";     
     
     $subject = t($template->title, $pair_value);
     $body = t(nl2br($template->content), $pair_value);
@@ -733,7 +733,8 @@ function send_invitation_email($pid, $role, $email, $info_card=0){
 function prepare_arguments_for_default_template($project, $to_user=null){
     $arg = module_invoke_all('project_template_prepare_arguments', $project, $to_user);
     $arg['@project_name'] = $project->name;
-    $arg['!project_link'] = 'http://'.$_SERVER['HTTP_HOST'].url(generate_project_url($project->path));
+    $project_link = 'http://'.$_SERVER['HTTP_HOST'].url(generate_project_url($project->path));
+    $arg['!project_link'] = "<a href='$project_link'>$project_link</a>";
    
     if($to_user){
         $arg['@username'] = $to_user->name;
