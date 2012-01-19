@@ -14,28 +14,28 @@ function reProjectUser_install(){
 
     $r_template_subject = '@project_name invite you to join their research group';
     variable_set('default_template_invite_researcher_subject',$r_template_subject);
-    $r_template_body = "Hi,\n\n"
-                      ."You are invited to join research project @project_name.\n\n"
-                      ."Click the link to accept the invitation:"
-                      ."!invite_link\n\n"
-                      ."If clicking the link doesn\'t work, please copy and paste it into your browser.\n\n"
-                      ."You may wish to visit the project home page: \n"
-                      ."!project_link\n\n"
-                      ."Please don\'t reply this mail.\n\n"
-                      ."Best Regards,\nYours,\n@project_name";
+    $r_template_body = "<p>Hi,</p>"
+                      ."<p>You are invited to join research project @project_name.</p>"
+                      ."<p>Click the link to accept the invitation:"
+                      ."<br>!invite_link</p>"
+                      ."<p>If clicking the link does not work, please copy and paste it into your browser.</p>"
+                      ."<p>You may wish to visit the project home page: "
+                      ."<br>!project_link</p>"
+                      ."<p>Please do not reply this mail.</p>"
+                      ."<p>Best Regards,<br>Yours,<br>@project_name</p>";
     variable_set('default_template_invite_researcher_body',$r_template_body);
     
     $p_template_subject = '@project_name invite you to participant their project';
     variable_set('default_template_invite_participant_subject',$p_template_subject);
-    $p_template_body = "Hi,\n\n"
-                      ."You are invited to participant project @project_name.\n\n"
-                      ."Click the link to accept the invitation:"
-                      ."!invite_link\n\n"
-                      ."If clicking the link doesn\'t work, please copy and paste it into your browser.\n\n"
-                      ."You may wish to visit the project home page: \n"
-                      ."!project_link\n\n"
-                      ."Please don\'t reply this mail.\n\n"
-                      ."Best Regards,\nYours,\n@project_name";
+    $p_template_body = "<p>Hi,</p>"
+                      ."<p>You are invited to participant project @project_name.</p>"
+                      ."<p>Click the link to accept the invitation:"
+                      ."<br>!invite_link</p>"
+                      ."<p>If clicking the link does not work, please copy and paste it into your browser.</p>"
+                      ."<p>You may wish to visit the project home page: "
+                      ."<br>!project_link</p>"
+                      ."<p>Please do not reply this mail.</p>"
+                      ."<p>Best Regards,<br>Yours,<br>@project_name</p>";
     variable_set('default_template_invite_participant_body',$p_template_body);
     
 }
