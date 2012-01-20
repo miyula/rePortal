@@ -119,9 +119,8 @@ function create_new_project_form(){
     );
     $form['founder'] = array(
         '#type'             => 'textfield',
-        '#title'            => t('Founder'),
-        '#description'      => t('The name of founders'),
-        '#required'         => TRUE,
+        '#title'            => t('Organization'),
+        '#description'      => t('The institution who is responsible for the project. If this is a personal project, you can keep this field empty. '),
         //'#default_value'    => isset($project->founder)?$project->founder:'',
     );
     $form['path'] = array(

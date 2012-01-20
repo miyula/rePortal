@@ -8,7 +8,7 @@
  */
 global $user;
 ?>
-<p style="text-align: center">Founder: <?= $project->founder; ?></p>
+<p style="text-align: center"><?= $project->founder; ?></p>
 <?php if (is_project_participant($project->id, $user->uid)): ?>
     <ul class="project-navigation-menu">
         <li><a href="<?= url('project/' . $project->path); ?>">Home</a></li>
