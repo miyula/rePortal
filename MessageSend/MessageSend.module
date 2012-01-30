@@ -147,7 +147,7 @@ function message_send_http_mail($to_mail,$subject,$body,$isArray=False){
 
 	$mail->IsHTML(true);    // send as HTML  
    
-	$mail->Subject = $subject;
+	$mail->Subject = html_entity_decode($subject, ENT_QUOTES);
     
 	$mail->Body = $body;
 	$mail->AltBody ="text/html";
