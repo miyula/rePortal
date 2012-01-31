@@ -78,7 +78,7 @@ function edit_research_project_form(&$form_state, $project){
         '#type'             => 'textfield',
         '#title'            => t('Founder'),
         '#description'      => t('The name of founders'),
-        '#required'         => TRUE,
+        '#required'         => FALSE,
         '#default_value'    => $project->founder,
     );
     $form['path'] = array(
