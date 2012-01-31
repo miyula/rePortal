@@ -47,6 +47,8 @@ function project_manage_settings_callback($path){
     $breadcrumb[] = l(t('Settings'), generate_project_url($path).'/manage/settings');
     drupal_set_breadcrumb($breadcrumb);
     
+    drupal_add_js(drupal_get_path('module', 'reProject').'/js/project.js');
+    
     $project->path_category = 'settings';
     $project->path_category_subitem = 'basic'; 
     
@@ -86,13 +88,24 @@ function edit_research_project_form(&$form_state, $project){
         '#required'         => TRUE,
         '#default_value'    => $project->path,
     );
-    $form['introduction'] = array(
+    $form['base-path-value'] = array(
+        '#type' => 'hidden',
+        '#value' => 'http://'.$_SERVER['HTTP_HOST'].base_path().'project/',
+    );   
+    /*$form['introduction'] = array(
         '#type'             => 'textarea',
         '#title'            => t('Introduction'),
         '#description'      => t('A short description of the project'),
         '#required'         => TRUE,
         '#default_value'    => $project->introduction,
+    );*/
+    $project_path = generate_project_url($project->path);
+    $sql = 'SELECT id FROM {research_projects_contents} WHERE project=%d AND type="homepage" ORDER BY created DESC LIMIT 1 ';
+    $nid = db_result(db_query($sql, $project->id));
+    $form['introduction'] = array(
+        '#value'            => '<div class="form-item">'.l('Edit introduction (home page)',$project_path.'/manage/contents/'.$nid).'</div>',
     );
+    print_r($homepage);
     $form['submit'] = array(
         '#type'             => 'submit',
         '#value'            => t('Save'),
@@ -129,13 +142,13 @@ function edit_research_project_form_submit($form, &$form_state){
     $name = $form_state['values']['name'];
     $founder = $form_state['values']['founder'];
     $path = $form_state['values']['path'];
-    $introduction = $form_state['values']['introduction'];
+    //$introduction = $form_state['values']['introduction'];
     
     $project = load_project($id, 'id');
     $project->name = $name;
     $project->founder = $founder;
     $project->path = $path;
-    $project->introduction = $introduction;
+    //$project->introduction = $introduction;
     _research_projects_save($project);
     
     drupal_set_message('Settings have been saved.', 'status');
