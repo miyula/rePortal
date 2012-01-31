@@ -30,7 +30,7 @@ function project_invite_research_form(&$form_state, $pid){
         '#type' => 'textfield',
         '#title' => t('Email address'),
         '#required' => TRUE,
-        '#description' => t('The email of the researcher to be invited. '.l('Edit the invitation letter.', get_project_url($pid).'/manage/settings/invitations')),
+        '#description' => t('The email of the researcher to be invited. '.l('Edit the invitation letter.', get_project_url($pid).'/manage/settings/templates')),
     );
     $form['submit'] = array(
         '#type' => 'submit',
