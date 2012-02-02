@@ -356,7 +356,7 @@ function get_tags_as_array($tags_str){
     $token = strtok($tags_str,';');
     while ($token !== false){
 	if(!empty($token)){
-	    $tags[] = trim($token);
+	    $tags[] = htmlentities(trim($token));
 	}
 	$token = strtok(';');
     }
@@ -373,6 +373,7 @@ function get_project_all_participants_tags($pid){
     $res = db_query($sql, $pid);
     $tags = array();
     while($row=db_fetch_array($res)){
+        $row['tag'] = htmlentities($row['tag']);
 	$tags[] = $row;
     }
     return $tags;

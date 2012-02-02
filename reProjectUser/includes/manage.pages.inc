@@ -14,8 +14,11 @@ function project_manage_persons_list_callback($path){
     $project->path_category = 'manage';
     $project->path_category_subitem = 'persons'; 
     
+    //add css
     drupal_add_css(drupal_get_path('module','reProjectUser').'/css/user_manage.css');
-    
+    drupal_add_css(drupal_get_path('module','reProjectUserProfile').'/personalInfo.css');
+    //add js
+    drupal_add_js(drupal_get_path('module','reProjectUserProfile').'/personalInfo.js');
     //add jQuery ui
     load_jquery_ui();
     drupal_add_js(drupal_get_path('module','reProjectUser').'/js/edit_tags_window.js');
@@ -35,7 +38,7 @@ function project_manage_persons_list_callback($path){
     );
     $owner = user_load($project->creator);
     $rows[] = array(
-        l($owner->name, 'user/'.$owner->uid).' (creator)',
+        l($owner->name, 'user/'.$owner->uid, array('attributes'=>array('class'=>'show_person_card'))).' (creator)',
         $owner->mail,
     );
     
@@ -134,8 +137,11 @@ function project_manage_persons_filter_callback($path, $tag){
     $project->path_category = 'manage';
     $project->path_category_subitem = 'persons'; 
     
+    //add css
     drupal_add_css(drupal_get_path('module','reProjectUser').'/css/user_manage.css');
-    
+    drupal_add_css(drupal_get_path('module','reProjectUserProfile').'/personalInfo.css');
+    //add js
+    drupal_add_js(drupal_get_path('module','reProjectUserProfile').'/personalInfo.js');
     //add jQuery ui
     load_jquery_ui();
     drupal_add_js(drupal_get_path('module','reProjectUser').'/js/edit_tags_window.js');
@@ -155,7 +161,7 @@ function project_manage_persons_filter_callback($path, $tag){
     );
     $owner = user_load($project->creator);
     $rows[] = array(
-        l($owner->name, 'user/'.$owner->uid).' (creator)',
+        l($owner->name, 'user/'.$owner->uid, array('attributes'=>array('class'=>'show_person_card'))).' (creator)',
         $owner->mail,
     );
     

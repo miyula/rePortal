@@ -7,15 +7,15 @@
 */
 div.project-manage-block-div{
     text-align: center;
-    min-width: 600px;
+    min-width: 595px;
     width: auto !important;
-    width: 600px;
-    margin-bottom: 20px;
+    width: 595px;
+    margin-bottom: 21px;
 }
 
 div.project-manage-categories-div{
     border: 1px solid #358AA3;
-    width: 600px;
+    width: 595px;
     padding-bottom: 10px;
     margin: 0 auto;
 }

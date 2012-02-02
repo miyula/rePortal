@@ -132,7 +132,7 @@ function set_invitation_templates_form_submit($form, &$form_state){
     module_invoke_all('project_message_templates_setting_submit', $project, $form, $form_state);
     
     $log_content = "Changed default templates.";
-    log_operation($pid, 'message', $log_content, get_project_url($pid).'/manage/settings/invitations', 'reProjectUser');
+    log_operation($pid, 'settings', $log_content, get_project_url($pid).'/manage/settings/invitations', 'reProjectUser');
     
     drupal_set_message(t('Invitation templates settings have been updated.'),'status');
 }

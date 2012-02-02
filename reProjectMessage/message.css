@@ -1,3 +1,25 @@
+/* For messages page */
+#message-selections{
+    text-align: center;
+}
+#message-selections a{
+    border: 1px solid #999;
+    margin: 0 auto 14px auto;
+    border-radius: 7px;
+    -moz-border-radius: 7px;
+    list-style: none;
+    width: 490px;
+    padding:14px 0 28px 0;
+    line-height: 0px;
+    overflow:hidden;position:relative;
+    display:block;
+}
+
+#message-selections a:hover{
+    border: 1px solid #333;
+}
+
+/* For email/sms sending page*/
 div.project-person-list-div{
     border: 1px solid #777;
     overflow: auto;

@@ -19,6 +19,15 @@ function reProjectUserProfile_menu(){
         'file'              => 'personal_info.page.inc',
         'type'              => MENU_LOCAL_TASK,
     );
+    $menu['user/%user/ajax/personal_info'] = array(
+        'title' => t('Personal information'),
+        'description'       => t('Return personal information as json. '),
+        'page callback'     => 'user_ajax_personal_info_callback',
+        'page arguments'    => array(1, 'user'),
+        'access arguments' => array('access content'),
+        'file'              => 'personal_info.ajax.inc',
+        'type'              => MENU_CALLBACK,
+    );
     return $menu;
 }
 

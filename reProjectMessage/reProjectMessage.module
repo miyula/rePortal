@@ -8,11 +8,11 @@ function reProjectMessage_menu(){
         'title arguments'   => array(1),
 	'title callback'    => 'project_title_callback',
         'description'       => t('Message sending'),
-        'page callback'     => 'project_manage_message_email_callback',
+        'page callback'     => 'project_manage_message_callback',
         'page arguments'    => array(1),
 	'access callback'   => 'manage_project_access',
         'access arguments'  => array(1),
-        'file'              => 'includes/manage.email.pages.inc',  
+        'file'              => 'includes/manage.messages.pages.inc',  
     );
     $menu['project/%/manage/message/email'] = array(
         'title arguments'   => array(1),
@@ -33,6 +33,16 @@ function reProjectMessage_menu(){
 	'access callback'   => 'manage_project_access',
         'access arguments'  => array(1),
         'file'              => 'includes/manage.sms.pages.inc',  
+    );
+    $menu['project/%/manage/message/history'] = array(
+        'title arguments'   => array(1),
+	'title callback'    => 'project_title_callback',
+        'description'       => t('Message sending'),
+        'page callback'     => 'project_manage_message_history_callback',
+        'page arguments'    => array(1),
+	'access callback'   => 'manage_project_access',
+        'access arguments'  => array(1),
+        'file'              => 'includes/manage.history.pages.inc',  
     );
     return $menu;
 }

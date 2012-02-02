@@ -9,6 +9,7 @@ function project_manage_message_sms_callback($path){
     $breadcrumb = drupal_get_breadcrumb();
     $breadcrumb[] = l($project->name, generate_project_url($path));
     $breadcrumb[] = l(t('Manage'), generate_project_url($path).'/manage');
+    $breadcrumb[] = l(t('Messages'), generate_project_url($path).'/manage/message');
     drupal_set_breadcrumb($breadcrumb);
     
     $project->path_category = 'manage';
@@ -41,6 +42,10 @@ function project_manage_message_sms_callback($path){
 /** SMS sending form **/
 
 function message_sms_sending_form($form_state, $project){
+    $form['project'] = array(
+        '#type' => 'hidden',
+        '#value' => $project->id,
+    );
     $form['to-list'] = array(
         '#type'         => 'textarea',
         '#title'        => t('To'),
@@ -88,9 +93,16 @@ function message_sms_sending_form_validate($form, &$form_state){
     }
 }
 function message_sms_sending_form_submit($form, &$form_state){
+    $pid = $form_state['values']['project']; 
     $to = $form_state['values']['to-list'];
     $body = strip_tags($form_state['values']['body']);
     $to_phone = $form_state['values']['to-phone']; 
     
     send_group_sms($to_phone,$body);
+    
+    $log_content = "<p>Send short message to $to</p>"
+                   ."<p>"
+                   .'====================================================<br>'
+                   ."$body</p>";
+    log_operation($pid, 'message', $log_content, get_project_url($pid).'/manage/message/sms', 'reProjectMessage');
 }

@@ -89,7 +89,7 @@ function manage_participant_tags_callback($path){
     
     $all_tags = get_project_all_participants_tags($project->id);
     foreach($all_tags as $tag){
-        $tag_count = count_participants_by_tag($project->id, $tag['tag']);
+        $tag_count = count_participants_by_tag($project->id, html_entity_decode($tag['tag']));
         $rows[] = array(
             $tag['tag'],
             $tag_count.'/'.$participants_count.' ('.number_format($tag_count/$participants_count*100, 2).'%)',

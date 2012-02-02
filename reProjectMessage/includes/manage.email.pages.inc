@@ -9,6 +9,7 @@ function project_manage_message_email_callback($path){
     $breadcrumb = drupal_get_breadcrumb();
     $breadcrumb[] = l($project->name, generate_project_url($path));
     $breadcrumb[] = l(t('Manage'), generate_project_url($path).'/manage');
+    $breadcrumb[] = l(t('Messages'), generate_project_url($path).'/manage/message');
     drupal_set_breadcrumb($breadcrumb);
     
     $project->path_category = 'manage';
@@ -41,6 +42,10 @@ function project_manage_message_email_callback($path){
 /** email sending form **/
 
 function message_email_sending_form($form_state, $project){
+    $form['project'] = array(
+        '#type' => 'hidden',
+        '#value' => $project->id,
+    );
     $form['to-list'] = array(
         '#type'         => 'textarea',
         '#title'        => t('To'),
@@ -93,6 +98,14 @@ function message_email_sending_form_submit($form, &$form_state){
     $subject = $form_state['values']['title'];
     $body = $form_state['values']['body'];
     $to_mail = $form_state['values']['to-mail']; 
+    $pid = $form_state['values']['project']; 
     
     message_send_http_mail($to_mail,$subject,$body,TRUE);
+    
+    $log_content = "<p>Send email to $to</p>"
+                   ."<p>Subject: $subject<br>"
+                   .'====================================================<br>'
+                   ."Body:<br>$body</p>";
+    log_operation($pid, 'message', $log_content, get_project_url($pid).'/manage/message', 'reProjectMessage');
+    
 }
