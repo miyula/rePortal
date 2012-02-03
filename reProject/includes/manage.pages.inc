@@ -121,7 +121,7 @@ function edit_research_project_form_validate($form, &$form_state){
     $path = $form_state['values']['path'];
     
     //validate if the path contain illegal characters
-    if(!preg_match('/^([0-9]|[_]|[a-z]|[A_Z])*$/',$path)){
+    if(!preg_match('/^([0-9]|[_]|[a-z]|[A-Z])*$/',$path)){
         form_set_error('path','The path contain illegal characters. Only letters, numbers and _ are allowed');
     }
     
