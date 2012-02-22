@@ -49,6 +49,14 @@ function reTool_update_2(){
    
    return $ret;
 }
+function reTool_update_3(){
+    $ret = array();
+    //add new column short_describe
+    db_add_field($ret, 'research_tools', 'short_describe',
+       array('type' => 'varchar', 'length' => 255, 'not null' => TRUE,));
+   
+    return $ret;
+}
 
 /**
  * Implementation of hook_schema().
@@ -69,6 +77,11 @@ function research_tools_schema(){
             'logo' => array(
                 'type' => 'varchar',
                 'length' => 255,
+                'not null' => TRUE,
+            ),
+            'short_describe' => array(
+                'type' => 'varchar',
+                'lenght' => 255,
                 'not null' => TRUE,
             ),
             'introduction' => array(

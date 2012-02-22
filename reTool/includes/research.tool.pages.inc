@@ -4,20 +4,22 @@
  * Menu callback for research/tools and research/tools/list
  */
 function research_tools_list_callback(){
+    
+    drupal_add_css(drupal_get_path('module','reTool').'/reTool.css');
+    
     if(user_access('create research tool')){
         $content = '<p style="text-align:right;"><a href="'.url('research/tools/add').'" class="add_link">Add new tool</a></p>';
     }
     
     $rows = array();
     $header = array(
-        array('data'=>'Project tool'),
-        array('data'=>'Name'),
-        array('data'=>'Abstract'),
-        array('data'=>'Ratings'),
+        array('data'=>t('Research tool'), 'width'=>'150px;'),
+        array('data'=>t('Short description'), 'width'=>'500px;'),
+        array('data'=>t('Ratings')),
     );
     
     //get tool list
-    $sql = "SELECT id, name, logo, introduction FROM {research_tools}";
+    $sql = "SELECT id, name, logo, short_describe FROM {research_tools}";
     $res = pager_query($sql,30);
     
     while($row = db_fetch_object($res)){
@@ -26,10 +28,18 @@ function research_tools_list_callback(){
         $count_res = db_result(db_query($count, $res->id));
         
         $rows[] = array(
-            "<img src='{$row->logo}' alt='{$row->name}' class='tool_logo_image'/>",
-            l($row->name,'research/tools/view/'.$row->id),
-            node_teaser($row->introduction, null, 100),
-            ($count_res?$count_res:0).' project using this tool',
+            array(
+                'data' => "<a href='".url('research/tools/view/'.$row->id)."'><img src='{$row->logo}' alt='{$row->name}' class='tool_logo_image'/><span class='tool-title'>{$row->name}</span></a>",
+                'class' => 'tool-name',
+            ),
+            array(
+                'data' => $row->short_describe,
+                'class' => 'tool-describe',
+            ),
+            array(
+                'data' => ($count_res?$count_res:0).' projects are using this tool',
+                'class' => 'tool-rating',
+            ),            
         );
     }
     
@@ -88,7 +98,7 @@ function research_tools_view_callback($tool_id){
 function research_tools_edit_callback($tool_id){
     
     //get tool info
-    $get_tool = "SELECT id, name, logo, introduction FROM {research_tools} WHERE id=%d";
+    $get_tool = "SELECT id, name, logo, short_describe, introduction FROM {research_tools} WHERE id=%d";
     $tool = db_fetch_object(db_query($get_tool, $tool_id));
     if($tool){
         
@@ -108,7 +118,7 @@ function research_tools_edit_callback($tool_id){
  * Menu callback for research/tools/view/%/delete
  */
 function research_tools_delete_callback(){
-    $get_tool = "SELECT id, name, logo, introduction FROM {research_tools} WHERE id=%d";
+    $get_tool = "SELECT id, name, logo, short_describe, introduction FROM {research_tools} WHERE id=%d";
     $tool = db_fetch_object(db_query($get_tool, $tool_id));
     if($tool){
         return drupal_get_form('research_tool_form',$tool);
@@ -127,7 +137,7 @@ function research_tool_form(&$form_state, $tool=null){
     );
     $form['name'] = array(
         '#type'             => 'textfield',
-        '#title'            => t('Research tool name'),
+        '#title'            => t('Tool name'),
         '#description'      => t('The name of the research tool.'),
         '#required'         => TRUE,
         '#default_value'    => isset($tool->name)?$tool->name:'',
@@ -146,6 +156,13 @@ function research_tool_form(&$form_state, $tool=null){
     $form['logo-path'] = array(
         '#type'             => 'hidden',
         '#value'            => isset($tool->logo)?$tool->logo:'',
+    );
+    $form['short_describe'] = array(
+        '#type'             => 'textfield',
+        '#title'            => t('Short description'),
+        '#description'      => t('Same short phrases or sentences to describe this tool. E.g: Android application, Track locations.'),
+        '#default_value'    => isset($tool->short_describe)?$tool->short_describe:'',
+        '#required'         => TRUE,
     );
     $form['introduction'] = array(
         '#type'             => 'textarea',
@@ -166,6 +183,7 @@ function research_tool_form_submit($form, &$form_state){
     $id = $form_state['values']['id'];
     $name = $form_state['values']['name'];
     $logo_path = $form_state['values']['logo-path'];
+    $describe = $form_state['values']['short_describe'];
     $introduction = $form_state['values']['introduction'];
     
     //Upload image
@@ -191,12 +209,12 @@ function research_tool_form_submit($form, &$form_state){
     
     if($id>0){
         //update
-        $update = 'UPDATE {research_tools} SET name="%s", logo="%s", introduction="%s", changed=NOW() WHERE id=%d';
-        db_query($update, $name, $logo_path, $introduction, $id);
+        $update = 'UPDATE {research_tools} SET name="%s", logo="%s", short_describe="%s", introduction="%s", changed=NOW() WHERE id=%d';
+        db_query($update, $name, $logo_path, $describe, $introduction, $id);
     }else{
         //insert new into database
-        $sql = 'INSERT INTO {research_tools}(name, logo, introduction, created, changed) VALUES("%s", "%s", "%s", NOW(), NOW())';
-        db_query($sql, $name, $logo_path, $introduction);
+        $sql = 'INSERT INTO {research_tools}(name, logo, short_describe, introduction, created, changed) VALUES("%s", "%s", "%s", "%s", NOW(), NOW())';
+        db_query($sql, $name, $logo_path, $describe, $introduction);
         $id = mysql_insert_id();
     }
     

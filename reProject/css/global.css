@@ -93,7 +93,7 @@ a.help_link{
 }
 img.tool_logo_image{
     width: 120px;
-    height: 120px;
+    padding-bottom: 7px;
 }
 
 div.project-introduction-div{

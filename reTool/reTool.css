@@ -23,3 +23,20 @@ div.project-tool-link-div{
     width: 320px;
     overflow: hidden;
 }
+
+/** tool list table **/
+td.tool-name{
+    padding: 14px;
+    text-align: center;
+}
+    td.tool-name span.tool-title{
+        display: block;
+        font-weight: bold;
+        font-size: 16px;
+    }
+td.tool-describe{
+    padding: 14px;
+}
+td.tool-rating{
+   padding: 14px; 
+}
