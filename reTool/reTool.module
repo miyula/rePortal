@@ -95,24 +95,6 @@ function reTool_menu(){
         'file'              => 'includes/research.tool.links.pages.inc',
         'type'              => MENU_CALLBACK,
     );
-    /*$menu['research/tools/view/%/links/edit/%'] = array(
-        'title'             => t('Edit research tool link'),
-        'description'       => t('The page to edit link of a research tool'),
-        'page callback'     => 'research_tools_links_edit_callback',
-        'page arguments'    => array(3, 6),
-        'access arguments'  => array('add research tool links'),
-        'file'              => 'includes/research.tool.links.pages.inc',
-        'type'              => MENU_CALLBACK,
-    );
-    $menu['research/tools/view/%/links/delete/%'] = array(
-        'title'             => t('Delete research tool link'),
-        'description'       => t('The page to delete link from a research tool'),
-        'page callback'     => 'research_tools_links_delete_callback',
-        'page arguments'    => array(3, 6),
-        'access arguments'  => array('add research tool links'),
-        'file'              => 'includes/research.tool.links.pages.inc',
-        'type'              => MENU_CALLBACK,
-    );*/
     
     /** project manage part **/
     $menu['project/%/manage/tools'] = array(
@@ -196,6 +178,25 @@ function reTool_menu(){
         'file'              => 'includes/manage.pages.inc',
     );
     
+    /** admin part **/
+    $menu['admin/content/retools'] = array(
+        'title'             => t('Research tools'),
+        'description'       => t('View, edit, and delete research tools.'),
+        'page callback'     => 'admin_content_retools_callback',
+        'access arguments'  => array('admin research tool'),
+        'type'              => MENU_NORMAL_ITEM,
+        'file'              => 'includes/admin.content.pages.inc',
+    );
+    $menu['admin/content/retools/%/delete'] = array(
+        'title'             => t('Research tools'),
+        'description'       => t('View, edit, and delete research tools.'),
+        'page callback'     => 'admin_content_retools_delete_callback',
+        'page arguments'    => array(3),
+        'access arguments'  => array('admin research tool'),
+        'type'              => MENU_NORMAL_ITEM,
+        'file'              => 'includes/admin.content.pages.inc',
+    );
+    
     return $menu;
 }
 
@@ -207,7 +208,7 @@ function reTool_perm(){
         'create research tool',
         'view research tools',
         'edit research tool',
-        'delete research tool',
+        'admin research tool',
         'add research tool links',
         'edit research tool links',
         'delete research tool links',

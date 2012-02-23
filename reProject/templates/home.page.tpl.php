@@ -10,7 +10,7 @@ global $user;
 ?>
 <p style="text-align: center"><?= $project->founder; ?></p>
 <?php if (is_project_participant($project->id, $user->uid)): ?>
-    <ul class="project-navigation-menu">
+<div id="project-navigation">    <ul class="project-navigation-menu">
         <li><a href="<?= url('project/' . $project->path); ?>">Home</a></li>
         <li class='live'></li>
         <li><a href="<?= url('project/' . $project->path . '/contents'); ?>">Pages</a></li>
@@ -18,6 +18,7 @@ global $user;
         <?= (is_project_researcher($project->id, $user)) ? '<li>' . l('Manage', 'project/' . $project->path . '/manage') . '</li><li class="live"></li>' : '' ?>
         <li><a href="<?= url('project/' . $project->path . '/content/Help_page'); ?>" >Help</a></li>
     </ul>
+</div>
 <?php endif; ?>
 
 <div class="project-introduction-div"><?= variable_get('open_g_translation_widget', 'disable') == 'enable' ? add_translation_widget($project->homepage->body) : $project->homepage->body; ?></div>

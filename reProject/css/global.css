@@ -96,6 +96,10 @@ img.tool_logo_image{
     padding-bottom: 7px;
 }
 
+h2#page-title{
+    font-size: 30px;
+}
+
 div.project-introduction-div{
     padding: 21px;
 }
@@ -114,9 +118,17 @@ h1.page-title{
 }
 
 /** project navigation menu **/
+div#project-navigation{
+    text-align: center;
+}
 ul.project-navigation-menu{
-    background-color: #4CA5BE;
-    margin: 0px 14px;
+    background-color: #1A97D4;
+    margin: 0px auto;
+    font-weight: bold;
+    font-size: 16px;
+    padding:0px;
+    width: 500px;
+    
 }
 ul.project-navigation-menu:after{
     content: '';
@@ -125,9 +137,9 @@ ul.project-navigation-menu:after{
     clear: both;
 }
 ul.project-navigation-menu li.live{
-    padding: 7px 0px;
+    padding: 5px 0px;
     background-color: #FFF;
-    width: 1px;
+    width: 2px;
     height: 21px;
 }
 ul.project-navigation-menu li{
@@ -135,11 +147,16 @@ ul.project-navigation-menu li{
     overflow: hidden;
     display: inline;
     font-size: 14px;
-    padding: 7px 35px;
+    padding: 7px 40px;
+    margin: 0px;
 }
 ul.project-navigation-menu li:hover{
-    background-color: #73B6CA;
+    background-color: #333;
 }
 ul.project-navigation-menu li a{
     border: none;
+    color: #FFF;    
+}
+ul.project-navigation-menu li a:hover{
+    color: #FFF;
 }
