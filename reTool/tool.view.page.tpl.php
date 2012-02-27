@@ -8,7 +8,19 @@
  */
 ?>
 <p><a class="edit_link" href="<?=url('research/tools/view/'.$tool->id.'/edit'); ?>">Edit</a></p>
-<div class="tool-mark-info-div"><?=$tool->projects; ?> projects using this tool</div>
+<div class="tool-mark-info-div">
+    <?php 
+        switch($tool->projects){
+            case 0:
+                break;
+            case 1:
+                echo '1 project is using this tool.';
+                break;
+            default :
+                echo "{$tool->projects} projects are using this tool.";
+        }
+    ?>
+</div>
 <div class="tool-logo-div"><img src="<?=$tool->logo; ?>" alt="<?=$tool->name; ?>"/></div>
 <div class="tool-introduction-div"><?=$tool->introduction; ?></div>
 

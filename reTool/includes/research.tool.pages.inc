@@ -25,7 +25,17 @@ function research_tools_list_callback(){
     while($row = db_fetch_object($res)){
         
         $count = "SELECT COUNT(*) FROM {research_project_tools_list} WHERE tool=%d";
-        $count_res = db_result(db_query($count, $res->id));
+        $count_res = db_result(db_query($count, $row->id));
+        switch($count_res){
+            case 0:
+                $ratings = '';
+                break;
+            case 1:
+                $ratings = '1 project is using this tool.';
+                break;
+            default :
+                $ratings = "$count_res projects are using this tool.";
+        }
         
         $rows[] = array(
             array(
@@ -37,7 +47,7 @@ function research_tools_list_callback(){
                 'class' => 'tool-describe',
             ),
             array(
-                'data' => ($count_res?$count_res:0).' projects are using this tool',
+                'data' => $ratings,
                 'class' => 'tool-rating',
             ),            
         );
