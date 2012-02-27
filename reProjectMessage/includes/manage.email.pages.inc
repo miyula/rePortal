@@ -102,9 +102,9 @@ function message_email_sending_form_submit($form, &$form_state){
     
     message_send_http_mail($to_mail,$subject,$body,TRUE);
     
-    $log_content = "<p>Send email to $to</p>"
+    $log_content = "<p>Send email to $to. </p>"
                    ."<p>Subject: $subject<br>"
-                   .'====================================================<br>'
+                   .'--------------------------------<br>'
                    ."Body:<br>$body</p>";
     log_operation($pid, 'message', $log_content, get_project_url($pid).'/manage/message', 'reProjectMessage');
     

@@ -76,10 +76,14 @@ function ProjectLogs_project_content_block($project, $op, &$blocks){
             $res = db_query($sql);
             $rows = array();
             while($r = db_fetch_object($res)){
+                $content = strip_tags($r->content);
+                if(strlen($content)>100){
+                    $content = substr($content, 0, 100).'...';
+                }
                 $rows[] = array(
                     $r->type,
                     l($r->name,'user/'.$r->uid),
-                    $r->content. ' ('.l('More',generate_project_url($project->path).'/manage/logs/'.$r->id).')',
+                    $content. ' ('.l('More',generate_project_url($project->path).'/manage/logs/'.$r->id).')',
                     $r->time,
                 );
             }
@@ -115,10 +119,14 @@ function project_manage_logs_callback($path){
               'WHERE project='.$project->id.' AND uid=operator ORDER by time DESC';
     $res = pager_query($sql, 20);
     while($r = db_fetch_object($res)){
+        $content = strip_tags($r->content);
+        if(strlen($content)>100){
+            $content = substr($content, 0, 100).'...';
+        }
         $rows[] = array(
             $r->type,
             l($r->name,'user/'.$r->uid),
-            $r->content. ' ('.l('More',generate_project_url($path).'/manage/logs/'.$r->id).')',
+            $content. ' ('.l('More',generate_project_url($path).'/manage/logs/'.$r->id).')',
             $r->time,
         );
     }

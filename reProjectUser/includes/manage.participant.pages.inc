@@ -70,6 +70,46 @@ function project_manage_persons_participant_edit_callback($path, $id){
     }
     
 }
+/**
+ * Menu callback for project/%/manage/persons/participant/resend/%
+ */
+function project_manage_persons_participant_resend_callback($path, $cardid){
+    $project = prepare_project_manage_page($path);
+    
+    $breadcrumb = drupal_get_breadcrumb();
+    $breadcrumb[] = l($project->name, generate_project_url($path));
+    $breadcrumb[] = l(t('Manage'), generate_project_url($path).'/manage');
+    $breadcrumb[] = l(t('Persons'), generate_project_url($path).'/manage/persons');
+    drupal_set_breadcrumb($breadcrumb);
+    
+    $project->path_category = 'manage';
+    $project->path_category_subitem = 'persons'; 
+    
+    $person_sql = "SELECT id, user, name, email, phone, tags, notes FROM {research_projects_participants_cards} WHERE id=%d AND project=%d";
+    $person = db_fetch_object(db_query($person_sql, $cardid, $project->id));
+    
+    if($person){
+        $project->subtitle = 'Resend Invitation';
+        
+        //check if person has already been actived
+        $check_sql = 'SELECT active FROM {research_projects_persons_list} WHERE user=%d AND role="participant"';
+        $active = db_result(db_query($check_sql, $person->user));
+        if($active==1){
+            $content = 'This participant has already accepted the invitation.';
+        }else{
+            send_invitation_email($project->id, 'participant', $person->email, $person->id);
+            $content = 'A new invitation has been sent.';
+        }
+        
+        $project->right_part = $content;
+        return theme('project_manage_page',$project);
+    }else{
+        drupal_not_found();
+    }    
+}
+
+
+
 /** new person info card form **/
 /** New participant info card form **/
 function new_participant_info_card_form($form_state, $project){

@@ -80,3 +80,10 @@ div#project-manage-div div.right-content-div table td{
 div#project-manage-div div.right-content-div form{
     text-align: left;
 }
+
+div.right-content-div dl{
+    text-align: left;
+}
+div.right-content-div dl dt{
+    font-weight: bold;
+}

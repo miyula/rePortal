@@ -38,6 +38,7 @@ function reProjectUserProfile_perm(){
     return array(
         'view any user project profile',
         'edit any user project profile',
+        'view other users projects',
     );    
 }
 
@@ -45,8 +46,10 @@ function reProjectUserProfile_perm(){
  * Implementation of hook_user().
  */
 function reProjectUserProfile_user($op, &$edit, &$account, $category = NULL){
+    global $user;
     if($op=='view'){
         if(edit_personal_info_access($account)){
+            
             //get profile info
             $info = load_user_personal_info($account->uid);
             $account->content['personal_info'] = array(
@@ -90,6 +93,51 @@ function reProjectUserProfile_user($op, &$edit, &$account, $category = NULL){
                     '#weight' => 10,
                 ),
             ); 
+            
+        }
+        if(($user->uid==$account->uid)||user_access("view other users projects")){
+            $account->content['projects'] = array(
+                '#title'    => t('Projects'),
+                '#type'    => 'user_profile_category',
+                '#weight' => 1,
+            );
+            
+            //get research projects list
+            $research_p_sql = 'SELECT name, path '
+                             .'FROM {research_projects_persons_list} AS p, '
+                             .'{research_projects} AS r '
+                             .'WHERE user=%d AND p.role IN ("creator","researcher") AND p.active=1 AND p.project=r.id '
+                             .'ORDER BY p.changed DESC';
+            $rp_res = db_query($research_p_sql, $account->uid);
+            while($rp_r = db_fetch_object($rp_res)){
+                $research_projects.='<li>'.l($rp_r->name, 'project/'.$rp_r->path).' ['.l(t('manage'), 'project/'.$rp_r->path.'/manage').']</li>'; 
+            }
+            if(!empty ($research_projects)){
+                $account->content['projects']['research_projects'] = array(
+                    '#title' => t('Research'),
+                    '#type' =>  'user_profile_item',
+                    '#value' => empty ($research_projects)?'':"<ul>$research_projects</ul>",
+                    '#weight' => 0,
+                );
+            }
+            //get participate in projects list
+            $participate_p_sql = 'SELECT name, path '
+                             .'FROM {research_projects_persons_list} AS p, '
+                             .'{research_projects} AS r '
+                             .'WHERE user=%d AND p.role="participant" AND p.active=1 AND p.project=r.id '
+                             .'ORDER BY p.changed DESC';
+            $pp_res = db_query($participate_p_sql, $account->uid);
+            while($pp_r = db_fetch_object($pp_res)){
+                $participate_projects.='<li>'.l($pp_r->name, 'project/'.$pp_r->path).'</li>'; 
+            }
+            if(!empty($participate_projects)){
+                $account->content['projects']['participate_projects'] = array(
+                    '#title' => t('Participate'),
+                    '#type' =>  'user_profile_item',
+                    '#value' => empty ($participate_projects)?'':"<ul>$participate_projects</ul>",
+                    '#weight' => 1,
+                );
+            }
         }
     }elseif($op=='load'){
         if(view_personl_info_access($account)){

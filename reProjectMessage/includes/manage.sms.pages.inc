@@ -100,9 +100,9 @@ function message_sms_sending_form_submit($form, &$form_state){
     
     send_group_sms($to_phone,$body);
     
-    $log_content = "<p>Send short message to $to</p>"
+    $log_content = "<p>Send short message to $to. </p>"
                    ."<p>"
-                   .'====================================================<br>'
+                   .'--------------------------------<br>'
                    ."$body</p>";
     log_operation($pid, 'message', $log_content, get_project_url($pid).'/manage/message/sms', 'reProjectMessage');
 }
