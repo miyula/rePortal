@@ -65,7 +65,7 @@ function reProjectMessage_project_manage_navigation($project){
  * Implements hook_project_manage_category().
  */
 function reProjectMessage_project_manage_category($project){
-    $image_path = base_path().drupal_get_path('module','reProjectContent').'/web-page.png';
+    $image_path = base_path().drupal_get_path('module','reProjectMessage').'/message.png';
     $categories[] = array(
         'image' => $image_path,
         'name'  => 'Send message',

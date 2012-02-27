@@ -103,6 +103,9 @@ h2#page-title{
 div.project-introduction-div{
     padding: 21px;
 }
+div#research-tools-div{
+    padding: 21px;
+}
 
 div.loading-div{
     background: url('../images/loading.gif') no-repeat left top;

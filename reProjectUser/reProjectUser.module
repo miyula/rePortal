@@ -247,18 +247,18 @@ function reProjectUser_project_manage_navigation($project){
  * Implements hook_project_manage_category().
  */
 function reProjectUser_project_manage_category($project){
-    $image_path = base_path().drupal_get_path('module','reProjectContent').'/web-page.png';
+    $image_path = base_path().drupal_get_path('module','reProjectUser');
     $count_sql = 'SELECT COUNT(*) FROM {research_projects_persons_list} WHERE project=%d AND role="%s"';
     $count1 = db_result(db_query($count_sql, $project->id, 'researcher'));
     $categories[] = array(
-        'image' => $image_path,
+        'image' => $image_path.'/researcher.png',
         'name'  => 'Researchers',
         'count' => $count1+1, //include the creator
         'link'  => generate_project_url($project->path).'/manage/persons',
     );
     $count2 = db_result(db_query($count_sql, $project->id, 'participant'));
     $categories[] = array(
-        'image' => $image_path,
+        'image' => $image_path.'/people.png',
         'name'  => 'Participants',
         'count' => $count2,
         'link'  => generate_project_url($project->path).'/manage/persons',

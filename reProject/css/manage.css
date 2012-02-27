@@ -58,7 +58,7 @@ div.left-navigation-div div.manage-item-tag-div ul.manage-item-sub-ul li.selecte
 
 /** For right content **/
 h2.sub-title{
-    margin-top: 0px;
+    
 }
 div#project-manage-div div.right-content-div{
     float: left;
@@ -67,6 +67,16 @@ div#project-manage-div div.right-content-div{
     min-height: 500px;
     height: auto !important;
     height: 500px;
-    width: 700px;
+    width: 680px;
     text-align: center;
+    padding: 0px 14px 14px 14px;
+}
+div#project-manage-div div.right-content-div table{
+    text-align: left;
+}
+div#project-manage-div div.right-content-div table td{
+    padding-left: 14px;
+}
+div#project-manage-div div.right-content-div form{
+    text-align: left;
 }

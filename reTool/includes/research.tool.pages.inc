@@ -13,8 +13,8 @@ function research_tools_list_callback(){
     
     $rows = array();
     $header = array(
-        array('data'=>t('Research tool'), 'width'=>'150px;'),
-        array('data'=>t('Short description'), 'width'=>'500px;'),
+        array('data'=>t('Research tool'), 'width'=>'150px'),
+        array('data'=>t('Short description'), 'width'=>'500px'),
         array('data'=>t('Ratings')),
     );
     

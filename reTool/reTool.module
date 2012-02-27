@@ -248,7 +248,7 @@ function reTool_project_manage_navigation($project){
  * Implements hook_project_manage_category().
  */
 function reTool_project_manage_category($project){
-    $image_path = base_path().drupal_get_path('module','reProjectContent').'/web-page.png';
+    $image_path = base_path().drupal_get_path('module','reTool').'/tool.png';
     $count_sql = 'SELECT COUNT(*) FROM {research_project_tools_list} WHERE project=%d';
     $count = db_result(db_query($count_sql, $project->id));
     $categories[] = array(
@@ -351,4 +351,17 @@ function get_research_tool_name($tid){
     $sql = "SELECT name FROM {research_tools} WHERE id=%d";
     $title = db_result(db_query($sql, $tid));
     return $title;
+}
+
+/**
+ * Count using and rating
+ * @param
+ *   $tid, the id of the tool
+ */
+function count_research_tool_using_and_rating($tid){
+    $count_using = "SELECT COUNT(*) FROM {research_project_tools_list} WHERE tool=%d";
+    $result = new stdClass();
+    $result->number = db_result(db_query($count_using, $tid));
+    
+    return $result;
 }

@@ -48,6 +48,9 @@ function project_manage_tools_list_callback($path){
 function project_manage_tools_selete_list_callback($path){
     $project = prepare_project_manage_page($path);
     
+    //add css
+    drupal_add_css(drupal_get_path('module','reTool').'/reTool.css');
+    
     //set breadcrumb
     $breadcrumb = drupal_get_breadcrumb();
     $breadcrumb[] = l($project->name, generate_project_url($path));
@@ -58,29 +61,38 @@ function project_manage_tools_selete_list_callback($path){
     $project->path_category = 'manage';
     $project->path_category_subitem = 'tools'; 
         
-    //get right part info
-    if(user_access('create research tool')){
-        $content = "<p><a class='add_link' href='".url('research/tools/add')."'>Create new</a></p>";
-    }
     $rows = array();
     $header = array(
-        array('data'=>'Tool'),
-        array('data'=>'Name'),
-        array('data'=>'Operation'),
+        array('data'=>t('Tool')),
+        array('data'=>t('Short description')),
+        array('data'=>t('Operation'),'width'=>'150px'),
     );
         
-    $sql = "SELECT t.id id, t.name, t.logo FROM {research_tools} AS t ORDER BY t.changed DESC";
-    $res = db_query($sql);
+    $sql = "SELECT t.id id, t.name, t.logo, short_describe FROM {research_tools} AS t ORDER BY t.changed DESC";
+    $res = pager_query($sql,10);
     while($row=db_fetch_object($res)){
+        $count = count_research_tool_using_and_rating($row->id);
+        if($count->number){
+            $statistic.= "<p><strong>{$count->number}</strong> projects are using this tool.</p>";
+        }
         $rows[] = array(
-            "<image src='{$row->logo}' width='100px' />",
-            "<a href='".url('research/tools/view/'.$row->id)."' target='_blank'>{$row->name}</a>",
+            array(
+                'data'  => "<a href='".url('research/tools/view/'.$row->id)."'><img src='{$row->logo}' alt='{$row->name}' class='tool_logo_image'/><span class='tool-title'>{$row->name}</span></a>",
+                'class' => 'tool-name',
+                'width' => '140px',
+            ),
+            "<p>{$row->short_describe}</p>".$statistic,
             check_project_using_tool($project, $row->id)?'You are using this tool.':"<a href='".url("project/$path/manage/tools/selete/{$row->id}")."' class='add_link'>Add to project</a>",
         );
     }
     $content.= theme_table($header, $rows);
     $content.= theme('pager');
-    $project->subtitle = 'Tools management';
+    
+    if(user_access('create research tool')){
+        $content.= "<p><a class='add_link' href='".url('research/tools/add')."'>Did not find the tool you want? Contribute a new tool here.</a></p>";
+    }
+    
+    $project->subtitle = 'Select Research Tool';
     $project->right_part = $content;    
     return theme('project_manage_page',$project);
 

@@ -42,7 +42,7 @@ div.research-tool-block ul:after{
     clear: both;
 }
 div.research-tool-block ul{
-    margin: 7px 14px;
+    margin: 7px 0px;
 }
 div.research-tool-block ul li{
     float: left;

@@ -45,7 +45,7 @@ function ProjectLogs_project_manage_navigation($project){
  * Implements hook_project_manage_category().
  */
 function ProjectLogs_project_manage_category($project){
-    $image_path = base_path().drupal_get_path('module','reProjectContent').'/web-page.png';
+    $image_path = base_path().drupal_get_path('module','ProjectLogs').'/log.png';
     $count_sql = 'SELECT COUNT(*) FROM {research_projects_operation_logs} WHERE project=%d';
     $count = db_result(db_query($count_sql, $project->id));
     $categories[] = array(
@@ -80,7 +80,7 @@ function ProjectLogs_project_content_block($project, $op, &$blocks){
                     $r->type,
                     l($r->name,'user/'.$r->uid),
                     $r->content. ' ('.l('More',generate_project_url($project->path).'/manage/logs/'.$r->id).')',
-                    format_interval(time()-strtotime($r->time)).' ago',
+                    $r->time,
                 );
             }
             $b['content'] = theme_table($header, $rows);
