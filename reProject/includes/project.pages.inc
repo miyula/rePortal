@@ -3,10 +3,17 @@
  * Menu callback for projects/new
  */
 function projects_new_callback(){
-    $module_path = drupal_get_path('module', 'reProject');
-    drupal_add_js($module_path.'/js/project.js');
-    //get project form
-    $content = drupal_get_form('create_new_project_form');
+    
+    if(user_access('create research project')){
+        $module_path = drupal_get_path('module', 'reProject');
+        drupal_add_js($module_path.'/js/project.js');
+        //get project form
+        $content = drupal_get_form('create_new_project_form');
+    }  else {
+        $content = '<p style="text-align:center;font-size: 16px;">To create a new project, you need to '.l('login','user/login').' as a researcher. You can '.l('apply a research account','contact').'.</p>';
+    }
+    
+    
     return $content;
 }
 /**
@@ -26,9 +33,9 @@ function projects_new_editpages_callback(){
  * Menu callback for projects/list
  */
 function projects_list_callback(){
-    if(user_access('create research project')){
+    /*if(user_access('create research project')){
         $content.= '<p style="text-align:right;"><a href="'.url('projects/new').'" class="add_link">Create new project</a></p>';
-    }
+    }*/
     $rows = array();
     $header = array(
         array('data'=>'Project name'),

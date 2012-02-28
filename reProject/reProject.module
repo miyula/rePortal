@@ -35,7 +35,7 @@ function reProject_menu(){
         'title'             => t('Create new project'),
         'description'       => t('The page to create a new research project'),
         'page callback'     => 'projects_new_callback',
-        'access arguments'  => array('create research project'),
+        'access arguments'  => array('access content'),
         'file'              => 'includes/project.pages.inc',
         'type'              => MENU_CALLBACK,
     );

@@ -96,10 +96,17 @@ function reProjectUserProfile_user($op, &$edit, &$account, $category = NULL){
             
         }
         if(($user->uid==$account->uid)||user_access("view other users projects")){
+            if(user_access('create research project')){
+                $create_link= '<p style=""><a href="'.url('projects/new').'" class="add_link">Create new project</a></p>';
+            }
             $account->content['projects'] = array(
                 '#title'    => t('Projects'),
                 '#type'    => 'user_profile_category',
-                '#weight' => 1,
+                '#weight' => -1,
+                'create_link' => array(
+                  '#value' => $create_link,
+                  '#weight'=> -1,
+                ),
             );
             
             //get research projects list
@@ -117,7 +124,7 @@ function reProjectUserProfile_user($op, &$edit, &$account, $category = NULL){
                     '#title' => t('Research'),
                     '#type' =>  'user_profile_item',
                     '#value' => empty ($research_projects)?'':"<ul>$research_projects</ul>",
-                    '#weight' => 0,
+                    '#weight' => 1,
                 );
             }
             //get participate in projects list
@@ -135,7 +142,7 @@ function reProjectUserProfile_user($op, &$edit, &$account, $category = NULL){
                     '#title' => t('Participate'),
                     '#type' =>  'user_profile_item',
                     '#value' => empty ($participate_projects)?'':"<ul>$participate_projects</ul>",
-                    '#weight' => 1,
+                    '#weight' => 2,
                 );
             }
         }
