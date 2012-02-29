@@ -10,7 +10,7 @@ function projects_new_callback(){
         //get project form
         $content = drupal_get_form('create_new_project_form');
     }  else {
-        $content = '<p style="text-align:center;font-size: 16px;">To create a new project, you need to '.l('login','user/login').' as a researcher. You can '.l('apply a research account','contact').'.</p>';
+        $content = '<p style="text-align:center;font-size: 16px;">To create a new project, you need to '.l('login','user/login').' as a researcher. You can '.l('apply a researcher account','content/apply-researcher-account').'.</p>';
     }
     
     

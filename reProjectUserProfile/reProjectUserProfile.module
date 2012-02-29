@@ -87,7 +87,7 @@ function reProjectUserProfile_user($op, &$edit, &$account, $category = NULL){
                     '#weight' => 10,
                 ),
                 'weight' => array(
-                    '#title' => t('Weight'),
+                    '#title' => t('Body weight'),
                     '#type' =>  'user_profile_item',
                     '#value' => empty($info->weight)?t('Unknown'):$info->weight.' KG',
                     '#weight' => 10,
