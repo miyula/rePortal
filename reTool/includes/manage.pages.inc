@@ -73,7 +73,7 @@ function project_manage_tools_selete_list_callback($path){
     while($row=db_fetch_object($res)){
         $count = count_research_tool_using_and_rating($row->id);
         if($count->number){
-            $statistic.= "<p><strong>{$count->number}</strong> projects are using this tool.</p>";
+            $statistic= "<p><strong>{$count->number}</strong> projects are using this tool.</p>";
         }
         $rows[] = array(
             array(
