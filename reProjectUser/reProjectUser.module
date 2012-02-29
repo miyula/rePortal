@@ -262,7 +262,7 @@ function reProjectUser_project_manage_category($project){
     $count1 = db_result(db_query($count_sql, $project->id, 'researcher'));
     $categories[] = array(
         'image' => $image_path.'/researcher.png',
-        'name'  => 'Researchers',
+        'name'  => 'Staffs',
         'count' => $count1+1, //include the creator
         'link'  => generate_project_url($project->path).'/manage/persons',
     );

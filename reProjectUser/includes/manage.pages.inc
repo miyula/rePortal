@@ -29,8 +29,8 @@ function project_manage_persons_list_callback($path){
     //get right part info
     
     //get researchers
-    $content.= '<h2>Researchers list</h2>';
-    $content.= '<p><a href="'.url('project/'.$path.'/manage/persons/researcher/add').'" class="add_link">Add researcher</a></p>';
+    $content.= '<h2>Staffs list</h2>';
+    $content.= '<p><a href="'.url('project/'.$path.'/manage/persons/researcher/add').'" class="add_link">Invite new staff</a></p>';
     $rows = array();
     $header = array(
         //array('data'=>'Photo'),
