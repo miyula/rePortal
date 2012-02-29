@@ -15,7 +15,7 @@ function project_manage_persons_researcher_add_callback($path){
     $project->path_category = 'manage';
     $project->path_category_subitem = 'persons'; 
     
-    $project->subtitle = 'Add new researcher';
+    $project->subtitle = 'Invite new staff';
     $project->right_part = drupal_get_form('project_invite_research_form', $project->id);
     return theme('project_manage_page',$project);
 }
@@ -30,7 +30,7 @@ function project_invite_research_form(&$form_state, $pid){
         '#type' => 'textfield',
         '#title' => t('Email address'),
         '#required' => TRUE,
-        '#description' => t('The email of the researcher to be invited. '.l('Edit the invitation letter.', get_project_url($pid).'/manage/settings/templates')),
+        '#description' => t('The email of the person to be invited. '.l('Edit the invitation letter.', get_project_url($pid).'/manage/settings/templates')),
     );
     $form['submit'] = array(
         '#type' => 'submit',
@@ -52,7 +52,7 @@ function project_invite_research_form_validate($form, &$form_state){
     
     if($r){
         //if the user already in researcher list
-        form_set_error('email', 'The researcher has already in your project.');
+        form_set_error('email', 'The staff is already in your project.');
     }
     
 }
@@ -64,7 +64,7 @@ function project_invite_research_form_submit($form, &$form_state){
     
     //log the operation
     global $user;
-    $content = "Send mail to invite $email to join project as a researcher.";
+    $content = "Send mail to invite $email to join project as a research.";
     log_operation($pid, 'persons', $content, get_project_url($pid).'/manage/persons/researcher/add', 'reProjectUser');
     
     $form_state['redirect']  = get_project_url($pid).'/manage/persons';
