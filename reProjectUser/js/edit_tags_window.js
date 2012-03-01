@@ -3,6 +3,7 @@ $(document).ready(function(){
         autoOpen: false,
         modal: true,
         width: 400,
+        height: 300,
         close: function(){
             location.reload();  
         }
@@ -106,5 +107,6 @@ function get_tags_from_participant(id){
     start_refresh_tags();
     $.getJSON(url, function(data){
         load_tags_in_window(data);
+        $('#edit-tags-div').css('display','block');
     });
 }

@@ -31,7 +31,7 @@ function set_invitation_templates_form($form_state, $project){
     
     $form['invite-researcher'] = array(
         '#type' => 'fieldset',
-        '#title' => t('Invite researcher'),
+        '#title' => t('Invite staff'),
         '#collapsible' => TRUE,
         '#collapsed' => FALSE,
         '#weight' => 0,

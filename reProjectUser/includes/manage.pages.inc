@@ -17,10 +17,13 @@ function project_manage_persons_list_callback($path){
     //add css
     drupal_add_css(drupal_get_path('module','reProjectUser').'/css/user_manage.css');
     drupal_add_css(drupal_get_path('module','reProjectUserProfile').'/personalInfo.css');
+    
     //add js
     drupal_add_js(drupal_get_path('module','reProjectUserProfile').'/personalInfo.js');
     
     //add jQuery ui
+    drupal_add_css('sites/all/libraries/jquery.ui/themes/default/ui.all.css');
+    jquery_ui_add(array('ui.dialog'));
 
     drupal_add_js(drupal_get_path('module','reProjectUser').'/js/edit_tags_window.js');
     
@@ -145,6 +148,8 @@ function project_manage_persons_filter_callback($path, $tag){
     drupal_add_js(drupal_get_path('module','reProjectUserProfile').'/personalInfo.js');
     
     //add jQuery ui
+    drupal_add_css('sites/all/libraries/jquery.ui/themes/default/ui.all.css');
+    jquery_ui_add(array('ui.dialog'));
     
     drupal_add_js(drupal_get_path('module','reProjectUser').'/js/edit_tags_window.js');
     
