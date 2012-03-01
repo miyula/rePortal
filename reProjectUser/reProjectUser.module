@@ -194,6 +194,24 @@ function reProjectUser_menu(){
 	'access arguments' => array('access content'),
 	'file'              => 'includes/invite.pages.inc',
     );
+    
+        /** admin part **/
+    $menu['admin/settings/reportal'] = array(
+        'title' => t('rePortal settings'),
+        'description' => t('Default templates for all projects.'),
+        'page callback' => 'admin_settings_reportal_default_templates_callback',
+        'access arguments' => array('administer site configuration'),
+        'type' => MENU_NORMAL_ITEM,
+        'file' => 'includes/admin.pages.inc',
+    );
+    $menu['admin/settings/reportal/restore_templates'] = array(
+        'title' => t('Restore templates'),
+        'description' => t('Default templates for all projects.'),
+        'page callback' => 'admin_settings_reportal_restore_templates_callback',
+        'access arguments' => array('administer site configuration'),
+        'type' => MENU_CALLBACK,
+        'file' => 'includes/admin.pages.inc',
+    );
 
     return $menu;
 }
