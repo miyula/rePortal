@@ -42,7 +42,8 @@ function project_manage_persons_list_callback($path){
     );
     $owner = user_load($project->creator);
     $rows[] = array(
-        l($owner->name, 'user/'.$owner->uid, array('attributes'=>array('class'=>'show_person_card'))).' (creator)',
+        //l($owner->name, 'user/'.$owner->uid, array('attributes'=>array('class'=>'show_person_card'))).' (creator)',
+        l($owner->name, 'user/'.$owner->uid).' (creator)',
         $owner->mail,
     );
     
@@ -168,7 +169,8 @@ function project_manage_persons_filter_callback($path, $tag){
     );
     $owner = user_load($project->creator);
     $rows[] = array(
-        l($owner->name, 'user/'.$owner->uid, array('attributes'=>array('class'=>'show_person_card'))).' (creator)',
+        //l($owner->name, 'user/'.$owner->uid, array('attributes'=>array('class'=>'show_person_card'))).' (creator)',
+        l($owner->name, 'user/'.$owner->uid).' (creator)',
         $owner->mail,
     );
     
