@@ -47,7 +47,7 @@ function project_manage_persons_list_callback($path){
         $owner->mail,
     );
     
-    $sql = "SELECT name, mail FROM {research_projects_persons_list} AS p, {users} AS u WHERE p.project=%d AND p.user=u.uid AND p.role='researcher' AND p.active=1";
+    $sql = "SELECT u.uid AS uid, name, mail FROM {research_projects_persons_list} AS p, {users} AS u WHERE p.project=%d AND p.user=u.uid AND p.role='researcher' AND p.active=1";
     $res = db_query($sql, $project->id);
     while($row=db_fetch_object($res)){
         $rows[] = array(
@@ -174,11 +174,11 @@ function project_manage_persons_filter_callback($path, $tag){
         $owner->mail,
     );
     
-    $sql = "SELECT name, mail FROM {research_projects_persons_list} AS p, {users} AS u WHERE p.project=%d AND p.user=u.uid AND p.role='researcher' AND p.active=1";
+    $sql = "SELECT user, name, mail FROM {research_projects_persons_list} AS p, {users} AS u WHERE p.project=%d AND p.user=u.uid AND p.role='researcher' AND p.active=1";
     $res = db_query($sql, $project->id);
     while($row=db_fetch_object($res)){
         $rows[] = array(
-            l($row->name, 'user/'.$row->uid),
+            l($row->name, 'user/'.$row->user),
             $row->mail,
         );
     }
