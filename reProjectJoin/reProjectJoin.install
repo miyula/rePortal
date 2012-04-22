@@ -1,0 +1,58 @@
+<?php
+
+/**
+  * Implementation of hook_install().
+  */
+function reProjectJoin_install(){
+    //Create tables
+    drupal_install_schema('research_experitmental_recruitment');
+}
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function reProjectJoin_uninstall(){
+    //Drop tables
+    drupal_uninstall_schema('research_experitmental_recruitment');
+}
+
+/**
+ * Implementation of hook_schema().
+ */
+function research_experitmental_recruitment_schema(){
+    $schema['research_experitmental_recruitment'] = array(
+        'fields' => array(
+            'id' => array(
+                'type' => 'serial',
+                'unsigned' => TRUE,
+                'not null' => TRUE,
+                ),
+            'project' => array(
+                'type' => 'int',
+                'unsigned' => TRUE,
+                'not null' => TRUE,
+                ),
+            'key_name' => array(
+                'type' => 'varchar',
+                'length' => 45,
+                'not null' => TRUE,
+                ),
+            'value' => array(
+                'type' => 'varchar',
+                'length' => 255,
+                'not null' => TRUE,
+            ),
+            'created' => array(
+                'type' => 'datetime',
+                'not null' => TRUE,
+                ),
+            'changed' => array(
+                'type' => 'datetime',
+                'not null' => TRUE,
+                ),
+            ),
+        'primary key' => array('id'),
+            
+    );
+    return $schema;
+}

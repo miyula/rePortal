@@ -45,6 +45,13 @@ global $user;
 </div>
 <!-- end part of Research tools -->
 
+<!-- addition content -->
+<?php foreach($project->additional as $content): ?>
+    <h3><?=$content['title']; ?></h3>
+    <?=$content['value']; ?>
+<?php endforeach; ?>
+<!-- end addition content -->
+
 <!-- footer navigation -->
 <div class="footer-navigation">
     <p>

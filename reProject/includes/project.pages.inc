@@ -87,6 +87,11 @@ function project_display_callback($path){
             $tools[] = $tool;
         }
         $project->tools_list = $tools;
+        
+        $home_additional = module_invoke_all('project_homepage_additional', $project);
+        
+        $project->additional = $home_additional;
+        
         return theme('project_home_page', $project);
     }
     drupal_not_found();

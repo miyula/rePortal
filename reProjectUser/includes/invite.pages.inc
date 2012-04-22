@@ -14,7 +14,18 @@ function invite_redirect_to_project_callback($code){
         
         if($result){
             $project = load_project($result->project,'id');
-            $invite_message = 'Do you accept to join project <strong>'.l($project->name, generate_project_url($project->path), array('attributes'=>array('target'=>'_blank')))."</strong> as a {$result->role}?";
+            $invite_message = t(
+                    'You are in this page, because you are to join <a href="@link" target="_blank">%project</a> as a !role.'
+                    .' By click <strong>%accept</strong>, you are agree to the @project <a href="@link/privacy_term_of_use" target="_blank">Privacy Policy & Terms of Use</a>.',
+                    array(
+                        '@link' => url(generate_project_url($project->path)),
+                        '%project' => $project->name,
+                        '!role' => $result->role,
+                        '@project'=> $project->name,
+                        '%accept' => t('Yes, I accept.'),
+                    )
+                    );
+            ////'Do you accept to join project <strong>'.l($project->name, generate_project_url($project->path), array('attributes'=>array('target'=>'_blank')))."</strong> as a {$result->role}?";
     
             global $user;
         
@@ -155,7 +166,7 @@ function login_to_join_project_from($form_state, $person){
         '#type' => 'hidden',
         '#value'=> $person->role,
     );
-    $form['submit']['#value'] = t('Login and accept');
+    $form['submit']['#value'] = t('Yes, I accept.');
     return $form;
 }
 
@@ -229,7 +240,7 @@ function register_to_join_project_from($form_state, $person){
         '#type' => 'hidden',
         '#value'=> $person->role,
     );
-    $form['submit']['#value'] = t('Register and accept');
+    $form['submit']['#value'] = t('Yes, I accept.');
     return $form;
 }
 

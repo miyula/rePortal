@@ -3,8 +3,8 @@
 /**
  * Implementation of hook_menu().
  */
-function reJoin_menu(){
-    $menu['project/%/manage/settings/join'] = array(
+function reProjectJoin_menu(){
+    $menu['project/%/manage/settings/recruitment'] = array(
         'title arguments'   => array(1),
 	'title callback'    => 'project_title_callback',
         'description'       => t('Admin join settings for project'),
@@ -14,5 +14,65 @@ function reJoin_menu(){
         'access arguments'  => array(1),
         'file'              => 'includes/settings.pages.inc',
     );
+     $menu['project/%/recruitment'] = array(
+        //'title arguments'   => array(1),
+	//'title callback'    => 'project_recruitment_title_callback',
+        'title'             => t('Recruitment'),
+        'description'       => t('Public recruitment page for project.'),
+        'page callback'     => 'project_recruitment_callback',
+        'page arguments'    => array(1),
+	'access arguments'   => array('access content'),
+        'file'              => 'includes/recruitment.pages.inc',
+    );
+     $menu['project/%/privacy_term_of_use'] = array(
+         'title'            => t('Privacy Policy & Terms of Use'),
+         'description'       => t('Privacy Policy & Terms of Use page for project.'),
+         'page callback'     => 'project_privacy_term_of_use_callback',
+         'page arguments'    => array(1),
+         'access arguments'   => array('access content'),
+         'file'              => 'includes/content.pages.inc',
+     );
     return $menu;
+}
+
+/**
+ * Implementation of hook_project_manage_navigation().
+ */
+function reProjectJoin_project_manage_navigation($project){
+    
+    $navigation['settings']['sub_items']['recruitment_page'] = array(
+        'title' => 'Recruitment',
+        'url'   => generate_project_url($project->path).'/manage/settings/recruitment',
+        'weight'=> 9,
+    );
+    return $navigation;
+}
+
+/**
+ * Implementation of hook_project_homepage_additional().
+ */
+function reProjectJoin_project_homepage_additional($project){
+    if(check_recruitment_status($project->id)){
+        $recruitment_link = l('The recruitment is open now. Go!',generate_project_url($project->path).'/recruitment', array('attributes'=>array('style'=>'color:#1A96D4;')));
+        return array(
+            'recuritment_status' => array(
+                'value' => "<div id='recruitment_div' style='font-size:24px; font-weight:blod; text-align:center; background-color: #333; padding: 5px;'>$recruitment_link</div>",
+            ),
+            
+        );
+    }
+}
+
+/**
+ * Check recruitment status
+ */
+function check_recruitment_status($pid){
+    $status_sql= 'SELECT value FROM {research_experitmental_recruitment} WHERE project=%d AND key_name="status"';
+    $status = db_result(db_query($status_sql, $pid));
+    
+    if($status&&$status==1){
+        return TRUE;
+    }else{
+        return FALSE;
+    }
 }
