@@ -45,16 +45,34 @@ function project_manage_persons_list_callback($path){
         //l($owner->name, 'user/'.$owner->uid, array('attributes'=>array('class'=>'show_person_card'))).' (creator)',
         l($owner->name, 'user/'.$owner->uid).' (creator)',
         $owner->mail,
+        '',
     );
     
-    $sql = "SELECT u.uid AS uid, name, mail FROM {research_projects_persons_list} AS p, {users} AS u WHERE p.project=%d AND p.user=u.uid AND p.role='researcher' AND p.active=1";
+    //get staffs list
+    $sql = "SELECT p.id AS id, u.uid AS uid, name, mail FROM {research_projects_persons_list} AS p, {users} AS u WHERE p.project=%d AND p.user=u.uid AND p.role='researcher' AND p.active=1";
     $res = db_query($sql, $project->id);
-    while($row=db_fetch_object($res)){
-        $rows[] = array(
-            l($row->name, 'user/'.$row->uid),
-            $row->mail,
-        );
+    
+    //get current user
+    global $user;
+    if($user->uid==$owner->uid){
+        $header[] = 'Operation';
+        while($row=db_fetch_object($res)){
+            $rows[] = array(
+                l($row->name, 'user/'.$row->uid),
+                $row->mail,
+                l('Remove', "project/$path/manage/persons/researcher/remove/".$row->id, array('attributes'=>array('class'=>'delete_link'))),
+            );
+        }
+    }else{
+        while($row=db_fetch_object($res)){
+            $rows[] = array(
+                l($row->name, 'user/'.$row->uid),
+                $row->mail,
+                '',
+            );
+        }
     }
+    
     $content.= theme_table($header, $rows);
     
     $content.= '<p>&nbsp;</p>';    

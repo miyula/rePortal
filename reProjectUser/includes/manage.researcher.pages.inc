@@ -71,3 +71,58 @@ function project_invite_research_form_submit($form, &$form_state){
     
     
 }
+
+/**
+ * Menu callback for project/%/manage/persons/researcher/remove/%
+ */
+function project_manage_persons_researcher_remove_callback($path, $id){
+    $project = prepare_project_manage_page($path);
+    
+    $breadcrumb = drupal_get_breadcrumb();
+    $breadcrumb[] = l($project->name, generate_project_url($path));
+    $breadcrumb[] = l(t('Manage'), generate_project_url($path).'/manage');
+    $breadcrumb[] = l(t('Persons'), generate_project_url($path).'/manage/persons');
+    drupal_set_breadcrumb($breadcrumb);
+    
+    $project->path_category = 'manage';
+    $project->path_category_subitem = 'persons'; 
+    
+    $project->subtitle = 'Remove staff';
+    
+    //find the researcher to be removed
+    $find = 'SELECT id, name, uid FROM {research_projects_persons_list}, {users} WHERE id=%d AND project=%d AND user=uid';
+    $staff = db_fetch_object(db_query($find, $id, $project->id));
+    if($staff){
+        $staff->after_remove_path = "project/$path/manage/persons";
+        $project->right_part = drupal_get_form('project_remove_research_form', $staff);
+        return theme('project_manage_page',$project);
+    }else{
+        drupal_not_found();
+    }
+}
+
+/** Form for remove researcher **/
+function project_remove_research_form(&$form_state, $staff){
+    $form['id'] = array(
+        '#type' => 'hidden',
+        '#value'=> $staff->id,
+    );
+    $form['after_remove_path'] = array(
+        '#type' => 'hidden',
+        '#value'=> $staff->after_remove_path,
+    );
+    return confirm_form($form, 
+        t('Are you sure you want to remove %user_name from the staff list?', 
+                array('%user_name' => $staff->name, '%section' => $page->section_title)
+            ), 
+        $staff->after_remove_path, 
+        t('This action cannot be undone.'), 
+        t('Remove'), 
+        t('Cancel'));
+}
+function project_remove_research_form_submit($form, &$form_state){
+    $id = $form_state['values']['id'];
+    $delete = "DELETE FROM {research_projects_persons_list} WHERE id=%d";
+    db_query($delete, $id);
+    $form_state['redirect'] = $form_state['values']['after_remove_path'];
+}

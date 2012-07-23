@@ -70,7 +70,7 @@ function reProjectUser_menu(){
         'description'       => t('Remove researcher'),
         'page callback'     => 'project_manage_persons_researcher_remove_callback',
         'page arguments'    => array(1, 6),
-	'access callback'   => 'manage_project_access',
+	'access callback'   => 'is_project_creator',
         'access arguments'  => array(1),
         'file'              => 'includes/manage.researcher.pages.inc',  
     );
@@ -315,6 +315,26 @@ function project_participant_access($path){
         return TRUE;
     }
     
+    return FALSE;
+}
+
+/**
+ * access callback to check if user is the creator of the project
+ */
+function is_project_creator($path){
+    global $user;
+    
+    if((bool)$user->uid && $user->status==1){
+        $project = load_project($path);
+        if($project){
+            //check if user is has the creator role in the project
+            $check = 'SELECT COUNT(*) FROM {research_projects_persons_list} WHERE project=%d AND role="creator" AND user=%d';
+            $result = db_result(db_query($check, $project->id, $user->uid));
+            if($result==1){
+                return TRUE;
+            }
+        }
+    }
     return FALSE;
 }
 
