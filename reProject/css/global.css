@@ -122,16 +122,14 @@ h1.page-title{
 
 /** project navigation menu **/
 div#project-navigation{
+    background-color: #1A97D4;
     text-align: center;
 }
 ul.project-navigation-menu{
-    background-color: #1A97D4;
     margin: 0px auto;
     font-weight: bold;
     font-size: 16px;
-    padding:0px;
-    width: 500px;
-    
+    padding:0px;    
 }
 ul.project-navigation-menu:after{
     content: '';
@@ -146,6 +144,7 @@ ul.project-navigation-menu li.live{
     height: 21px;
 }
 ul.project-navigation-menu li{
+    
     float:left;
     overflow: hidden;
     display: inline;
