@@ -119,14 +119,14 @@ function project_manage_logs_callback($path){
               'WHERE project='.$project->id.' AND uid=operator ORDER by time DESC';
     $res = pager_query($sql, 20);
     while($r = db_fetch_object($res)){
-        $content = strip_tags($r->content);
-        if(strlen($content)>100){
-            $content = substr($content, 0, 100).'...';
+        $logtxt = strip_tags($r->content);
+        if(strlen($logtxt)>100){
+            $logtxt = substr($logtxt, 0, 100).'...';
         }
         $rows[] = array(
             $r->type,
             l($r->name,'user/'.$r->uid),
-            $content. ' ('.l('More',generate_project_url($path).'/manage/logs/'.$r->id).')',
+            $logtxt. ' ('.l('More',generate_project_url($path).'/manage/logs/'.$r->id).')',
             $r->time,
         );
     }

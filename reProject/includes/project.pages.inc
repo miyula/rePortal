@@ -300,7 +300,7 @@ function create_new_project($project){
     if(_research_projects_save($project)){
         
         //log operation
-        log_operation($project->id, 'information', "Create new project", 'http://'.$_SERVER['HTTP_HOST'].url('projects/new'), REPROJECT_MODULE_NAME);
+        log_operation($project->id, 'information', "This project was created.", 'http://'.$_SERVER['HTTP_HOST'].url('projects/new'), REPROJECT_MODULE_NAME);
         
         //update project activity
         update_project_activity($project->id, 1);
