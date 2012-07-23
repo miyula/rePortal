@@ -28,14 +28,14 @@ function project_manage_message_history_callback($path){
     );
     
     //get person list
-    $get = 'SELECT name, operator, content, LEFT(time,10) date, RIGHT(time,8) time FROM {research_projects_operation_logs} LEFT JOIN {users} ON uid=operator WHERE project='.$project->id.' AND type="message" ORDER BY time DESC';
-    $res = pager_query($get, 30);
+    $get = 'SELECT name, operator, content, LEFT(time,10) tdate, RIGHT(time,8) ttime FROM {research_projects_operation_logs} LEFT JOIN {users} ON uid=operator WHERE project='.$project->id.' AND type="message" ORDER BY time DESC';
+    $res = pager_query($get, 10);
     $rows = array();
     while($log=db_fetch_object($res)){
         $rows[] = array(
             l($log->name, 'user/'.$log->operator, array('attributes'=>array('class'=>'show_person_card'))),
             $log->content,
-            $log->date.'<br/>'.$log->time,
+            $log->tdate.'<br/>'.$log->ttime,
         );
     }
     
