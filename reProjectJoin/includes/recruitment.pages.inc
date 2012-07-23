@@ -30,7 +30,7 @@ function recruitment_email_form(&$form_state, $project){
     );
     $form['email'] = array(
         '#type' => 'textfield',
-        '#title'=> t('Your email adress'),
+        '#title'=> t('Your email address'),
         '#required'=>TRUE,
     );
     $form['submit'] = array(
