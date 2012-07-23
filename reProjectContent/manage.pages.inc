@@ -141,6 +141,7 @@ function project_content_edit_form(&$form_state, $content){
     );
     $options = array(
         'PUBLIC' => 'Public -- can be viewed by everyone',
+        'LIMITED'=> 'Limited -- participants, creator and staffs can view',
         'CONFIDENTIAL' => 'Confidential -- only viewed by researchers',
     );
     $form['permission'] = array(

@@ -193,6 +193,16 @@ function view_project_content_access($path, $title_path){
 	switch($permission){
 	    case 'PUBLIC':
 		return TRUE;
+            case 'LIMITED':
+                //get current user
+		global $user;
+		if((bool)$user->uid && $user->status==1){
+                    //find user in person list
+                    $sql = "SELECT COUNT(*) FROM {research_projects_persons_list} WHERE project=%d AND user=%d AND active=1";
+		    if(db_result(db_query($sql, $project->id, $user->uid))>0){
+			return TRUE;
+		    }
+                }
 	    case 'CONFIDENTIAL':
 		//get current user
 		global $user;

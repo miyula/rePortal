@@ -53,6 +53,11 @@ function project_contents_list_callback($path){
             //fetch all contents list
             $get = 'SELECT SUBSTRING(title, 1, 1) AS first_letter, title_path, title FROM {research_projects_contents} AS c, {node} AS n '
                   .'WHERE c.project=%d AND n.nid = c.node ORDER BY title';
+        }elseif(is_project_participant($project->id, $user->uid)){
+            //fetch limited and public contents
+            $get = 'SELECT SUBSTRING(title, 1, 1) AS first_letter, title_path, title FROM {research_projects_contents} AS c, {node} AS n '
+                  .'WHERE c.project=%d AND c.permission IN ("PUBLIC", "LIMITED") AND  n.nid = c.node ORDER BY title';
+            
         }else{
             //fetch public contents
             $get = 'SELECT SUBSTRING(title, 1, 1) AS first_letter, title_path, title FROM {research_projects_contents} AS c, {node} AS n '
