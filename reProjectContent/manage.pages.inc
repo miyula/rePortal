@@ -39,7 +39,7 @@ function project_manage_contents_list_callback($path){
     }
     $content.= theme_table($header, $rows);
     $content.= theme('pager');
-    $project->subtitle = 'Contents management';
+    $project->subtitle = 'Pages management';
     $project->right_part = $content;    
     return theme('project_manage_page',$project);
 }
