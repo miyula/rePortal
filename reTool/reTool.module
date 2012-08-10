@@ -24,7 +24,7 @@ function reTool_menu(){
     
     /**  research tools **/
     $menu['research/tools'] = array(
-        'title'             => t('Research tools'),
+        'title'             => t('Research Tools Library'),
         'description'       => t('The page to list all research tools'),
         'page callback'     => 'research_tools_list_callback',
         'access arguments'  => array('view research tools'),
