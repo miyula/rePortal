@@ -17,7 +17,7 @@ function project_manage_tools_list_callback($path){
     $project->path_category_subitem = 'tools'; 
         
     //get right part info
-    $content = '<a href="'.url('project/'.$path.'/manage/tools/selete').'" class="add_link">Add new tool</a>';
+    $content = '<a href="'.url('project/'.$path.'/manage/tools/selete').'" class="add_link">Find a new tool from library</a>';
     $rows = array();
     $header = array(
         array('data'=>'Tool'),
